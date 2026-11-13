@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《欢闹厨房》常驻场景 · B3-A 生成预览</title>
+<style>
+  :root{
+    --caramel:#E8A05C; --peach:#F3BFC0; --frost:#FFF7EA; --berry:#D9534F;
+    --cream:#F5E4C9; --cocoa:#5A3B2E; --ink:#4A3428; --muted:#8A7361;
+    --line:#E3CDB2; --paper:#FFFCF5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#EFE1CC;color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+    font-size:15px;line-height:1.75}
+  .page{width:1000px;max-width:94vw;margin:26px auto;background:var(--paper);
+    border:1px solid var(--line);border-radius:18px;padding:44px 52px 34px;
+    box-shadow:0 8px 28px rgba(90,59,46,.10);position:relative}
+  .page::before{content:"";position:absolute;left:0;top:0;width:100%;height:7px;
+    background:linear-gradient(90deg,var(--caramel),var(--peach),var(--frost));
+    border-radius:18px 18px 0 0}
+  h1{font-size:38px;margin:0 0 6px;letter-spacing:1px;color:var(--cocoa)}
+  h2{font-size:25px;margin:0 0 4px;color:var(--cocoa)}
+  h3{font-size:17px;margin:26px 0 10px;color:var(--cocoa)}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+  .kicker{display:inline-block;background:var(--caramel);color:#fff;border-radius:999px;
+    padding:3px 14px;font-size:12px;letter-spacing:1px;margin-bottom:14px}
+  .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 26px}
+  .meta div{background:var(--cream);border-radius:12px;padding:12px 14px;font-size:13px}
+  .meta b{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-bottom:3px}
+  .swatches{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 8px}
+  .swatches span{width:74px;height:44px;border-radius:10px;border:1px solid rgba(90,59,46,.18);
+    display:flex;align-items:flex-end;justify-content:center;font-size:10px;color:var(--cocoa);padding-bottom:3px}
+  .toc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+  .toc a{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);
+    background:#FBF3E6;border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+  .toc a:hover{background:var(--cream)}
+  .toc .n{font-size:20px;font-weight:700;color:var(--caramel);min-width:30px}
+  .scene{display:grid;grid-template-columns:330px 1fr;gap:34px;align-items:start;margin-top:16px}
+  .shot{background:var(--cream);border:1px solid var(--line);border-radius:16px;padding:10px}
+  .shot img{width:100%;display:block;border-radius:10px}
+  .shot .cap{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+  .id{display:inline-block;background:var(--cocoa);color:#fff;border-radius:8px;
+    padding:3px 12px;font-size:13px;letter-spacing:1px;margin-bottom:8px}
+  .tag{display:inline-block;background:var(--peach);color:var(--cocoa);border-radius:999px;
+    padding:2px 11px;font-size:12px;margin-left:8px}
+  table{width:100%;border-collapse:collapse;margin:12px 0 8px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:var(--caramel);color:#fff;font-weight:600;width:24%}
+  tbody tr:nth-child(even) td{background:#FBF3E6}
+  .callout{background:#FBF3E6;border-left:5px solid var(--caramel);border-radius:0 10px 10px 0;
+    padding:12px 16px;margin:18px 0;font-size:14px}
+  .warn{background:#FBEAEA;border-left:5px solid var(--berry);border-radius:0 10px 10px 0;
+    padding:12px 16px;margin:18px 0;font-size:14px}
+  .ok{color:#3E7A54;font-weight:600}
+  ul{margin:8px 0 0;padding-left:20px}
+  li{margin:5px 0}
+  .foot{display:flex;justify-content:space-between;border-top:1px solid var(--line);
+    margin-top:30px;padding-top:12px;font-size:12px;color:var(--muted)}
+  code{background:#F3E7D4;border-radius:4px;padding:1px 5px;font-size:13px}
+  @media print{.page{box-shadow:none;margin:0 auto;page-break-after:always;border-radius:0}}
+</style>
+</head>
+<body>
+
+<!-- 01 封面 -->
+<section class="page" id="s0">
+  <span class="kicker">ART · B3-A · 已实出</span>
+  <h1>《欢闹厨房》常驻场景</h1>
+  <p class="sub">4 个常驻场景底图生成预览 ｜ 依据「糖霜团子 / Sugar Dumpling」冻结风格与玩法流程 3.1</p>
+  <div class="meta">
+    <div><b>版本</b>v1.0 · 2026-11-14</div>
+    <div><b>实出数量</b>4 张常驻场景</div>
+    <div><b>规格</b>1080×1920 · JPG 不透明</div>
+    <div><b>状态</b>小改待精修</div>
+  </div>
+  <h3>冻结色彩板</h3>
+  <div class="swatches">
+    <span style="background:#E8A05C">#E8A05C</span>
+    <span style="background:#F3BFC0">#F3BFC0</span>
+    <span style="background:#FFF7EA">#FFF7EA</span>
+    <span style="background:#D9534F">#D9534F</span>
+    <span style="background:#F5E4C9">#F5E4C9</span>
+    <span style="background:#5A3B2E;color:#FFF7EA">#5A3B2E</span>
+  </div>
+  <h3>目录</h3>
+  <div class="toc">
+    <a href="#s1"><span class="n">01</span><span>S1 · 一勺糖 · 后厨</span></a>
+    <a href="#s2"><span class="n">02</span><span>S2 · 大堂与柜台</span></a>
+    <a href="#s3"><span class="n">03</span><span>S3 · 巷口街面</span></a>
+    <a href="#s4"><span class="n">04</span><span>S4 ·《一百零一页》菜谱界面</span></a>
+    <a href="#s5"><span class="n">05</span><span>规格、红线与校验结果</span></a>
+    <a href="#s6"><span class="n">06</span><span>需人工精修项</span></a>
+  </div>
+  <div class="callout"><b>生成顺序</b>　S1 → S2 → S3 → S4。先跑通 S1 的尺寸、无字约束与水印处理链路，确认有效后才放量后三张；首版 S1 因罐子被写上英文标签已按纪律保留为 <code>_deprecated</code>。</div>
+  <div class="foot"><span>《欢闹厨房》· 常驻场景 B3-A</span><span>第 1 页 / 共 6 页</span></div>
+</section>
+
+<!-- 02 S1 -->
+<section class="page" id="s1">
+  <span class="id">S1</span><span class="tag">序章起开放 · 常驻</span>
+  <h2>一勺糖 · 后厨</h2>
+  <p class="sub">P1 练习关 / P3 挑战关 / V2 无配方模式的主战场</p>
+  <div class="scene">
+    <div class="shot">
+      <img src="generated/batch02_scenes/final/env_s1_kitchen_bg_v1.jpg" alt="S1 后厨场景">
+      <div class="cap">env_s1_kitchen_bg_v1.jpg · 1080×1920</div>
+    </div>
+    <div>
+      <table>
+        <tbody>
+          <tr><th>剧情职能</th><td>连焦三炉（0-3）、面团山（2-3）、摔模具（3-5）、通宵百页（5-5）；终章故意焦一角的布丁在此出炉</td></tr>
+          <tr><th>落图细节</th><td>奶油杏墙 + 明显水痕 + <b>天花板漏雨补丁与接水小桶</b>、圆烤炉、无标签糖罐面粉罐、软圆面团</td></tr>
+          <tr><th>禁止项</th><td>人物、刀、火焰黑烟、锐角金属、任何文字</td></tr>
+          <tr><th>视角 / 光向</th><td>45° 俯视；左上主光、右下暖反光；深棕描边从浅底分离</td></tr>
+          <tr><th>状态</th><td><span class="ok">已生成 · 小改待精修</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><b>红线核对</b>　「漏雨屋顶一直漏」是贯穿全作的设定。本图把补丁、水痕、水桶一并画进底图，后续任何批次都不得「修好」。</div>
+    </div>
+  </div>
+  <div class="foot"><span>S1 · 后厨</span><span>第 2 页 / 共 6 页</span></div>
+</section>
+
+<!-- 03 S2 -->
+<section class="page" id="s2">
+  <span class="id">S2</span><span class="tag">序章起开放 · 常驻</span>
+  <h2>一勺糖 · 大堂与柜台</h2>
+  <p class="sub">P4 接单经营 / P5 装扮 / P6 结算 / P8 岗位派遣，终章七人同框之地</p>
+  <div class="scene">
+    <div class="shot">
+      <img src="generated/batch02_scenes/final/env_s2_hall_bg_v1.jpg" alt="S2 大堂与柜台场景">
+      <div class="cap">env_s2_hall_bg_v1.jpg · 1080×1920</div>
+    </div>
+    <div>
+      <table>
+        <tbody>
+          <tr><th>剧情职能</th><td>开张（1-1）、账本「对不住」（3-3）、5-4 账本重新摊开、6-7 全员写下「今天不累。」</td></tr>
+          <tr><th>落图细节</th><td>水痕 + 接水桶、<b>账本摊开在柜台上且页面无字</b>、算盘、蜜桃粉靠窗固定座、<b>长桌向右延伸</b>、门后空位</td></tr>
+          <tr><th>禁止项</th><td>人物、门后先挂匾额、账本收进抽屉、任何文字</td></tr>
+          <tr><th>设定咬合</th><td>向右延长的长桌为 S8「同一张桌子的延长」预留，不做成对立店面</td></tr>
+          <tr><th>状态</th><td><span class="ok">已生成 · 小改待精修</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><b>v1.1 大团圆改动落地</b>　账本必须摊在柜台上（不是收进抽屉），糖老书终章起趴这里当菜单本。底图已按摊开态出图。</div>
+    </div>
+  </div>
+  <div class="foot"><span>S2 · 大堂与柜台</span><span>第 3 页 / 共 6 页</span></div>
+</section>
+
+<!-- 04 S3 -->
+<section class="page" id="s3">
+  <span class="id">S3</span><span class="tag">序章起开放 · 常驻</span>
+  <h2>巷口街面（含门口空地）</h2>
+  <p class="sub">P4 排队客流 / 街边事件／终章咕咕外送队挂牌处</p>
+  <div class="scene">
+    <div class="shot">
+      <img src="generated/batch02_scenes/final/env_s3_street_bg_v1.jpg" alt="S3 巷口街面场景">
+      <div class="cap">env_s3_street_bg_v1.jpg · 1080×1920</div>
+    </div>
+    <div>
+      <table>
+        <tbody>
+          <tr><th>剧情职能</th><td>捡书（0-1）、当街开炉（2-1）、排队到街口（2-7 / 3-1）、5-4 豆豆留人</td></tr>
+          <tr><th>落图细节</th><td>旧仓库改的店门脸 + 淡水痕、焦糖橘圆角门框、<b>完全无字木招牌</b>、圆石排队空地与两根圆角矮柱、街对面预留小摊空位</td></tr>
+          <tr><th>禁止项</th><td>招牌写字、人物、鸽子占位（外送队是终章才挂牌）、任何文字</td></tr>
+          <tr><th>元规则</th><td>店名与所有文字由字体渲染，图里一律留空；避免多语言版本要重出底图</td></tr>
+          <tr><th>状态</th><td><span class="ok">已生成 · 小改待精修</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="foot"><span>S3 · 巷口街面</span><span>第 4 页 / 共 6 页</span></div>
+</section>
+
+<!-- 05 S4 -->
+<section class="page" id="s4">
+  <span class="id">S4</span><span class="tag">序章起开放 · 元场景</span>
+  <h2>《一百零一页》菜谱界面</h2>
+  <p class="sub">非物理空间：进度条、主线钩子、第 100 页回想关入口，三合一的一屏</p>
+  <div class="scene">
+    <div class="shot">
+      <img src="generated/batch02_scenes/final/env_s4_recipe_bg_v1.jpg" alt="S4 菜谱界面场景">
+      <div class="cap">env_s4_recipe_bg_v1.jpg · 1080×1920</div>
+    </div>
+    <div>
+      <table>
+        <tbody>
+          <tr><th>剧情职能</th><td>0-3 第 1 页显形、3-9 撕纸角、4-8 归还、5-6 百页齐鸣、6-5 第 101 页显字</td></tr>
+          <tr><th>落图细节</th><td>摊开的圆角旧书页、泛黄纸感与书脊、<b>页心完全留空</b>可摆 101 页卡片、少量糖霜白点</td></tr>
+          <tr><th>禁止项</th><td>任何文字 / 数字 / 行线 / 密集插图；高亮显形由特效层叠加，不画进底图</td></tr>
+          <tr><th>状态规则</th><td>扣书期置灰由代码叠封条图形，显形态由 <code>fx_frosting_reveal_v1</code> 叠加，均不重出底图</td></tr>
+          <tr><th>状态</th><td><span class="ok">已生成 · 小改待精修</span></td></tr>
+        </tbody>
+      </table>
+      <div class="warn"><b>已知瑕疵</b>　原图右下角自带一块直角浅米白色块（已对照 <code>source/</code> 原图核实，非后处理造成），需人工改为整块背景或延展书页；糖霜白点实出约 6 个，需收敛到 3 个。</div>
+    </div>
+  </div>
+  <div class="foot"><span>S4 · 菜谱界面</span><span>第 5 页 / 共 6 页</span></div>
+</section>
+
+<!-- 06 规格与精修 -->
+<section class="page" id="s5">
+  <h2>规格、红线与校验结果</h2>
+  <p class="sub">四张同一链路产出，规格口径完全一致</p>
+  <h3>规格表</h3>
+  <table>
+    <thead><tr><th>项</th><th>值</th></tr></thead>
+    <tbody>
+      <tr><td>成品</td><td>1080×1920 JPG 不透明 · <code>standalone</code> · 命名四段式 + <code>_v1</code></td></tr>
+      <tr><td>原图</td><td><code>source/*_v1_src.png</code> 保留可复核，AI 生成来源与参数已标注</td></tr>
+      <tr><td>尺寸处理</td><td>模型实出 1072×1920 → 等比缩放 + 中心裁切到 1080×1920，<b>不拉伸</b></td></tr>
+      <tr><td>水印处理</td><td>右下角预留平坦色块 → 上方等大色块复制 + 12px 羽化回填，四张目视无残留</td></tr>
+      <tr><td>风格冻结</td><td>STYLE BLOCK v1 逐字复用；场景专用 <code>SCENE TECHNICAL v1</code> 逐字复用</td></tr>
+      <tr><td>校验</td><td>命名合规、尺寸一致、无文字、无水印；<code>check</code> 报 4 项「非 2 的幂」属 standalone 例外</td></tr>
+      <tr><td>同族比对</td><td>4 张 / 220px 缩略图接触表通过：描边、哑光平涂、奶油暖色一致，无明度突变</td></tr>
+    </tbody>
+  </table>
+  <h3 id="s6">需人工精修项（不谎报可直接入包）</h3>
+  <table>
+    <thead><tr><th>范围</th><th>处理内容</th></tr></thead>
+    <tbody>
+      <tr><td>S1</td><td>色温偏橘粉，墙面按 <code>#F5E4C9</code> 校色；制作台物件密度可按玩法需要人工补件；描边统一 3px</td></tr>
+      <tr><td>S2</td><td>账本页几条细线需抹平；与 S8 长桌衔接处需对齐；左下深色矩形确认是地垫或改为连续地面</td></tr>
+      <tr><td>S3</td><td>右上空调外机与旧仓库调性冲突，建议去除；左下浅色圆角块按「小摊预留位」保留或统一铺地</td></tr>
+      <tr><td>S4</td><td>右下直角浅色块改为整块背景；糖霜白点 6 → 3；页心留白保持</td></tr>
+      <tr><td>四张共同</td><td>描边统一到 3px @1024 基准、修 AI 边缘锯齿、生成内容商用授权范围做法务确认</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><b>范围边界</b>　本批只出 4 个常驻场景。S5–S9 五个场景、10 项交互物、UI 图标、动画特效、逐张人工精修与跨引擎导入设置均不在本批。<b>四张均为 AI 生成图，需人工精修与合规确认后才能作为最终素材。</b></div>
+  <div class="foot"><span>规格与精修 · 附页</span><span>第 6 页 / 共 6 页</span></div>
+</section>
+
+</body>
+</html>

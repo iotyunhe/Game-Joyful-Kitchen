@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《欢闹厨房》美术风格企划 · 糖霜团子 v1.0</title>
+<style>
+  :root{
+    --caramel:#E8A05C; --peach:#F3BFC0; --frost:#FFF7EA; --berry:#D9534F;
+    --cream:#F5E4C9; --cocoa:#5A3B2E;
+    --ink:#3A2B22; --ink2:#6B5546; --line:#DEC7A6; --paper:#FFFBF2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);
+       font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+       font-size:15px;line-height:1.75;}
+  .page{max-width:980px;margin:0 auto 26px;background:var(--paper);
+        border:1px solid var(--line);border-radius:18px;overflow:hidden;
+        box-shadow:0 6px 22px rgba(90,59,46,.09);}
+  .pad{padding:38px 46px 30px;}
+  .foot{display:flex;justify-content:space-between;align-items:center;
+        padding:12px 46px;background:#FBF1DF;border-top:1px solid var(--line);
+        font-size:12px;color:var(--ink2);letter-spacing:.04em;}
+  h1,h2,h3{line-height:1.3;margin:0 0 14px;}
+  h2{font-size:25px;color:var(--cocoa);border-left:6px solid var(--caramel);padding-left:14px;}
+  h3{font-size:17px;color:var(--cocoa);margin-top:26px;}
+  p{margin:0 0 12px;}
+  .sub{color:var(--ink2);font-size:14px;margin-bottom:22px;}
+  .lead{font-size:16px;background:#FCF2E1;border-left:4px solid var(--caramel);
+        padding:14px 18px;border-radius:0 10px 10px 0;margin-bottom:22px;}
+  .kicker{display:inline-block;background:var(--caramel);color:#fff;font-size:12px;
+          padding:4px 12px;border-radius:20px;letter-spacing:.1em;margin-bottom:14px;}
+  /* 封面 */
+  .cover{background:linear-gradient(160deg,#FFF7EA 0%,#FBE7CB 55%,#F6D9B4 100%);
+         padding:76px 56px 54px;position:relative;}
+  .cover h1{font-size:46px;color:var(--cocoa);letter-spacing:.02em;}
+  .cover .style{font-size:27px;color:var(--caramel);margin:8px 0 26px;font-weight:700;}
+  .cover .meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 30px;
+               max-width:640px;font-size:14px;color:var(--ink2);margin-top:24px;}
+  .cover .meta b{color:var(--cocoa);display:inline-block;min-width:76px;}
+  .band{display:flex;height:16px;border-radius:8px;overflow:hidden;margin-top:34px;}
+  .band i{flex:1;}
+  .cover .stamp{position:absolute;right:56px;top:70px;border:3px solid var(--caramel);
+                color:var(--caramel);border-radius:50%;width:112px;height:112px;
+                display:flex;align-items:center;justify-content:center;text-align:center;
+                font-size:13px;font-weight:700;line-height:1.4;transform:rotate(9deg);}
+  /* 目录 */
+  .toc a{display:flex;align-items:center;gap:14px;padding:11px 14px;
+         text-decoration:none;color:var(--ink);border-bottom:1px dashed var(--line);}
+  .toc a:hover{background:#FCF2E1;}
+  .toc .n{background:var(--cocoa);color:#fff;width:30px;height:30px;border-radius:8px;
+          display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;}
+  .toc .t{flex:1;font-weight:600;}
+  .toc .d{font-size:12px;color:var(--ink2);}
+  /* 表格 */
+  table{width:100%;border-collapse:collapse;margin:14px 0 20px;font-size:14px;}
+  th{background:var(--caramel);color:#fff;text-align:left;padding:10px 12px;font-weight:600;}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tbody tr:nth-child(even){background:#FBF3E6;}
+  tbody tr:hover{background:#FCEBD3;}
+  code{background:#F5E7CF;color:var(--cocoa);padding:2px 6px;border-radius:5px;
+       font-family:Consolas,"Courier New",monospace;font-size:13px;}
+  pre{background:#FCF3E4;border:1px solid var(--line);border-radius:12px;
+      padding:18px 20px;overflow-x:auto;font-size:12.5px;line-height:1.7;
+      font-family:Consolas,"Courier New",monospace;color:var(--ink);white-space:pre-wrap;}
+  pre .tag{color:#B5651D;font-weight:700;}
+  pre .hex{color:#C0392B;}
+  /* 色板 */
+  .swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0;}
+  .sw{background:#FFFDF8;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .sw .chip{height:72px;}
+  .sw .info{padding:12px 14px 14px;}
+  .sw .nm{font-weight:700;color:var(--cocoa);font-size:15px;}
+  .sw .hx{font-family:Consolas,monospace;font-size:13px;color:var(--ink2);margin:3px 0 6px;}
+  .sw .use{font-size:12.5px;color:var(--ink2);line-height:1.55;}
+  .pill{display:inline-block;background:#F5E7CF;border-radius:20px;padding:2px 10px;
+        font-size:11.5px;color:var(--cocoa);margin-top:6px;}
+  .idents{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 20px;}
+  .id{background:#FFFDF8;border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+      display:flex;align-items:center;gap:10px;font-size:13px;}
+  .id .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--cocoa);flex:none;}
+  /* 明度阶梯 */
+  .ladder{display:flex;gap:6px;margin:18px 0 10px;}
+  .rung{flex:1;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:#FFFDF8;}
+  .rung .bar{height:56px;}
+  .rung .lb{padding:8px 6px;font-size:11.5px;text-align:center;color:var(--ink2);line-height:1.4;}
+  .rung .lb b{display:block;color:var(--cocoa);font-size:12.5px;}
+  /* 卡片 / 提示 */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:16px 0;}
+  .card{background:#FFFDF8;border:1px solid var(--line);border-left:4px solid var(--peach);
+        border-radius:10px;padding:14px 16px;}
+  .card b{color:var(--cocoa);}
+  .callout{background:#FCEFE0;border:1px dashed var(--caramel);border-radius:12px;
+           padding:14px 18px;margin:16px 0;font-size:14px;}
+  .warn{background:#FBE9E7;border-left:4px solid var(--berry);border-radius:0 10px 10px 0;
+        padding:12px 16px;margin:14px 0;font-size:13.5px;}
+  /* 批次轴 */
+  .batch{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap;}
+  .b{flex:1;min-width:140px;background:#FFFDF8;border:1px solid var(--line);
+     border-radius:12px;padding:14px;position:relative;}
+  .b .num{font-family:Consolas,monospace;font-size:12px;color:#fff;background:var(--cocoa);
+          display:inline-block;padding:2px 9px;border-radius:12px;margin-bottom:8px;}
+  .b .ttl{font-weight:700;color:var(--cocoa);font-size:14px;margin-bottom:5px;}
+  .b .cnt{font-size:12px;color:var(--ink2);}
+  .b.active{border:2px solid var(--caramel);background:#FFF6E8;}
+  /* 基准图 */
+  .shots{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:18px 0;}
+  .shot{background:#FFFDF8;border:1px solid var(--line);border-radius:14px;overflow:hidden;text-align:center;}
+  .shot .imgbox{background:repeating-conic-gradient(#F3EADB 0% 25%,#FBF6EC 0% 50%) 50%/20px 20px;
+                height:270px;display:flex;align-items:center;justify-content:center;}
+  .shot img{max-width:88%;max-height:250px;object-fit:contain;}
+  .shot .cap{padding:12px 14px;font-size:13px;color:var(--ink2);border-top:1px solid var(--line);}
+  .shot .cap b{display:block;color:var(--cocoa);font-family:Consolas,monospace;font-size:12.5px;}
+  .stat{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0 20px;}
+  .stat div{background:#FFFDF8;border:1px solid var(--line);border-radius:12px;
+            padding:12px 18px;min-width:130px;}
+  .stat b{display:block;font-size:24px;color:var(--caramel);line-height:1.2;}
+  .stat span{font-size:12px;color:var(--ink2);}
+  @media print{
+    body{background:#fff;}
+    .page{box-shadow:none;border:none;margin:0;page-break-after:always;
+          border-radius:0;max-width:none;}
+    .page:last-child{page-break-after:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== 封面 ========== -->
+<section class="page">
+  <div class="cover">
+    <div class="stamp">STYLE<br>v1.0<br>FROZEN</div>
+    <span class="kicker">美术风格企划</span>
+    <h1>《欢闹厨房》</h1>
+    <div class="style">糖霜团子 / Sugar Dumpling</div>
+    <p style="max-width:620px;color:var(--ink2);font-size:16px;">
+      软描边 · 圆润剪影 · 奶油暖色 · 哑光粉质的 2D 手绘可爱风。<br>
+      为一款「谐星反派全员入队」的欢快大团圆经营养成游戏而定。
+    </p>
+    <div class="meta">
+      <div><b>版本</b>v1.0 · 2026-11-14</div>
+      <div><b>设计分辨率</b>1080×1920（竖屏）</div>
+      <div><b>目标平台</b>手机为主 / PC 兼容</div>
+      <div><b>引擎</b>未定（规格与引擎无关）</div>
+      <div><b>资产规模</b>6 批 / 47 项 / P0 26 项</div>
+      <div><b>第 1 批</b>2 张基准图 · 已实出</div>
+    </div>
+    <div class="band">
+      <i style="background:#E8A05C"></i><i style="background:#F3BFC0"></i>
+      <i style="background:#FFF7EA"></i><i style="background:#D9534F"></i>
+      <i style="background:#F5E4C9"></i><i style="background:#5A3B2E"></i>
+    </div>
+  </div>
+  <div class="foot"><span>《欢闹厨房》美术风格企划 · 糖霜团子 v1.0</span><span>第 1 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== 目录 ========== -->
+<section class="page">
+  <div class="pad">
+    <h2>目录</h2>
+    <p class="sub">点击跳转。完整可复制提示词见同目录《欢闹厨房-提示词包.md》。</p>
+    <div class="toc">
+      <a href="#s1"><span class="n">01</span><span class="t">风格锚点：八字段与冻结文本</span><span class="d">唯一风格来源</span></a>
+      <a href="#s2"><span class="n">02</span><span class="t">色彩板：6 色 + 7 位角色识别色</span><span class="d">含色号与明度</span></a>
+      <a href="#s3"><span class="n">03</span><span class="t">明度阶梯与主体 / 背景分离</span><span class="d">双重保证</span></a>
+      <a href="#s4"><span class="n">04</span><span class="t">禁忌清单与一致性三道检查</span><span class="d">8 条禁令</span></a>
+      <a href="#s5"><span class="n">05</span><span class="t">分批资产计划：6 批 / 47 项</span><span class="d">按玩法依赖排序</span></a>
+      <a href="#s6"><span class="n">06</span><span class="t">第 1 批基准图与实跑发现</span><span class="d">2 张实出 + 4 个发现</span></a>
+      <a href="#s7"><span class="n">07</span><span class="t">与玩法 / 剧情的咬合</span><span class="d">美术不只好看</span></a>
+      <a href="#s8"><span class="n">08</span><span class="t">假设与待确认</span><span class="d">5 条</span></a>
+    </div>
+    <div class="callout"><b>本企划的三条定调理由</b>　① 谐星反派的出糗桥段不能显得可怕 → 零锐角、零黑线、零硬阴影；②「显形 ≠ 学会」是核心反馈 → 糖霜白被留作唯一最高明度，专供百页齐鸣；③ 终章七人同框 → 七位角色共用描边与辅色，只换识别色。</div>
+  </div>
+  <div class="foot"><span>目录</span><span>第 2 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== S1 风格锚点 ========== -->
+<section class="page" id="s1">
+  <div class="pad">
+    <h2>01 · 风格锚点</h2>
+    <p class="lead">结论：风格锚点是唯一风格来源。下面这段英文是唯一可执行版本，生成时整段复制，一个字都不改；中文八字段只用于团队评审，不进提示词。</p>
+    <table>
+      <thead><tr><th style="width:14%">字段</th><th style="width:38%">定稿</th><th>为什么这样定</th></tr></thead>
+      <tbody>
+        <tr><td>画风</td><td>2D 手绘卡通、哑光平涂 + 轻微粉质笔触</td><td>休闲泛用户；粉质笔触给点心「糖粉感」，不靠写实食欲图</td></tr>
+        <tr><td>视角</td><td>场景 / 道具 45° 俯视；角色正面四分之三</td><td>同屏可见台面 + 角色上半身 + 出餐区</td></tr>
+        <tr><td>光照</td><td>左上暖主光 + 右下暖反光，同色系阴影</td><td>暖光小店；纯黑阴影会把谐星桥段压成惊悚</td></tr>
+        <tr><td>线宽</td><td>统一 3px @1024，可可棕 <code>#5A3B2E</code>，外深内浅圆头</td><td>浅背景下靠描边把主体抠出来，缩略图可辨的关键</td></tr>
+        <tr><td>质感</td><td>哑光平涂、无镜面高光、无渐变光晕</td><td>糖霜高光用「点」不用「反射」</td></tr>
+        <tr><td>比例</td><td>Q 版 2.5–3 头身，头占 40%，短圆手脚、点眼 + 腮红</td><td>七人同框靠头身比统一；点眼在 10% 缩略图下更可读</td></tr>
+        <tr><td>色彩倾向</td><td>低饱和奶油暖色；冷色只给阴影 / 夜景；高饱和只给交互</td><td>莓果红独占交互，玩家不会把倒计时和装饰看混</td></tr>
+        <tr><td>禁忌</td><td>8 条，见第 04 节</td><td>锚点不写禁忌，第 3 批开始必然漂</td></tr>
+      </tbody>
+    </table>
+    <h3>冻结文本（复制到每个提示词的第一段）</h3>
+    <pre><span class="tag">[STYLE BLOCK v1 - FROZEN]</span>
+Cozy cute 2D hand-drawn cartoon for a lighthearted dessert-shop management game. Soft matte flat coloring with a subtle chalky pastel texture, no glossy highlights, no gradients, no glow. Rounded silhouettes everywhere, zero sharp corners or spikes. Uniform 3px warm cocoa-brown outline (<span class="hex">#5A3B2E</span>), darker outside and lighter inside, round line caps. Chibi 2.5-3 head-tall proportions, head about 40 percent of the body, stubby round limbs, dot eyes and small blush cheeks. 45-degree top-down view for scenes and props, three-quarter front view for characters. Warm key light from the upper-left with a soft warm bounce from the lower-right; shadows stay in the same hue family, never black. Low-saturation creamy warm palette: caramel orange <span class="hex">#E8A05C</span>, peach pink <span class="hex">#F3BFC0</span>, frosting white <span class="hex">#FFF7EA</span>, cream apricot <span class="hex">#F5E4C9</span>, with muted cool tones only for shadows or night scenes; cocoa brown <span class="hex">#5A3B2E</span> for outlines and deepest shadows; berry red <span class="hex">#D9534F</span> reserved for interactive feedback only. Flat even lighting, no rim light, no lens flare, no photorealistic food photography, no realistic anatomy, no pure black lines, no text, no letters, no watermark, no signature, no recognizable brand or IP character.</pre>
+    <div class="warn"><b>版本纪律</b>　任何修改 = 升 v2、旧版保留、并写明「推翻了哪些已产出资产」。已确认的锚点条目未经明确要求不得回退。</div>
+  </div>
+  <div class="foot"><span>01 · 风格锚点</span><span>第 3 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== S2 色彩板 ========== -->
+<section class="page" id="s2">
+  <div class="pad">
+    <h2>02 · 色彩板</h2>
+    <p class="lead">结论：6 色全部冻结，色号与明度写进规格，不许凭感觉调。主体与背景差 ≥ 2 档，靠「浅背景 + 深描边」双重保证。</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#E8A05C"></div><div class="info"><div class="nm">主色 · 焦糖橘</div><div class="hx">#E8A05C ｜ L 68</div><div class="use">主角围裙、主按钮、店招牌、暖光、烤制进度</div><span class="pill">占比 ≤ 25%</span></div></div>
+      <div class="sw"><div class="chip" style="background:#F3BFC0"></div><div class="info"><div class="nm">辅色 · 蜜桃粉</div><div class="hx">#F3BFC0 ｜ L 79</div><div class="use">腮红、甜点主体、次要控件、女性角色识别底</div><span class="pill">占比 ≤ 20%</span></div></div>
+      <div class="sw"><div class="chip" style="background:#FFF7EA;border-bottom:1px solid #DEC7A6"></div><div class="info"><div class="nm">强调色 · 糖霜白</div><div class="hx">#FFF7EA ｜ L 97</div><div class="use"><b>专供显形仪式 / 糖霜 / 选中态</b>，日常 UI 禁用</div><span class="pill">占比 ≤ 15% · 独占</span></div></div>
+      <div class="sw"><div class="chip" style="background:#D9534F"></div><div class="info"><div class="nm">交互色 · 莓果红</div><div class="hx">#D9534F ｜ L 53</div><div class="use">倒计时、失败提示、干扰事件警示；不用于装饰</div><span class="pill">占比 ≤ 5%</span></div></div>
+      <div class="sw"><div class="chip" style="background:#F5E4C9;border-bottom:1px solid #DEC7A6"></div><div class="info"><div class="nm">背景色 · 奶油杏</div><div class="hx">#F5E4C9 ｜ L 89</div><div class="use">场景大底、面板底、列表底</div><span class="pill">占比 ≤ 30%</span></div></div>
+      <div class="sw"><div class="chip" style="background:#5A3B2E"></div><div class="info"><div class="nm">阴影 / 描边 · 焙茶棕</div><div class="hx">#5A3B2E ｜ L 24</div><div class="use">统一描边、最深暗部、正文文字</div><span class="pill">占比 ≤ 5%</span></div></div>
+    </div>
+    <h3>七位角色识别色（从 6 色板派生，不占主位）</h3>
+    <p class="sub">全部共用 <code>#5A3B2E</code> 描边与 <code>#FFF7EA</code> 高光，只换识别色 —— 这是「七人同框不成拼盘」的执行方式。</p>
+    <div class="idents">
+      <div class="id"><span class="dot" style="background:#E8A05C"></span>麦小满 · 焦糖橘</div>
+      <div class="id"><span class="dot" style="background:#E5CF9E"></span>糖老书 · 旧纸黄</div>
+      <div class="id"><span class="dot" style="background:#84A6BB"></span>雷千层 · 瓷青蓝</div>
+      <div class="id"><span class="dot" style="background:#89A578"></span>顾苦 · 苦瓜绿</div>
+      <div class="id"><span class="dot" style="background:#C3A2BE"></span>沈如意 · 藕荷紫</div>
+      <div class="id"><span class="dot" style="background:#A08D78"></span>周伯 · 灰茶褐</div>
+      <div class="id"><span class="dot" style="background:#F2CE72"></span>豆豆 · 奶黄</div>
+      <div class="id"><span class="dot" style="background:#3E5545"></span>顾苦斗篷 · 墨绿</div>
+    </div>
+    <div class="warn"><b>唯一一处风格反向修正（已显式记录，不暗改）</b>　设定写顾苦「黑斗篷」，但纯黑违反「不用纯黑 / 不阴森」的锚点。改为墨绿 <code>#3E5545</code> + 蜜桃粉流苏，保留「自己缝的窗帘」这一喜剧来源，剪影仍是斗篷。</div>
+  </div>
+  <div class="foot"><span>02 · 色彩板</span><span>第 4 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== S3 明度阶梯 ========== -->
+<section class="page" id="s3">
+  <div class="pad">
+    <h2>03 · 明度阶梯与主体 / 背景分离</h2>
+    <p class="lead">结论：可爱风常用浅背景，最容易出现「缩略图糊成一片」。本作靠「浅背景 L 84–92 + 主体中调 L 40–60 + 强制深描边 L 24」把主体抠出来，转灰度仍可分。</p>
+    <div class="ladder">
+      <div class="rung"><div class="bar" style="background:#FFF7EA;border-bottom:1px solid #DEC7A6"></div><div class="lb"><b>L 90–100</b>高光 / 糖霜</div></div>
+      <div class="rung"><div class="bar" style="background:#F3BFC0"></div><div class="lb"><b>L 60–80</b>主体亮面</div></div>
+      <div class="rung"><div class="bar" style="background:#E8A05C"></div><div class="lb"><b>L 40–60</b>主体中间调</div></div>
+      <div class="rung"><div class="bar" style="background:#B47A4E"></div><div class="lb"><b>L 20–40</b>主体暗部</div></div>
+      <div class="rung"><div class="bar" style="background:#F5E4C9;border-bottom:1px solid #DEC7A6"></div><div class="lb"><b>L 84–92</b>日间背景</div></div>
+      <div class="rung"><div class="bar" style="background:#3E3550"></div><div class="lb"><b>L 18–32</b>夜景背景</div></div>
+      <div class="rung"><div class="bar" style="background:#5A3B2E"></div><div class="lb"><b>L 24</b>统一描边</div></div>
+    </div>
+    <table>
+      <thead><tr><th style="width:22%">场景</th><th style="width:26%">背景明度</th><th>主体处理</th></tr></thead>
+      <tbody>
+        <tr><td>日间（S1–S4、S6、S8、S9）</td><td>奶油杏 L 89</td><td>主体中调 L 40–60 + 强制 <code>#5A3B2E</code> 描边，形成 L 24–60 暗团，与背景差 ≥ 2 档</td></tr>
+        <tr><td>夜景（S5 评定场、S7 云端大会）</td><td>深紫 <code>#3E3550</code> L 24</td><td>主体亮面抬到 L 70–85；**唯一允许**改用「外浅内深」反向描边，资产名标 <code>_night</code></td></tr>
+      </tbody>
+    </table>
+    <h3>状态不能只靠颜色区分</h3>
+    <div class="cards">
+      <div class="card"><b>倒计时</b>　莓果红 + 沙漏形（等宽数字，不跳字）</div>
+      <div class="card"><b>禁用</b>　去饱和 + 斜杠图标（第三章结算按钮少一个）</div>
+      <div class="card"><b>增益</b>　焦糖橘 + 上箭头</div>
+      <div class="card"><b>扣书期置灰</b>　去饱和 + <b>封条图形</b>，不是只降透明度</div>
+    </div>
+    <div class="callout"><b>验证方法</b>　成品转灰度，主体与背景仍清晰可分即合格；用 <code>art_asset_tools.py sheet</code> 出接触表做 10% 缩略图测试。文字与底对比度 ≥ 4.5:1，点击热区 ≥ 44×44。</div>
+  </div>
+  <div class="foot"><span>03 · 明度阶梯</span><span>第 5 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== S4 禁忌与一致性 ========== -->
+<section class="page" id="s4">
+  <div class="pad">
+    <h2>04 · 禁忌清单与一致性检查</h2>
+    <p class="lead">结论：每条禁令都附「具体失败表现」，验收时能直接判不合格，不写「感觉不好看」。</p>
+    <table>
+      <thead><tr><th style="width:6%">#</th><th style="width:38%">禁止</th><th>失败表现</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>纯黑描边 / 纯黑阴影</td><td>谐星出糗桥段变惊悚；灰度图出现死黑块</td></tr>
+        <tr><td>2</td><td>锐角、尖刺、尖牙、锐利道具</td><td>顾苦 / 雷千层看起来像真反派，与「零锐角」锚点冲突</td></tr>
+        <tr><td>3</td><td>镜面高光、渐变光晕、全屏泛光</td><td>糖霜显形变廉价发光滤镜，L97 独占性被破坏</td></tr>
+        <tr><td>4</td><td>写实烘焙摄影质感 / 写实解剖</td><td>与 2D 手绘同屏即拼凑感</td></tr>
+        <tr><td>5</td><td>大面积冷灰 / 冷蓝</td><td>暖色小店基调丢掉，大团圆的温度没了</td></tr>
+        <tr><td>6</td><td>同屏 &gt; 3 种高饱和色</td><td>视觉噪音，玩家分不清哪个是倒计时</td></tr>
+        <tr><td>7</td><td>状态只靠颜色区分</td><td>色觉障碍玩家读不出禁用 / 危险 / 增益</td></tr>
+        <tr><td>8</td><td>文字、水印、签名、真实品牌、受保护 IP、在世艺术家风格</td><td>抠图后文字卡在资产里；合规红线</td></tr>
+      </tbody>
+    </table>
+    <h3>一致性三道检查</h3>
+    <table>
+      <thead><tr><th style="width:20%">检查</th><th style="width:40%">做法</th><th>不合格处理</th></tr></thead>
+      <tbody>
+        <tr><td>同族比对</td><td>七位角色排在一张接触表上</td><td>统一头身比、描边色、腮红位置与辅色，只保留识别色差异</td></tr>
+        <tr><td>同对象状态比对</td><td>主角常态 / 专注 / 失败 / 开心 四态并排</td><td>统一左上主光方向与描边策略，不许一态换光向</td></tr>
+        <tr><td>跨类别比对</td><td>角色 + S1 场景 + 菜谱 UI + 糖霜特效拼同屏</td><td>UI 与特效不得比角色更抢眼；糖霜白面积 ≤ 15%</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>迭代收敛</b>　版本号 <code>_v1 → _v2</code>，旧版改名 <code>_deprecated</code> 保留不删；只改指定部分，不顺手改配色或线宽；连续两轮无实质修改意见即冻结为定稿。确需改锚点时，先写明会推翻哪几批已产出资产。</div>
+    <h3>参考坐标（只取结构特征）</h3>
+    <div class="cards">
+      <div class="card"><b>休闲经营类构图惯例</b>　取「45° 俯视，同屏可见台面 + 角色上半身」；不取任何具体游戏的界面与角色。</div>
+      <div class="card"><b>儿童绘本软描边</b>　取「圆润剪影、暖褐描边、无锐角、粉质平涂」；不指定模仿在世画师。</div>
+      <div class="card"><b>中式点心铺视觉</b>　取「暖木色、纸质招牌、糖霜白」；不取真实老字号标识。</div>
+      <div class="card"><b>本项目既有设定</b>　漏雨屋顶、代记账小摊、咕咕外送队、门后的匾 —— 原创内容，直接可用。</div>
+    </div>
+  </div>
+  <div class="foot"><span>04 · 禁忌与一致性</span><span>第 6 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== S5 分批 ========== -->
+<section class="page" id="s5">
+  <div class="pad">
+    <h2>05 · 分批资产计划</h2>
+    <p class="lead">结论：6 批 / 47 项，按「能被一套锚点覆盖」分批，不按类别分批。优先级只按玩法依赖排，每个 P0 都写「阻塞什么」。</p>
+    <div class="stat">
+      <div><b>6</b><span>批次</span></div>
+      <div><b>47</b><span>运行时资产</span></div>
+      <div><b>26</b><span>P0 玩法必需</span></div>
+      <div><b>19</b><span>P1 体验项</span></div>
+      <div><b>2</b><span>P2 锦上添花</span></div>
+      <div><b>2</b><span>本轮实出基准图</span></div>
+    </div>
+    <div class="batch">
+      <div class="b active"><span class="num">B1</span><div class="ttl">基准定调</div><div class="cnt">2 项 · 主角 + 招牌布丁<br>已实出，待确认锚点</div></div>
+      <div class="b"><span class="num">B2</span><div class="ttl">角色同族</div><div class="cnt">13 项 · 6 角色 + 状态<br>验证锚点可复用</div></div>
+      <div class="b"><span class="num">B3</span><div class="ttl">场景与环境</div><div class="cnt">14 项 · S1–S9 + 交互物<br>验证与角色同族</div></div>
+      <div class="b"><span class="num">B4</span><div class="ttl">UI 与图标</div><div class="cnt">11 项 · 菜谱页三态<br>验证界面表现</div></div>
+      <div class="b"><span class="num">B5</span><div class="ttl">动画与特效</div><div class="cnt">5 项 · 糖霜显形<br>依赖前四批定稿</div></div>
+      <div class="b"><span class="num">B6</span><div class="ttl">插画与卡面</div><div class="cnt">2 项 · 七人同框<br>最后做</div></div>
+    </div>
+    <div class="callout"><b>批次顺序不是随手排的</b>　B5 排在 B4 之后：糖霜粒子尺寸取决于菜谱页画布（512×704），火候反馈帧数取决于制作 HUD，先做特效必然返工。B6 排最后：七人同框要等七位角色（B2）全部定稿，否则是七张不同批次的图硬拼。</div>
+    <h3>不排产 / 不建场景</h3>
+    <table>
+      <thead><tr><th style="width:26%">项</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td><code>mon</code> 怪物类</td><td>经营养成无战斗敌人；鸽子归入 <code>char</code> / <code>fx</code>，不建怪物族</td></tr>
+        <tr><td><code>mdl</code> / <code>tex</code> 3D</td><td>全 2D，无 LOD、无 PBR 通道、无碰撞代理</td></tr>
+        <tr><td>顾苦童年店门口 / 雷记老店</td><td>依 LOCATIONS.md 红线，仅回忆与讲述，只进 B6 插画，不进 <code>env</code> 批次</td></tr>
+        <tr><td>沈如意归队新场景</td><td>5-4 归队 = 回 S2 柜台，S6 同时撤摊；零新增场景</td></tr>
+      </tbody>
+    </table>
+    <h3>入队节点 × 资产解锁（R3 咬合）</h3>
+    <table>
+      <thead><tr><th style="width:22%">剧情节点</th><th style="width:44%">当场可见 / 可点</th><th>要求</th></tr></thead>
+      <tbody>
+        <tr><td>5-2 雷千层 → S8</td><td>技法台底图 + 技法研发按钮角标</td><td>同一次 session 内出现</td></tr>
+        <tr><td>5-3 顾苦 → S9</td><td>外送站底图 + 鸽子资产</td><td>鸽子从干扰机制原地转外送队，复用同一资产</td></tr>
+        <tr><td>5-4 沈如意 → S2</td><td>结算面板加一个按钮 + 账本摊开态</td><td>S6 同时撤摊</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="foot"><span>05 · 分批资产计划</span><span>第 7 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== S6 基准图 ========== -->
+<section class="page" id="s6">
+  <div class="pad">
+    <h2>06 · 第 1 批基准图与实跑发现</h2>
+    <p class="lead">结论：锚点在这 2 张上成立，六维评审分档「小改」。但「纯 <code>#FF00FF</code> 底」这条技术约束被实跑证伪，且平台水印与误抠问题都必须写进流程 —— 两张均不可直接作为最终素材。</p>
+    <div class="shots">
+      <div class="shot">
+        <div class="imgbox"><img src="generated/batch01/final/char_maixiaoman_normal_v1.png" alt="主角麦小满基准图"></div>
+        <div class="cap"><b>char_maixiaoman_normal_v1.png</b>512×512 RGBA · 验证头身比 / 描边 / 识别色</div>
+      </div>
+      <div class="shot">
+        <div class="imgbox"><img src="generated/batch01/final/img_dessert_pudding_v1.png" alt="焦糖布丁基准图"></div>
+        <div class="cap"><b>img_dessert_pudding_v1.png</b>512×512 RGBA · 验证哑光粉质 / 糖霜白 / 焦一角剪影</div>
+      </div>
+    </div>
+    <h3>四个实跑发现</h3>
+    <table>
+      <thead><tr><th style="width:6%">#</th><th style="width:34%">发现</th><th>处理</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><b>纯色底不稳定</b>：同批两张底色是 <code>#B09088</code> 与 <code>#F038B0</code>，都不是 <code>#FF00FF</code></td><td>第 2 批起逐张 <code>palette</code> 取色再抠；统一色值批量 keyout 会整批失败</td></tr>
+        <tr><td>2</td><td><b>平台水印</b>：右下角「AI生成 / WORKBUDDY」，提示词 <code>no watermark</code> 无效</td><td>后处理清除右下角区域（实测为主体外的纯背景，未伤主体）；每张必须目视复核</td></tr>
+        <tr><td>3</td><td><b>全局 keyout 误抠</b>：头发中间调与围裙浅色被抠掉，头顶出现大片透明缺口</td><td>改为<b>边缘连通抠图</b>（flood fill from border, tol 35），主体内部不连通的相似色保留；重做后头发完整、焦糖橘围裙恢复</td></tr>
+        <tr><td>4</td><td><b>校验口径冲突</b>：<code>check</code> 要求 alpha bbox 贴合画布，但等比缩放必有留白</td><td>保留刻意的 8% 安全边距，逐条说明；禁止拉伸变形；等比缩放与 8% 安全边距按规格执行</td></tr>
+      </tbody>
+    </table>
+    <h3>六维评审与精修项</h3>
+    <div class="cards">
+      <div class="card"><b>六维评审</b>　剪影 / 明度 / 构图 / 一致性 / 技术合规 / 可用性 全部通过 → <b>分档：小改</b>（不改结构，只调明度与边缘）。缩略图测试通过，两张同族。</div>
+      <div class="card"><b>校验结果</b>　<code>check final/</code>：命名合规、512² 为 2 的幂、RGBA 有透明通道、<b>边缘半透明像素 0</b>；仅剩 2 项「残留透明边」为刻意留白。</div>
+      <div class="card"><b>需人工精修 ①</b>　主角围裙偏沉，需按 <code>#E8A05C</code> 校色；头发高光点统一到左上主光方向。</div>
+      <div class="card"><b>需人工精修 ②</b>　布丁糖霜点 5 个（要求 3 个）、焦角偏花形；描边局部粗细不均需统一到 3px；AI 生成图需合规确认后方可商用。</div>
+    </div>
+    <div class="warn"><b>放量结论（已定）</b>　STYLE BLOCK v1 与 TECHNICAL v1 不升版、不改动；底色偏差由后处理链路兜住（逐张取色 + 边缘连通抠图）。直接输出透明底的方案本次不采用。<b>第 1 批定稿前不启动第 2 批。</b></div>
+  </div>
+  <div class="foot"><span>06 · 第 1 批基准图</span><span>第 8 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== S7 咬合 ========== -->
+<section class="page" id="s7">
+  <div class="pad">
+    <h2>07 · 与玩法 / 剧情的咬合</h2>
+    <p class="lead">结论：美术不是自说自话的一层皮。下表每一条都能在玩法流程设计里找到对应的系统或剧情节点。</p>
+    <table>
+      <thead><tr><th style="width:42%">玩法 / 剧情约束</th><th>美术落点</th></tr></thead>
+      <tbody>
+        <tr><td>糖霜显形 = G3 关门落点，全作最强反馈</td><td><code>#FFF7EA</code> 独占最高明度，日常 UI 禁用</td></tr>
+        <tr><td>第三章扣书期 S4 置灰</td><td>置灰态叠「封条」图形，不能只降透明度</td></tr>
+        <tr><td>入队即解锁（5-2 / 5-3 / 5-4）</td><td>三个新按钮同一次 session 内可见可点，用主色 + 新增角标，不做过场才出现</td></tr>
+        <tr><td>失败永远有笑声兜底</td><td>糊脸 = 圆润面团；干扰事件图标一律圆角，禁用锐利警示三角</td></tr>
+        <tr><td>终章七人同框，无一人离场</td><td>单出 <code>img_ending_group_v1</code>，不靠七张立绘拼贴</td></tr>
+        <tr><td>漏雨屋顶贯穿全作</td><td>S1 / S2 底图把水痕画进去，任何批次都不得「修好」</td></tr>
+        <tr><td>顾苦黑斗篷 vs 欢快调性</td><td>减重为墨绿 + 蜜桃粉流苏，显式记录</td></tr>
+      </tbody>
+    </table>
+    <h3>UI 专项（可直接进开发）</h3>
+    <table>
+      <thead><tr><th style="width:24%">控件</th><th style="width:18%">画布</th><th style="width:26%">九宫格边距（左/上/右/下）</th><th>备注</th></tr></thead>
+      <tbody>
+        <tr><td>主按钮</td><td>240×88</td><td>24 / 24 / 24 / 24</td><td>圆角 ≤ 20，中间纯色可拉伸</td></tr>
+        <tr><td>次按钮</td><td>180×72</td><td>20 / 20 / 20 / 20</td><td>与主按钮同圆角半径</td></tr>
+        <tr><td>弹窗底</td><td>640×480</td><td>40 / 40 / 40 / 40</td><td>中间留纯色，标题字不进图</td></tr>
+        <tr><td>面板 / 列表底</td><td>512×512</td><td>32 / 32 / 32 / 32</td><td>可平铺优先</td></tr>
+        <tr><td>菜谱页（S4）</td><td>512×704</td><td>36 / 36 / 36 / 36</td><td>页角、糖霜点单独出层</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>省产能口径</b>　同一形状只变颜色或尺寸 → 交给代码：按钮三态、稀有度边框、进度条、状态色、换色皮肤一律程序化叠加，不生成 N 张。这条把 B4 实际生成量从 11 项压到 3 张基底。</div>
+  </div>
+  <div class="foot"><span>07 · 咬合与 UI 规格</span><span>第 9 页 / 共 10 页</span></div>
+</section>
+
+<!-- ========== S8 假设 ========== -->
+<section class="page" id="s8">
+  <div class="pad">
+    <h2>08 · 假设与待确认</h2>
+    <p class="lead">结论：以下 5 条是显式假设，不拿提问当阻断。确认后按「影响哪些组件」逐条复核，不推翻已冻结的风格锚点。</p>
+    <table>
+      <thead><tr><th style="width:6%">#</th><th style="width:42%">假设 / 待定</th><th>确认后要复核什么</th></tr></thead>
+      <tbody>
+        <tr><td>A1</td><td>设计分辨率 1080×1920 竖屏、手机为主 PC 兼容</td><td>若改 720×1280，第 07 节所有 UI 尺寸 ×0.667 复核；16:9 / 19.5:9 / 4:3 三种比例重排</td></tr>
+        <tr><td>A2</td><td>全 2D，不排产 3D 资产与骨骼动画</td><td>若改 Spine 骨骼，须重开《美术规格与预算》，补帧率 / 帧数 / 状态机接口</td></tr>
+        <tr><td>A3</td><td>字体商用授权由项目方另行确认</td><td>本提案只定 ≤ 2 族、字号阶梯 24/32/40/56；打包前记录字体名称与授权来源</td></tr>
+        <tr><td>A4</td><td>目标引擎未定，全部规格与引擎无关</td><td>引擎确定后另出导入设置表与纹理内存 / draw call 预算（本轮不含）</td></tr>
+        <tr><td>A5</td><td>S3 巷口街面是否需要无缝平铺瓦片</td><td>影响 B3 出图方式，B3 启动前需给结论</td></tr>
+      </tbody>
+    </table>
+    <h3>本轮交付清单</h3>
+    <table>
+      <thead><tr><th style="width:44%">文件</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td><code>欢闹厨房-美术风格提案.md</code></td><td>10 节完整定调：锚点 / 色板 / 明度 / 类别约定 / 禁忌 / 参考坐标 / 一致性 / 咬合</td></tr>
+        <tr><td><code>欢闹厨房-美术资产清单.md</code></td><td>6 批 47 项，逐项规格 + P0 阻塞 + 入队解锁对齐</td></tr>
+        <tr><td><code>欢闹厨房-提示词包.md</code></td><td>7 个完整可复制四段提示词 + 槽位表 + 实跑记录（13 节）</td></tr>
+        <tr><td><code>欢闹厨房-美术风格企划.html</code></td><td>本视觉版，8 页 + 附页，色板 / 明度 / 批次 / 基准图</td></tr>
+        <tr><td><code>generated/batch01/</code></td><td><code>source/</code> 2 张纯色底原图、<code>final/</code> 2 张 512² 透明底成品 + 接触表</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>范围边界</b>　本轮做的是「定调 + 清单 + 可执行提示词包 + 第 1 批基准图」。不含：B2–B6 批量出图、逐张人工精修、动画 / 特效规格、跨引擎导入设置与性能预算、商店页与买量素材。这些各自有独立启动条件，已在文档内写明。</div>
+  </div>
+  <div class="foot"><span>08 · 假设与待确认</span><span>第 10 页 / 共 10 页</span></div>
+</section>
+
+</body>
+</html>

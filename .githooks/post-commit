@@ -1,0 +1,16 @@
+#!/bin/sh
+# 每次本地提交后自动推送到 GitHub。
+# 启用方式：git config --local core.hooksPath .githooks
+# 关闭方式：git config --local --unset core.hooksPath
+# 推送失败不阻塞提交，仅在终端提示手动补推。
+
+branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 0
+git remote get-url origin >/dev/null 2>&1 || exit 0
+
+if GIT_TERMINAL_PROMPT=0 git push -u origin "$branch" >/dev/null 2>&1; then
+    echo "[post-commit] 已自动推送到 origin/$branch"
+else
+    echo "[post-commit] 自动推送失败，请手动执行：git push -u origin $branch" >&2
+fi
+
+exit 0

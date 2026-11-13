@@ -1,0 +1,20 @@
+# 系统 / 编辑器临时文件
+Thumbs.db
+desktop.ini
+.DS_Store
+*.tmp
+*.log
+*.swp
+*~
+
+# Python 运行产物
+__pycache__/
+*.py[cod]
+
+# WorkBuddy 工作区内部数据（不属于游戏项目产物）
+.workbuddy/
+
+# 依赖与构建产物（当前项目为纯文档 / 资产仓库，预留）
+node_modules/
+dist/
+build/

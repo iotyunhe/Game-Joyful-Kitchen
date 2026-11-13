@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《欢闹厨房》主线故事企划书</title>
+<style>
+  :root{
+    --paper:#FFFDF7; --ink:#3A2E24; --ink2:#6B5947; --ink3:#9A876F;
+    --line:#E8DDC9; --caramel:#B4702E; --caramel-l:#FAEBD3;
+    --pink:#C55F82; --pink-l:#FBEAF0; --blue:#4C7EA8; --blue-l:#E9F2F9;
+    --green:#5E9B77; --green-l:#E9F4EC; --red:#B75B52; --red-l:#FBECE9;
+    --purple:#7A6BB0; --purple-l:#F0EDFA;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#F4EEE2;color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,sans-serif;line-height:1.8;counter-reset:page}
+  .sheet{width:900px;max-width:100%;margin:28px auto;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:56px 64px 40px;counter-increment:page;position:relative;box-shadow:0 2px 14px rgba(90,70,40,.06)}
+  .pagefoot{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);letter-spacing:.5px}
+  .pagefoot::after{content:"第 " counter(page) " 页"}
+  h1,h2,h3{font-weight:600;letter-spacing:.5px}
+  h2{font-size:24px;margin:0 0 8px;padding-bottom:14px;border-bottom:2px solid var(--caramel)}
+  h3{font-size:17px;margin:30px 0 12px;color:var(--caramel)}
+  p{margin:10px 0;font-size:14.5px}
+  .lead{font-size:15.5px;color:var(--ink2)}
+  .eyebrow{font-size:12px;letter-spacing:3px;color:var(--caramel);text-transform:uppercase;margin:0 0 14px}
+  .sub{color:var(--ink3);font-size:13px;margin:0 0 28px}
+  .cover{background:var(--paper);padding:78px 64px 54px;min-height:640px;position:relative;overflow:hidden}
+  .cover .band{position:absolute;left:0;top:0;width:100%;height:12px;background:linear-gradient(90deg,var(--caramel) 0 25%,var(--pink) 25% 50%,var(--green) 50% 75%,var(--blue) 75% 100%)}
+  .cover h1{font-size:52px;margin:26px 0 8px;letter-spacing:4px}
+  .cover .en{font-size:13px;letter-spacing:5px;color:var(--ink3);margin-bottom:36px}
+  .cover .tagline{font-size:18px;color:var(--ink2);max-width:620px;line-height:2;margin-bottom:44px}
+  .cover .meta{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 36px;border-top:1px solid var(--line);padding-top:24px;font-size:13px;color:var(--ink2)}
+  .cover .meta b{color:var(--caramel);font-weight:600;margin-right:10px}
+  .deco{position:absolute;right:-30px;bottom:-40px;width:300px;height:300px;border-radius:50%;border:36px solid var(--caramel-l);opacity:.75}
+  .deco2{position:absolute;right:120px;bottom:110px;width:112px;height:112px;border-radius:50%;background:var(--caramel-l);border:2px dashed var(--caramel)}
+  .deco3{position:absolute;right:158px;bottom:142px;width:38px;height:38px;border-radius:50%;background:var(--pink-l);border:2px solid var(--pink)}
+  .toc a{display:flex;justify-content:space-between;padding:11px 4px;border-bottom:1px dotted var(--line);color:var(--ink);text-decoration:none;font-size:14.5px}
+  .toc a:hover{color:var(--caramel);background:var(--caramel-l)}
+  .toc .n{color:var(--caramel);font-variant-numeric:tabular-nums;width:38px}
+  .toc .t{flex:1}
+  .toc .d{color:var(--ink3);font-size:12.5px}
+  table{width:100%;border-collapse:collapse;margin:16px 0 8px;font-size:13.5px}
+  th{background:var(--caramel);color:#fff;text-align:left;padding:11px 13px;font-weight:500;font-size:13px}
+  td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  tbody tr:nth-child(even){background:#FBF5E9}
+  tbody tr:hover{background:var(--caramel-l)}
+  .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;line-height:1.7;white-space:nowrap}
+  .t-car{background:var(--caramel-l);color:var(--caramel)} .t-pink{background:var(--pink-l);color:var(--pink)}
+  .t-blue{background:var(--blue-l);color:var(--blue)} .t-green{background:var(--green-l);color:var(--green)}
+  .t-red{background:var(--red-l);color:var(--red)} .t-pur{background:var(--purple-l);color:var(--purple)}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}
+  .card{border:1px solid var(--line);border-radius:6px;padding:20px 22px;background:#fff}
+  .card .top{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .card .name{font-size:18px;font-weight:600}
+  .card .role{font-size:12px}
+  .card .quote{font-size:13px;color:var(--caramel);font-style:italic;margin:8px 0 12px;padding-left:12px;border-left:2px solid var(--caramel-l)}
+  .card ul{margin:0;padding-left:18px;font-size:13px;color:var(--ink2)}
+  .card li{margin:4px 0}
+  .card.hero{background:var(--caramel-l);border-color:#E8CFA6}
+  .rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+  .rule{border-left:3px solid var(--caramel);background:#FBF5E9;padding:14px 18px;font-size:13.5px}
+  .rule b{display:block;color:var(--caramel);margin-bottom:4px;font-size:14px}
+  .callout{background:var(--pink-l);border-left:3px solid var(--pink);padding:14px 20px;margin:20px 0;font-size:14px;color:var(--ink2);border-radius:0 4px 4px 0}
+  .chapters{margin-top:22px}
+  .chap{border:1px solid var(--line);border-radius:6px;margin-bottom:16px;overflow:hidden;background:#fff}
+  .chap .head{display:flex;align-items:center;gap:14px;padding:14px 20px;background:#FBF5E9;border-bottom:1px solid var(--line)}
+  .chap .num{width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:var(--caramel);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .chap .ttl{font-size:16px;font-weight:600;flex:1}
+  .chap .body{padding:16px 20px 18px;font-size:13.5px;color:var(--ink2)}
+  .chap .body p{margin:6px 0;font-size:13.5px}
+  .chap .kv{display:grid;grid-template-columns:78px 1fr;gap:4px 12px;margin-top:10px}
+  .chap .kv span:first-child{color:var(--caramel);font-weight:600;font-size:12.5px}
+  .chap.low .head{background:var(--red-l)} .chap.low .num{background:var(--red)}
+  .chap.peak .head{background:var(--pink-l)} .chap.peak .num{background:var(--pink)}
+  .chap.end .head{background:var(--green-l)} .chap.end .num{background:var(--green)}
+  .legend{display:flex;flex-wrap:wrap;gap:18px;font-size:12.5px;color:var(--ink2);margin:14px 0 4px}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+  .footgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+  .footbox{border:1px dashed var(--line);border-radius:6px;padding:16px 20px;background:#FBF5E9;font-size:13.5px;color:var(--ink2)}
+  .footbox b{color:var(--caramel);display:block;margin-bottom:6px}
+  .big{font-size:20px;color:var(--caramel);font-weight:600;line-height:1.9}
+  @media print{body{background:#fff}.sheet{margin:0;box-shadow:none;border:none;page-break-after:always;width:100%}}
+  @media (max-width:760px){.sheet{padding:32px 22px}.grid,.rules,.footgrid{grid-template-columns:1fr}.cover h1{font-size:36px}.deco,.deco2,.deco3{display:none}}
+</style>
+</head>
+<body>
+
+<section class="sheet cover">
+  <div class="band"></div>
+  <p class="eyebrow">Game Narrative Proposal · 主线剧情企划</p>
+  <h1>欢闹厨房</h1>
+  <p class="en">THE ONE HUNDRED AND ONE PAGES</p>
+  <p class="tagline">一个手笨但乐观的送货少年，被一本会吐槽的旧菜谱砸中。<br>为了把空白页一页页填满，他开了一家甜品店——<br>然后被挑战、被捣乱、被背叛，最后学会了全部菜谱，<br>以及第 101 页上那句谁也没写出来的答案。</p>
+  <div class="meta">
+    <div><b>文档类型</b>完整主线故事大纲</div>
+    <div><b>版本</b>v1.1 · 大团圆修订版</div>
+    <div><b>结构</b>序章 + 5 主线章 + 终章，共 7 幕</div>
+    <div><b>基调</b>轻松 · 欢快 · 大团圆 · 反派全员谐星</div>
+    <div><b>核心机制</b>排名解锁 → 三重磨炼 → 百页齐鸣</div>
+    <div><b>结局</b>学全菜谱封神，三位对手全部入队</div>
+  </div>
+  <div class="deco"></div><div class="deco2"></div><div class="deco3"></div>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+<section class="sheet">
+  <p class="eyebrow">Contents</p>
+  <h2>目录</h2>
+  <p class="sub">点击条目可直接跳转</p>
+  <div class="toc">
+    <a href="#s1"><span class="n">01</span><span class="t">核心设定：一本书、四条铁律、五阶排名</span><span class="d">世界观与规则</span></a>
+    <a href="#s2"><span class="n">02</span><span class="t">角色设定：主角、书灵与三类冲突</span><span class="d">角色卡 + 入队时间表</span></a>
+    <a href="#s3"><span class="n">03</span><span class="t">叙事骨架：三类冲突 × 三重磨炼</span><span class="d">结构图</span></a>
+    <a href="#s4"><span class="n">04</span><span class="t">七幕结构与情绪曲线</span><span class="d">总览图</span></a>
+    <a href="#s5"><span class="n">05</span><span class="t">章节划分与关键剧情节点</span><span class="d">逐幕详解</span></a>
+    <a href="#s6"><span class="n">06</span><span class="t">菜谱解锁、排名与伏笔回收</span><span class="d">两张对照表</span></a>
+    <a href="#s7"><span class="n">07</span><span class="t">结局、彩蛋与可延展留白</span><span class="d">收束</span></a>
+  </div>
+  <div class="callout"><b>一句话梗概</b>　「吃完这一本，你就是神」——可这本书只给菜名，不给配方；每一页，都得自己一炉一炉练出来。</div>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+<section class="sheet" id="s1">
+  <p class="eyebrow">01 / World & Rules</p>
+  <h2>核心设定</h2>
+  <p class="sub">一本书、四条铁律、五阶排名——所有剧情冲突都从这套规则里长出来</p>
+
+  <h3>《一百零一页》与书灵「糖老书」</h3>
+  <p class="lead">一本封皮掉渣、会自己翻页、会打瞌睡、会打分的老菜谱，扉页写着「吃完这一本，你就是神」。书里住着个毒舌老头儿，口癖是「这炉……勉强能算个东西」。<b>真相：他是初代「点心之神」留下的一缕念头，第 101 页正是他当年没写出来的那一页。</b></p>
+
+  <h3>菜谱的四条铁律（金手指的规则与限制）</h3>
+  <div class="rules">
+    <div class="rule"><b>① 显形</b>所有页面原本空白。只有店铺在「糖勺榜」升到对应段位，下一页才显出题目——只给菜名和一句莫名其妙的提示，<b>不给配方</b>。</div>
+    <div class="rule"><b>② 三重磨炼</b>显形 ≠ 学会。每道菜必须过三关：<b>练</b>（反复实操攒手感）、<b>悟</b>（弄明白做给谁吃）、<b>战</b>（限时客人 / 挑战赛 / 捣乱突发下完整做出来）。</div>
+    <div class="rule"><b>③ 不可作弊</b>照抄配方、请人代做、用捷径道具 → 页面褪回空白并长出霉斑，得从头再练。喜剧惩罚，不是恐吓。</div>
+    <div class="rule"><b>④ 越往后越挑人</b>第 100 页的要求是：把前面所有<b>失败过</b>的菜，一炉一炉重做一遍。第 101 页则永不因排名显形。</div>
+  </div>
+  <div class="callout"><b>正反馈仪式</b>　一页真正学会，纸上才长出糖霜插图，还带一股刚出炉的香味。这是全作最重要的爽点载体。</div>
+
+  <h3>糖勺榜：五阶排名对应五章</h3>
+  <table>
+    <thead><tr><th style="width:15%">段位</th><th style="width:15%">范围</th><th style="width:15%">章节</th><th>评定口味</th></tr></thead>
+    <tbody>
+      <tr><td>铜勺</td><td>街角</td><td>第一章</td><td>有客人愿意进门就行</td></tr>
+      <tr><td>银勺</td><td>街区</td><td>第二章</td><td>技法开始被挑剔</td></tr>
+      <tr><td>金勺</td><td>全城</td><td>第三章</td><td>只看配方出处与标准度 → 评定作废</td></tr>
+      <tr><td>琉璃勺</td><td>全国</td><td>第四章</td><td>规则第一次为「心意」松口</td></tr>
+      <tr><td>云顶勺</td><td>云端食榜</td><td>第五章</td><td>终极评定，全城围观</td></tr>
+    </tbody>
+  </table>
+  <p>评审会不是反派，是<b>制度性压力</b>：一板一眼、只认技法不认心意。终局因主角被撬开一条缝，条例里多了一行「谁在吃」。</p>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+<section class="sheet" id="s2">
+  <p class="eyebrow">02 / Characters</p>
+  <h2>角色设定</h2>
+  <p class="sub">每个冲突角色都有可理解的动机、可辨认的性格、一条完整的弧光——以及一个入队后的岗位</p>
+  <div class="grid">
+    <div class="card hero">
+      <div class="top"><span class="name">麦小满</span><span class="tag t-car">主角 · 18 岁</span></div>
+      <div class="quote">「再来一炉就好！」</div>
+      <ul>
+        <li>面包房送货工 → 漏雨铺子「一勺糖」老板。手笨、心软、乐天，对「好吃」有野兽般的直觉。</li>
+        <li><b>动机曲线</b>：书上说能当神，试试呗 → 有人还愿意来吃 → 我自己还想再做一炉。</li>
+        <li><b>致命弱点</b>：不会拒绝人，把别人的需要排在自己前面——这正是沈如意那一刀的根。</li>
+        <li><b>成长阶梯</b>：手笨 → 手感 → 功夫 → 心意 → 无配方 → 放下。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="top"><span class="name">糖老书</span><span class="tag t-pur">引导者 · 书灵</span></div>
+      <div class="quote">「这炉……勉强能算个东西。」</div>
+      <ul>
+        <li>泛黄书页里浮出的皱脸，戴糖丝眼镜，说两句就打瞌睡；毒舌、嘴硬心软、护短。</li>
+        <li>讲解规则、发任务、扣分、制造笑点，也埋下全作最大的伏笔。</li>
+        <li>第三章被扣走前，偷偷撕下第 101 页一角塞进主角围裙。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="top"><span class="name">雷千层</span><span class="tag t-blue">★ 挑战者 · 谐星 · 第 5 章入队</span></div>
+      <div class="quote">「我不信神。我只信秤。」／「我只是路过。（第 412 天）」</div>
+      <ul>
+        <li>千层酥世家「雷记」第七代，22 岁天才。冷面、毒舌、称量到 0.1 克的强迫症。</li>
+        <li><b>动机</b>：表层「技术即真理」；深层是雷记被「点心之神」传说压了三代，祖父临终还念着「差一炉」。</li>
+        <li><b>底线</b>：绝对公平，从不使阴招，输了当场认，还替对手捡托盘。</li>
+        <li><b>谐星标签 · 冷面反差萌</b>：随身小秤连客人的笑声都要「记个数值」；天天说「我只是路过」却风雨无阻准点来挑刺、准点吃完两块；偷偷收藏主角每一炉失败品并按焦度编号归档，被豆豆翻出来时耳根通红。</li>
+        <li><b>招牌翻车</b>：1024 层被顾苦的鸽子撞翻，坚持一片片捡回重数到天黑。</li>
+        <li><b>入队后</b>：技法总顾问，把「雷记」改成「一勺糖·雷记分店」；依旧每天挑刺，挑完顺手把碗洗了。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="top"><span class="name">顾苦</span><span class="tag t-green">★ 捣乱者 · 谐星 · 第 5 章入队</span></div>
+      <div class="quote">「甜是骗局！我要让这座城清醒！」（说完滑倒）</div>
+      <ul>
+        <li>自称「苦味博士」，黑斗篷是拿家里窗帘改的（下摆还留流苏），登场必先发表宣言。戏剧化、浮夸、总把自己坑了。</li>
+        <li><b>动机</b>：童年差两文钱被甜品店赶走 → 认定「甜是哄人的」。其实只是想让当年那个小孩，被谁递一块什么。</li>
+        <li><b>手段</b>：糖罐换盐、温度计调乱、胡椒烟雾弹、雇鸽子占座、伪装评论家打一星、改门牌。</li>
+        <li><b>谐星标签 · 正经地不正经</b>：一本《作战记录簿》把捣乱编号成「苦味作战第 07 号」，写计划、画示意图、盖自制印章，然后每次都翻车；宣言念到一半总被鸽子或豆豆打断。</li>
+        <li><b>招牌翻车</b>：换盐后自己先偷吃一勺，苦着脸灌三杯水；伪装评论家忘了摘「苦味博士」袖章。</li>
+        <li><b>入队后</b>：自封「首席试味官兼防捣乱演练总指挥」，鸽子收编为「咕咕外送队」，把自己的六种捣乱手法编成教材给新人上课，讲得极其骄傲。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="top"><span class="name">沈如意</span><span class="tag t-pink">★ 背叛者 · 谐星 · 第 5 章入队</span></div>
+      <div class="quote">「你每次都说'再来一炉就好'……可你从来没问过我累不累。」</div>
+      <ul>
+        <li>开张第一天来应聘的搭档，管账、跑堂、最会哄客人。温柔利落，笑起来像店里的灯。</li>
+        <li><b>三层动机（已减重）</b>：评审世家之女，家族拿弟弟的<b>甜点学徒名额</b>做筹码要拓印（弟弟自己跑来偷吃被豆豆抓包，镜像笑点）；她也曾是菜谱候选继承者被刷掉；以及她真的喜欢这家店，也真的委屈。</li>
+        <li><b>背叛（轻量化但不消失）</b>：金勺前夜紧张得手抖，拓印三页还按了三个糖霜指印、把「海盐焦糖」拓成「海盐焦…」，评审会借题发挥摘星封炉扣书 → 账本留一行「对不住」。</li>
+        <li><b>谐星标签 · 最拙劣的伪装</b>：出走后没走远，在街对面摆「代记账」摊，大口罩墨镜遮阳帽自以为天衣无缝——全街坊都认得她，周伯每天还特地去照顾生意，豆豆常来报告「如意姐姐又把算盘拿反了」。</li>
+        <li><b>入队后</b>：第五章被豆豆一句「你抽屉还留着呢」当场留下，复任掌柜；终章当着全员写下「今天不累。」，与顾苦组成「挑刺二人组」。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="top"><span class="name">周伯 · 豆豆</span><span class="tag t-car">见证者 / 试吃员</span></div>
+      <ul>
+        <li><b>周伯</b>：每天买最便宜的一块桂花糕、从不说话的老邮差。真实身份是退休的<b>初代糖勺评审</b>，因当年一次误判退隐。第四章被「没有配方的桂花糕」（亡妻的味道）弄哭并亮明身份，第五章投关键一票。</li>
+        <li><b>豆豆</b>：翻窗偷吃被抓包，顺势成了试吃员。童言暴击担当；<b>第五章用一句「你抽屉还留着呢」把沈如意留下，是全员团圆的关键推手</b>；终章挂上新牌子。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>反派谐星化与入队时间表</h3>
+  <p class="sub">本作没有真正的敌人——三位冲突角色都是「还没坐到同一张桌子上」的队友。</p>
+  <table>
+    <thead><tr><th>角色</th><th>谐星定位</th><th>招牌翻车</th><th>入队节点</th><th>入队后身份</th><th>对应玩法</th></tr></thead>
+    <tbody>
+      <tr><td><b>雷千层</b></td><td>冷面反差萌</td><td>1024 层被鸽子撞翻，捡回重数到天黑</td><td>5-2 认输交秘传，当场入队</td><td>技法总顾问 · 雷记分店店长</td><td>技法研发 / 精准度挑战</td></tr>
+      <tr><td><b>顾苦</b></td><td>正经地不正经</td><td>换盐后自己先偷吃一勺</td><td>5-3 被「苦甜交织」化解，当场入队</td><td>首席试味官 · 防捣乱演练总指挥</td><td>咕咕外送队 / 干扰演练</td></tr>
+      <tr><td><b>沈如意</b></td><td>最拙劣的伪装</td><td>街对面戴墨镜摆摊，全街坊都认得</td><td>5-4 被豆豆一句留下，正式归队</td><td>复任掌柜 · 挑刺二人组</td><td>经营结算 / 店铺加成</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><b>入队写法三条约定</b>　① 入队要当场、要热闹，伴一句笑场台词完成，仪式感靠「多摆一副碗筷」；② 旧身份不洗掉，改成新用法（继续挑刺、继续捣乱、继续算账，只换方向）；③ 终章全员同框，一个不少，不留「某某会不会回来」的悬置。</div>
+
+  <div class="callout"><b>调性红线 · 大团圆修订</b>　不出现死亡、血腥、真正的恶意。顾苦的「坏」是别扭，沈如意的「背叛」是委屈，雷千层的「狠」是较真——<b>三人全是谐星</b>，各有招牌翻车与反差萌。每次失败都要有喜剧落点；第五章三人全部加入主角团队，终章全员到齐，无一人离场。</div>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+<section class="sheet" id="s3">
+  <p class="eyebrow">03 / Narrative Spine</p>
+  <h2>叙事骨架：三类冲突 × 三重磨炼</h2>
+  <p class="sub">三类冲突不是并列摆设，而是成长机制的化身——每个角色专门负责把主角的一重磨炼逼出来；第五章三人全部入队后，这套关系顺势从「逼他成长」变成「陪他经营」</p>
+  <svg viewBox="0 0 780 400" width="100%" role="img" aria-label="三类冲突分别逼出练、战、悟三重磨炼，最终汇向百页齐鸣的结构图" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="#B4702E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+    <text x="30" y="28" font-size="12" fill="#9A876F" letter-spacing="2">磨 炼</text>
+    <text x="288" y="28" font-size="12" fill="#9A876F" letter-spacing="2">冲 突 角 色</text>
+    <text x="560" y="28" font-size="12" fill="#9A876F" letter-spacing="2">主角因此学会</text>
+
+    <rect x="30" y="46" width="170" height="66" rx="8" fill="#FAEBD3" stroke="#B4702E" stroke-width="1"/>
+    <text x="115" y="72" text-anchor="middle" font-size="16" font-weight="600" fill="#3A2E24">练</text>
+    <text x="115" y="94" text-anchor="middle" font-size="12" fill="#6B5947">反复实操 · 攒手感</text>
+    <rect x="288" y="46" width="220" height="66" rx="8" fill="#E9F2F9" stroke="#4C7EA8" stroke-width="1"/>
+    <text x="398" y="72" text-anchor="middle" font-size="15" font-weight="600" fill="#3A2E24">雷千层 · 正面挑战</text>
+    <text x="398" y="94" text-anchor="middle" font-size="12" fill="#6B5947">1024 层碾压 / 三次交锋</text>
+    <rect x="560" y="46" width="190" height="66" rx="8" fill="#FBF5E9" stroke="#E8DDC9" stroke-width="1"/>
+    <text x="655" y="72" text-anchor="middle" font-size="13.5" fill="#3A2E24">手感 → 功夫</text>
+    <text x="655" y="94" text-anchor="middle" font-size="12" fill="#6B5947">再敢把功夫放下</text>
+
+    <rect x="30" y="142" width="170" height="66" rx="8" fill="#FAEBD3" stroke="#B4702E" stroke-width="1"/>
+    <text x="115" y="168" text-anchor="middle" font-size="16" font-weight="600" fill="#3A2E24">战</text>
+    <text x="115" y="190" text-anchor="middle" font-size="12" fill="#6B5947">真实压力 · 突发</text>
+    <rect x="288" y="142" width="220" height="66" rx="8" fill="#E9F4EC" stroke="#5E9B77" stroke-width="1"/>
+    <text x="398" y="168" text-anchor="middle" font-size="15" font-weight="600" fill="#3A2E24">顾苦 · 恶意捣乱</text>
+    <text x="398" y="190" text-anchor="middle" font-size="12" fill="#6B5947">换盐 / 烟雾弹 / 鸽子占座</text>
+    <rect x="560" y="142" width="190" height="66" rx="8" fill="#FBF5E9" stroke="#E8DDC9" stroke-width="1"/>
+    <text x="655" y="168" text-anchor="middle" font-size="13.5" fill="#3A2E24">混乱里不慌</text>
+    <text x="655" y="190" text-anchor="middle" font-size="12" fill="#6B5947">麻烦反成招牌</text>
+
+    <rect x="30" y="238" width="170" height="66" rx="8" fill="#FAEBD3" stroke="#B4702E" stroke-width="1"/>
+    <text x="115" y="264" text-anchor="middle" font-size="16" font-weight="600" fill="#3A2E24">悟</text>
+    <text x="115" y="286" text-anchor="middle" font-size="12" fill="#6B5947">这道点心做给谁</text>
+    <rect x="288" y="238" width="220" height="66" rx="8" fill="#FBEAF0" stroke="#C55F82" stroke-width="1"/>
+    <text x="398" y="264" text-anchor="middle" font-size="15" font-weight="600" fill="#3A2E24">沈如意 · 背叛</text>
+    <text x="398" y="286" text-anchor="middle" font-size="12" fill="#6B5947">拓印交审 / 摘星扣书</text>
+    <rect x="560" y="238" width="190" height="66" rx="8" fill="#FBF5E9" stroke="#E8DDC9" stroke-width="1"/>
+    <text x="655" y="264" text-anchor="middle" font-size="13.5" fill="#3A2E24">店不是排名</text>
+    <text x="655" y="286" text-anchor="middle" font-size="12" fill="#6B5947">是有人还愿意来</text>
+
+    <path d="M200 79 H282" stroke="#B4702E" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+    <path d="M200 175 H282" stroke="#B4702E" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+    <path d="M200 271 H282" stroke="#B4702E" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+    <path d="M508 79 H554" stroke="#B4702E" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+    <path d="M508 175 H554" stroke="#B4702E" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+    <path d="M508 271 H554" stroke="#B4702E" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+
+    <path d="M655 112 V330" stroke="#C55F82" stroke-width="1.5" fill="none"/>
+    <path d="M655 208 H620 V330" stroke="#C55F82" stroke-width="1.5" fill="none"/>
+    <path d="M655 304 V330" stroke="#C55F82" stroke-width="1.5" fill="none"/>
+    <rect x="490" y="330" width="260" height="52" rx="8" fill="#FBEAF0" stroke="#C55F82" stroke-width="1"/>
+    <text x="620" y="352" text-anchor="middle" font-size="16" font-weight="600" fill="#3A2E24">百页齐鸣 · 点心之神</text>
+    <text x="620" y="371" text-anchor="middle" font-size="12" fill="#6B5947">第 101 页：因为你还想再做一炉</text>
+  </svg>
+  <div class="legend">
+    <span><i style="background:#4C7EA8"></i>堂堂正正，逼出「练」</span>
+    <span><i style="background:#5E9B77"></i>制造混乱，逼出「战」</span>
+    <span><i style="background:#C55F82"></i>情感断崖，逼出「悟」</span>
+  </div>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+<section class="sheet" id="s4">
+  <p class="eyebrow">04 / Pacing</p>
+  <h2>七幕结构与情绪曲线</h2>
+  <p class="sub">第三章是全篇唯一低谷，但只占一幕、章内就开始回暖；第五章三连收束为最大爆点</p>
+  <svg viewBox="0 0 780 340" width="100%" role="img" aria-label="七幕情绪曲线：序章到第二章起伏上升，第三章断崖跌至最低，第四章回升，第五章达到顶点，终章回落到温热余味" style="font-family:'PingFang SC','Microsoft YaHei',sans-serif">
+    <line x1="50" y1="40" x2="750" y2="40" stroke="#E8DDC9" stroke-width="1"/>
+    <line x1="50" y1="105" x2="750" y2="105" stroke="#E8DDC9" stroke-width="1"/>
+    <line x1="50" y1="170" x2="750" y2="170" stroke="#E8DDC9" stroke-width="1"/>
+    <line x1="50" y1="235" x2="750" y2="235" stroke="#E8DDC9" stroke-width="1"/>
+    <line x1="50" y1="270" x2="750" y2="270" stroke="#D8C9AE" stroke-width="1"/>
+    <text x="20" y="44" font-size="11" fill="#9A876F">10</text>
+    <text x="26" y="109" font-size="11" fill="#9A876F">8</text>
+    <text x="26" y="174" font-size="11" fill="#9A876F">6</text>
+    <text x="26" y="239" font-size="11" fill="#9A876F">4</text>
+    <text x="26" y="274" font-size="11" fill="#9A876F">1</text>
+    <rect x="158" y="35" width="88" height="235" fill="#FBECE9" opacity=".7"/>
+    <text x="202" y="30" text-anchor="middle" font-size="11" fill="#B75B52">唯一低谷</text>
+    <polyline points="85,170 145,133 202,105 260,170 318,253 376,105 434,48 492,88" fill="none" stroke="#B4702E" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="85" cy="170" r="5" fill="#B4702E"/><circle cx="145" cy="133" r="5" fill="#B4702E"/>
+    <circle cx="202" cy="105" r="5" fill="#B4702E"/><circle cx="260" cy="170" r="5" fill="#B4702E"/>
+    <circle cx="318" cy="253" r="6" fill="#B75B52"/><circle cx="376" cy="105" r="5" fill="#B4702E"/>
+    <circle cx="434" cy="48" r="7" fill="#C55F82"/><circle cx="492" cy="88" r="5" fill="#5E9B77"/>
+    <text x="85" y="292" text-anchor="middle" font-size="12" fill="#3A2E24">序章</text>
+    <text x="145" y="292" text-anchor="middle" font-size="12" fill="#3A2E24">一章</text>
+    <text x="202" y="292" text-anchor="middle" font-size="12" fill="#3A2E24">二章</text>
+    <text x="260" y="292" text-anchor="middle" font-size="12" fill="#B75B52">三章</text>
+    <text x="318" y="292" text-anchor="middle" font-size="12" fill="#3A2E24">三章末</text>
+    <text x="376" y="292" text-anchor="middle" font-size="12" fill="#3A2E24">四章</text>
+    <text x="434" y="292" text-anchor="middle" font-size="12" fill="#C55F82">五章</text>
+    <text x="492" y="292" text-anchor="middle" font-size="12" fill="#5E9B77">终章</text>
+    <text x="434" y="72" text-anchor="middle" font-size="11" fill="#C55F82">百页齐鸣</text>
+    <text x="318" y="243" text-anchor="middle" font-size="11" fill="#B75B52">摘星 · 扣书</text>
+    <rect x="540" y="52" width="210" height="196" rx="8" fill="#FBF5E9" stroke="#E8DDC9"/>
+    <text x="558" y="78" font-size="13" font-weight="600" fill="#B4702E">节奏底线自检</text>
+    <text x="558" y="104" font-size="12" fill="#6B5947">每 1–2 幕有小打脸　✔</text>
+    <text x="558" y="128" font-size="12" fill="#6B5947">每 3–5 幕有中打脸　✔</text>
+    <text x="558" y="152" font-size="12" fill="#6B5947">大高潮落在第五章　✔</text>
+    <text x="558" y="176" font-size="12" fill="#6B5947">低谷不超一幕　✔</text>
+    <text x="558" y="200" font-size="12" fill="#6B5947">无连续两幕无爽点　✔</text>
+    <text x="558" y="224" font-size="12" fill="#6B5947">能力逐幕可感知递进　✔</text>
+  </svg>
+  <table>
+    <thead><tr><th>幕</th><th>核心事件</th><th>冲突登场</th><th>菜谱进度</th><th>排名</th></tr></thead>
+    <tbody>
+      <tr><td>序章</td><td>捡书、连焦三炉、决定开店</td><td>糖老书</td><td>1 / 101</td><td>—</td></tr>
+      <tr><td>第一章</td><td>开张、伙伴到齐、换盐反爆单</td><td>顾苦 / 雷千层露面</td><td>8 / 101</td><td>铜勺</td></tr>
+      <tr><td>第二章</td><td>千层惨败 → 平局</td><td>雷千层正战</td><td>20 / 101</td><td>银勺</td></tr>
+      <tr><td>第三章</td><td><b>背叛、摘星、封炉、扣书</b></td><td>沈如意爆发</td><td>40 → 被扣</td><td>作废</td></tr>
+      <tr><td>第四章</td><td>无配方三十天、周伯亮身份</td><td>三条线回流</td><td>87 / 101</td><td>琉璃勺</td></tr>
+      <tr><td>第五章</td><td>三连收束、<b>三人全部入队</b>、百页齐鸣、封神</td><td>三线同日收束并入队</td><td><b>100 / 101</b></td><td>云顶勺</td></tr>
+      <tr><td>终章</td><td>第 101 页显字、<b>全员同框大团圆</b></td><td>—</td><td><b>101 / 101</b></td><td>不重要了</td></tr>
+    </tbody>
+  </table>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+<section class="sheet" id="s5">
+  <p class="eyebrow">05 / Chapters & Beats</p>
+  <h2>章节划分与关键剧情节点</h2>
+  <p class="sub">每幕包含：概要 · 情绪曲线 · 解锁内容 · 编号节点 · 爽点 · 章末钩子</p>
+  <div class="chapters">
+
+    <div class="chap">
+      <div class="head"><div class="num">00</div><div class="ttl">序章 · 从天而降的一百零一页</div><span class="tag t-car">好奇 → 挫败 → 小火苗</span></div>
+      <div class="body">
+        <p>送货路上被旧书砸中，第一页显形「焦糖布丁 · 提示：别看钟」。只给菜名，不给配方。</p>
+        <p><b>关键节点</b>：0-1 天降旧书 → 0-2 糖老书开口「我不教笨蛋」 → 0-3 连焦三炉、厨房冒黑烟 → 0-4 蹲在炉边听见糖「噗」一声，<b>顿悟火候要听声音不是看钟</b> → 0-5 第四炉成功，纸上长出糖霜插图 → 0-6 书末小字「要有人吃」，于是决定开店。</p>
+        <div class="kv"><span>本章爽点</span><span>第 1 页显形的仪式感；把「看钟」的常规思路打脸</span><span>章末钩子</span><span>最后一页：「第 101 页 · 留给还不知道自己为什么做点心的人」</span></div>
+      </div>
+    </div>
+
+    <div class="chap">
+      <div class="head"><div class="num">01</div><div class="ttl">第一章 · 铜勺篇《一勺糖，一间店》</div><span class="tag t-car">热闹 ↑ → 被认可 ↑↑</span></div>
+      <div class="body">
+        <p><b>关键节点</b>：1-1 租下漏雨旧仓库、挂牌「一勺糖」 → 1-2 豆豆翻窗偷吃被抓包，反成试吃员 → 1-3 沈如意上门，一下午理平乱账 → 1-4 <b>顾苦首次登场</b>把糖罐换成盐，主角将错就错做出「海盐焦糖」当天爆单，顾苦踩到自己撒的糖粉滑倒 → 1-5 雷千层隔窗丢下一句「这也叫千层？」 → 1-6 周伯第一次进门，只买最便宜的桂花糕 → 1-7 铜勺通过，周伯说全章唯一一句台词「……再来一块」。</p>
+        <div class="kv"><span>解锁</span><span>接单系统 / 店铺装扮 / 糖艺入门；菜谱第 2–8 页</span><span>本章爽点</span><span>被捣乱反做出招牌；最沉默的客人开口要第二块</span><span>章末钩子</span><span>菜谱一次显出三页，糖老书：「别高兴，这才刚够你摔的。」</span></div>
+      </div>
+    </div>
+
+    <div class="chap">
+      <div class="head"><div class="num">02</div><div class="ttl">第二章 · 银勺篇《擀不薄的千层》</div><span class="tag t-blue">被碾压 ↓↓ → 平局小爆 ↑↑</span></div>
+      <div class="body">
+        <p><b>关键节点</b>：2-1 雷千层下战帖 → 2-2 <b>初战惨败</b>：主角擀到第五层破皮、面团糊脸，雷千层 1024 层分毫不差 → 2-3 闭关喜剧蒙太奇，面团堆成山、豆豆在里面迷路，糖老书计数「第 87 次，还是个饼」 → 2-4 顾苦胡椒烟雾弹，自己先被熏哭 → 2-5 混乱中忘了计时，面团静静松弛，<b>顿悟层次不是叠出来的，是等出来的</b> → 2-6 再战技法仍输，但周伯把「好吃」那一票投给主角，<b>平局</b>；雷千层第一次皱眉「你这层数根本不标准……为什么好吃」 → 2-7 银勺到手，队伍排到街口。</p>
+        <div class="kv"><span>解锁</span><span>擀制 / 层次控制 / 限时订单；菜谱第 9–20 页</span><span>本章爽点</span><span>平局打脸（中打脸）；周伯关键一票；天才的皱眉</span><span>章末钩子</span><span>沈如意把一张纸叠了又叠塞进围裙口袋，灯灭了才走（拓印伏笔）</span></div>
+      </div>
+    </div>
+
+    <div class="chap low">
+      <div class="head"><div class="num">03</div><div class="ttl">第三章 · 金勺篇《最甜的那天下了雨》</div><span class="tag t-red">转折 · 全篇唯一断崖</span></div>
+      <div class="body">
+        <p><b>关键节点</b>：3-1 排队排到街口，全员备战金勺 → 3-2 评审会突然到场，出示<b>三页菜谱拓印</b>「配方来源不明」 → 3-3 摘星、封炉、扣书；沈如意不见，账本只留一行「对不住」 → 3-4 全城改口「那家店是靠抄的」 → 3-5 主角第一次不想开炉、摔了模具，<b>全作唯一一次他没说「再来一炉就好」</b> → 3-6 <b>顾苦破天荒没捣乱</b>，放下一袋没动过手脚的糖就跑，跑两步滑倒、爬起来继续跑 → 3-7 豆豆和周伯把碎模具一块块粘起来，周伯第一次主动开口「明天……还开吗」 → 3-8 主角重新点炉，做了一炉谁也不卖的布丁，四个人分着吃完 → 3-9 糖老书被扣走前撕下第 101 页一角塞进围裙。</p>
+        <div class="kv"><span>刻意设计</span><span>本章不给大爽点，只给「还有人愿意来」的小暖点。张弛需要一章呼吸。</span><span>章末钩子</span><span>围裙口袋里那张纸角，上面什么字都没有</span></div>
+      </div>
+    </div>
+
+    <div class="chap">
+      <div class="head"><div class="num">04</div><div class="ttl">第四章 · 琉璃勺篇《没有菜谱的三十天》</div><span class="tag t-green">稳步爬升 ↑↑ → 爆发 ↑↑↑</span></div>
+      <div class="body">
+        <p><b>关键节点</b>：4-1 评审会给最后机会：三十天后重考，<b>但不许用那本菜谱</b> → 4-2 靠记忆和手感把已学每道重做一遍 → 4-3 顾苦捣乱升级却次次自坑，斗篷被烤箱勾住时主角顺手把人拽出来，两人愣三秒谁也没说话 → 4-4 被扣的原料单被人补齐，字迹工工整整，沈如意在暗处没露面 → 4-5 <b>雷千层上门不是挑战</b>：「我来替你作证。那些页数，是他自己一炉一炉练出来的。」 → 4-6 重考端出<b>没有配方的桂花糕</b>，凭周伯每天买的那块猜了三十天 → 4-7 周伯当场落泪（亡妻的味道），亮明初代评审身份，条例被撬开一条缝 → 4-8 琉璃勺、菜谱归还。</p>
+        <div class="kv"><span>三连打脸</span><span>评审会「离了书你什么都不是」／全城议论／主角自己「我以为我离不开那本书」</span><span>章末钩子</span><span>100 页已显形 87 页，最后 13 页写着同一句：「把摔过的，再做一遍」</span></div>
+      </div>
+    </div>
+
+    <div class="chap peak">
+      <div class="head"><div class="num">05</div><div class="ttl">第五章 · 云顶勺篇《百页齐鸣》</div><span class="tag t-pink">三连收束 + 全员入队 ↑↑↑↑</span></div>
+      <div class="body">
+        <p><b>关键节点</b>：5-1 云端食榜·全国甜点大会，顾苦把全场糖换成苦精，雷千层摆出 1024 层 → <b>5-2 雷千线 · 入队</b>：终战认输「……这一炉，我认」，交出雷记秘传后板着脸补一句「明天我来上班，别迟到」，糖老书一句「你不是不信神吗」换来「……我只是路过」 → <b>5-3 顾苦线 · 入队</b>：主角没换回糖，改做「苦甜交织」，顾苦掉眼泪「当年要是有人给我这个就好了」，抹完脸立刻宣布「这不是投降，是深入内部观察」，并把鸽子全数捐出成立「咕咕外送队」 → <b>5-4 沈如意线 · 入队</b>：她回来「我只替你站完最后一炉」，那句「你从来没问过我累不累」说出口时顾苦举手「我累」，全场笑场；散场前想走，被豆豆一句「你抽屉还留着呢，算盘我也没借给别人」留下，账本重新摊回柜台 → 5-5 第 100 页要求重做所有失败过的菜，<b>新入队三人各守一炉</b>（数层 / 试味 / 记账）→ 5-6 天亮百页齐鸣，整条街都是香味 → 5-7 授「<b>点心之神</b>」，主角把三位新队友一起推到台前：「这炉不是一个人烤的。」</p>
+        <div class="kv"><span>本章爽点</span><span>三连收束 + <b>三人全部入队</b> + 百页齐鸣；三个曾让他难受的人，坐到了同一张桌子上</span><span>章末钩子</span><span>第 101 页——仍是空白</span></div>
+      </div>
+    </div>
+
+    <div class="chap end">
+      <div class="head"><div class="num">06</div><div class="ttl">终章 · 第 101 页：给自己的一炉</div><span class="tag t-green">全员同框 · 大团圆</span></div>
+      <div class="body">
+        <p><b>关键节点</b>：6-1 众人等着接匾、开连锁，主角第二天照常卷门帘，匾额挂到了门后 → 6-2 <b>全员到齐</b>：雷千层系围裙数层、顾苦指挥鸽子外送（鸽子不听指挥）、沈如意把账本摊回柜台、周伯坐靠窗、豆豆踮脚看炉、糖老书趴柜台打瞌睡，一个不少 → 6-3 给自己烤一炉<b>谁也不卖、故意焦了一角</b>的布丁，和序章第一炉一模一样，结果被六个人分着吃光，顾苦还举手要第二块 → 6-4 糖老书揭底：初代神当年也没写出第 101 页，他等的是「肯不为排名、不为客人，只为自己在炉前多站一会儿的人」 → 6-5 第 101 页显字「<b>因为你还想再做一炉</b>」 → 6-6 书合上变成普通旧菜谱，<b>但没走</b>：第二天又自己翻回柜台，嘟囔「神位我不要，这炉我得看着」，从此当店里的菜单本继续挑刺 → 6-7 沈如意当着全员写下「今天不累。」，顾苦补一行「今天也不苦。」，雷千层默默记了个数值被全员起哄 → 6-8 <b>结局确认</b>：学会全部菜谱成为「点心之神」，三位对手全部成为队友，全店大团圆，神位匾拿去垫了歪掉的面粉缸。</p>
+        <div class="kv"><span>本章爽点</span><span>「放下」+「全都在」的爽：全城争的东西他随手搁下，那张桌子他坐满了</span><span>闭环</span><span>回到序章那炉焦布丁；全员在场，无一人离场、无一条关系悬置</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+<section class="sheet" id="s6">
+  <p class="eyebrow">06 / Progression & Payoffs</p>
+  <h2>菜谱解锁、排名与伏笔回收</h2>
+  <h3>菜谱解锁与餐厅排名对照</h3>
+  <table>
+    <thead><tr><th>段位</th><th>章节</th><th>显形页数</th><th>代表菜式</th><th>新玩法</th><th>主导磨炼</th></tr></thead>
+    <tbody>
+      <tr><td>入门</td><td>序章</td><td>第 1 页</td><td>焦糖布丁</td><td>火候判定（听声）</td><td>练</td></tr>
+      <tr><td>铜勺</td><td>第一章</td><td>2–8</td><td>海盐焦糖、桂花糕、奶香小方</td><td>接单 / 装扮</td><td>战</td></tr>
+      <tr><td>银勺</td><td>第二章</td><td>9–20</td><td>千层酥、可颂、蝴蝶酥</td><td>擀制 / 层次 / 限时</td><td>练</td></tr>
+      <tr><td>金勺</td><td>第三章</td><td>21–40</td><td>裱花蛋糕、慕斯、糖霜饼干</td><td>裱花 / 多桌并行</td><td>悟</td></tr>
+      <tr><td>扣书期</td><td>第四章</td><td>全部重铸</td><td>无配方桂花糕</td><td>凭手感选料 / 复原关</td><td>练（终极）</td></tr>
+      <tr><td>琉璃勺</td><td>第四章末</td><td>41–87</td><td>糖艺、发酵、冷冻甜点</td><td>糖艺 / 温控</td><td>悟</td></tr>
+      <tr><td>云顶勺</td><td>第五章</td><td>88–100</td><td>苦甜交织、全菜式合流</td><td>极高压多线订单</td><td>战（终极）</td></tr>
+      <tr><td>神位</td><td>终章</td><td><b>第 101 页</b></td><td>焦了一角的布丁</td><td>无（自由炉）</td><td>无</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><b>设计说明</b>　第 101 页是唯一不绑定排名、不绑定玩法、不产出任何数值的一页——它只负责回答「为什么还在开炉」。</div>
+
+  <h3>伏笔回收清单</h3>
+  <table>
+    <thead><tr><th style="width:38%">伏笔</th><th style="width:16%">埋设</th><th style="width:20%">回收</th><th>效果</th></tr></thead>
+    <tbody>
+      <tr><td>第 101 页「留给还不知道自己为什么做点心的人」</td><td>序章 0-6</td><td>终章 6-4</td><td>全作主命题闭环</td></tr>
+      <tr><td>连焦三炉 / 焦布丁</td><td>序章 0-3</td><td>终章 6-2</td><td>从失败变成选择</td></tr>
+      <tr><td>周伯每天买最便宜的桂花糕、从不说话</td><td>第一章 1-7</td><td>第四章 4-6/4-7</td><td>亡妻的味道 + 初代评审身份</td></tr>
+      <tr><td>沈如意打烊后叠了又叠的纸</td><td>第二章钩子</td><td>第三章 3-2</td><td>背叛不突兀</td></tr>
+      <tr><td>糖老书撕下的纸角</td><td>第三章 3-9</td><td>第四章 → 终章</td><td>引导者一直在偷偷帮忙</td></tr>
+      <tr><td>顾苦「差两文钱」的童年</td><td>角色设定</td><td>第五章 5-3</td><td>捣乱者被温柔接住</td></tr>
+      <tr><td>雷记老掌柜临终「差一炉」</td><td>角色设定</td><td>第五章 5-2</td><td>三代人的执念被放下</td></tr>
+      <tr><td>评审会只认技法</td><td>第二章起</td><td>第四章 / 第五章</td><td>条例加一行「谁在吃」</td></tr>
+      <tr><td>漏雨的屋顶</td><td>第一章 1-1</td><td>终章</td><td>懒得修，反成招牌</td></tr>
+      <tr><td>账本上的「对不住」</td><td>第三章 3-3</td><td>终章 6-7 当着全员写下「今天不累。」</td><td>从裂痕变成团圆的一页</td></tr>
+      <tr><td>顾苦的鸽子与《作战记录簿》</td><td>第一章起捣乱</td><td>第五章收编为「咕咕外送队」，入队后当演练教材</td><td>捣乱道具变成团队资产</td></tr>
+      <tr><td>雷千层的「我只是路过」</td><td>第一章 1-5</td><td>第五章入队、终章第 412 天还在说</td><td>冷面人设的长线笑点</td></tr>
+    </tbody>
+  </table>
+
+  <h3>与玩法配置的接口建议</h3>
+  <div class="footgrid">
+    <div class="footbox"><b>三段式关卡</b>每道菜映射为练习关（无限重试、不计分）→ 剧情关（悟，触发短对话）→ 挑战关（战，限时 / 突发干扰），正好对应三重磨炼。</div>
+    <div class="footbox"><b>干扰事件池</b>顾苦的六种捣乱手法本身就是现成事件池，按段位逐级投放，制造「战」的压力。</div>
+    <div class="footbox"><b>失去与返还</b>第三章做一次「失去全部加成」的特殊关卡组，第四章逐道返还，正反馈最强。</div>
+    <div class="footbox"><b>回想关卡</b>第 100 页要求重做所有失败过的菜，天然构成终局前的回顾与情感回收。</div>
+    <div class="footbox"><b>入队即解锁</b>5-2 / 5-3 / 5-4 三人入队时分别开放对应可操作角色或店铺岗位（技法研发 / 咕咕外送 / 经营结算），让玩家当场感到「队伍变大了」。</div>
+    <div class="footbox"><b>反派喜剧资源化</b>三人的招牌翻车可直接做成失败动画与成就彩蛋；《作战记录簿》可作收集图鉴，鸽子可作外送单位。</div>
+  </div>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+<section class="sheet" id="s7">
+  <p class="eyebrow">07 / Ending</p>
+  <h2>结局、彩蛋与可延展留白</h2>
+  <p class="lead">麦小满历经正面挑战（雷千层）、恶意捣乱（顾苦）、亲密背叛（沈如意）、摘星封炉、菜谱被扣、无配方重考与百页回想，掌握了《一百零一页》的<b>全部</b>菜谱，被云端食榜承认为「点心之神」。<b>三位曾经的对手在第五章全部成为队友，终章全员同框——欢快大团圆，无一人离场。</b></p>
+  <p class="big">终章揭示：神位从来不是学完菜谱的奖品，<br>而是「学完之后，还愿不愿意再做一炉」<br>以及「这一炉有没有人一起吃」。</p>
+
+  <h3>片尾彩蛋 · 全员同框</h3>
+  <div class="footgrid">
+    <div class="footbox"><b>新招牌</b>豆豆踩着凳子挂上：「今日营业 · 排名不重要」。</div>
+    <div class="footbox"><b>雷记分店</b>「一勺糖·雷记分店」是同一张桌子的延长；雷千层每天准点挑刺、挑完顺手洗碗，第 412 天还在说「我只是路过」。</div>
+    <div class="footbox"><b>咕咕外送队</b>顾苦自封首席试味官，鸽子依旧不太听话；他开了「防捣乱演练」小课堂，讲得极其骄傲。</div>
+    <div class="footbox"><b>柜台上的账本</b>沈如意复任掌柜，当着全员写下「今天不累。」；顾苦在旁边补一行「今天也不苦。」</div>
+    <div class="footbox"><b>没走的糖老书</b>趴在柜台上当菜单本，继续给每一炉挑刺：「这炉……勉强能算个东西。」</div>
+    <div class="footbox"><b>靠窗老位置</b>周伯还是最便宜的一块桂花糕，只是现在有人陪着吃。</div>
+  </div>
+  <p>门后那块「点心之神」的匾，被拿来垫了歪掉的面粉缸。</p>
+
+  <h3>可延展留白（DLC / 后日谈，不含「角色会不会回来」类悬置）</h3>
+  <table>
+    <thead><tr><th style="width:8%">#</th><th>留白</th><th style="width:34%">延展方向</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>合上又翻开的旧菜谱，会不会哪天再砸中下一个人</td><td>可引出续作新主角，不影响本作团圆</td></tr>
+      <tr><td>2</td><td>周伯当年那次「误判」判的是谁</td><td>与雷记「差一炉」是否同源</td></tr>
+      <tr><td>3</td><td>顾苦的两文钱、豆豆第一次独立看炉、雷千层的失败品收藏册</td><td>各自做成支线小章节</td></tr>
+      <tr><td>4</td><td>「咕咕外送队」与三人入队后的店铺经营</td><td>拓展为后日谈关卡组</td></tr>
+    </tbody>
+  </table>
+
+  <h3>质量自检</h3>
+  <table>
+    <thead><tr><th style="width:46%">检查项</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td>逆袭起点够低</td><td>送货工、手笨、连焦三炉、漏雨铺子</td></tr>
+      <tr><td>金手指有清晰规则与限制</td><td>显形 / 三重磨炼 / 不可作弊 / 越后越挑人，四条铁律</td></tr>
+      <tr><td>前 3 章有打脸设计</td><td>换盐反爆单、平局、周伯关键一票</td></tr>
+      <tr><td>等级层级清晰</td><td>铜 → 银 → 金 → 琉璃 → 云顶，五阶对应五章</td></tr>
+      <tr><td>「众人轻视 → 被打脸」完整</td><td>全城「靠抄的」→ 无配方重考 → 百页齐鸣</td></tr>
+      <tr><td>反派够聪明</td><td>雷千层强到服气、顾苦真造成麻烦、沈如意那一刀真疼</td></tr>
+      <tr><td>伏笔全部回收</td><td>12 条，见上一节</td></tr>
+      <tr><td>符合休闲烹饪调性</td><td>无死亡、无真正恶意、低谷不超一幕、失败必带喜剧落点</td></tr>
+      <tr><td><b>反派够谐星</b></td><td>三人各有谐星定位、招牌翻车、反差萌（见第 02 节入队时间表）</td></tr>
+      <tr><td><b>后续全部加入主角团队</b></td><td>5-2 / 5-3 / 5-4 逐人入队，6-2 全员同框</td></tr>
+      <tr><td><b>是欢快大团圆</b></td><td>无一人离场、无一条关系悬置；书灵也留了下来</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">本大纲可直接拆为逐章剧本 / 对话脚本 / 关卡剧情文案；项目下 <code>.learnings/</code> 已建立角色、地点、情节点与世界观记忆文件，续写前先读取，避免设定串味。</div>
+  <div class="pagefoot"><span>《欢闹厨房》主线故事企划书</span></div>
+</section>
+
+</body>
+</html>
