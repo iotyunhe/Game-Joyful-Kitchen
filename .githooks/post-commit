@@ -2,7 +2,7 @@
 # 每次本地提交后自动推送到 GitHub。
 # 启用方式：git config --local core.hooksPath .githooks
 # 关闭方式：git config --local --unset core.hooksPath
-# 推送失败不阻塞提交，仅在终端提示手动补推。
+# 推送失败时打印补推命令并以 0 退出；post-commit 退出码不影响提交结果。
 
 branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 0
 git remote get-url origin >/dev/null 2>&1 || exit 0
