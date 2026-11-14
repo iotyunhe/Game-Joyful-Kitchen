@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>一勺糖 · 可玩原型 ｜ 欢闹厨房</title>
+<style>
+/* ============ 糖霜团子 / Sugar Dumpling · 色彩板（冻结） ============ */
+:root{
+  --caramel:#E8A05C;   /* 主色 */
+  --peach:#F3BFC0;     /* 辅色 */
+  --frost:#FFF7EA;     /* 糖霜白：只给显形 / 选中 / 完美 */
+  --berry:#D9534F;     /* 交互色：倒计时 / 失败 */
+  --cream:#F5E4C9;     /* 背景 */
+  --cocoa:#5A3B2E;     /* 描边 / 正文 */
+  --paper:#FFFBF2;
+  --line:3px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","HYQiHei",system-ui,sans-serif;
+  color:var(--cocoa);background:var(--cream);
+  font-variant-numeric:tabular-nums;
+  overflow:hidden;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+button:focus-visible{outline:var(--line) solid var(--berry);outline-offset:3px}
+svg{display:block}
+
+/* ============ 桌面展示层 ============ */
+.desk{height:100%;display:flex;align-items:center;justify-content:center;gap:26px;padding:18px;
+  background:var(--cream);position:relative}
+.desk::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(circle at 12px 12px, rgba(90,59,46,.09) 2px, transparent 2px);
+  background-size:26px 26px}
+.side{width:250px;flex:0 0 250px;position:relative;z-index:1;display:none}
+@media(min-width:1140px){.side{display:block}}
+.side h1{font-size:22px;margin:0 0 6px;letter-spacing:.5px}
+.side .sub{font-size:13px;opacity:.72;line-height:1.7;margin:0 0 18px}
+.side .card{background:var(--paper);border:var(--line) solid var(--cocoa);border-radius:20px;
+  padding:14px 15px;margin-bottom:12px;box-shadow:0 5px 0 rgba(90,59,46,.13)}
+.side .card h3{margin:0 0 9px;font-size:14px;display:flex;align-items:center;gap:7px}
+.side .dot{width:11px;height:11px;border-radius:50%;border:2px solid var(--cocoa);display:inline-block;flex:none}
+.side ul{margin:0;padding-left:17px;font-size:12px;line-height:1.85;opacity:.88}
+.side .pill{display:inline-block;font-size:11px;padding:2px 8px;border:2px solid var(--cocoa);
+  border-radius:20px;margin:0 4px 5px 0;background:var(--frost)}
+.kbd{font-size:11px;opacity:.6;margin-top:10px;line-height:1.6}
+
+/* ============ 手机框 ============ */
+.phone{width:min(430px,100vw);height:min(880px,100vh);flex:none;position:relative;z-index:2;
+  border:var(--line) solid var(--cocoa);border-radius:30px;overflow:hidden;
+  background:var(--paper);box-shadow:0 10px 0 rgba(90,59,46,.18),0 22px 40px rgba(90,59,46,.16)}
+.screen{position:relative;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden}
+.bg{position:absolute;inset:0;background-size:cover;background-position:center top;background-color:var(--cream);
+  transition:background-image .35s ease}
+.bg-veil{position:absolute;inset:0;background:rgba(255,251,242,.55);pointer-events:none}
+.bg-veil.soft{background:rgba(255,251,242,.38)}
+
+/* ============ 顶栏 ============ */
+.hud{position:relative;z-index:3;flex:none;display:flex;align-items:center;gap:7px;
+  padding:9px 10px;background:var(--paper);border-bottom:var(--line) solid var(--cocoa)}
+.hud .rank{font-size:12px;font-weight:700;white-space:nowrap;padding:4px 8px;border-radius:14px;
+  background:var(--caramel);border:2px solid var(--cocoa)}
+.hud .stat{font-size:12px;white-space:nowrap;display:flex;align-items:center;gap:3px}
+.hud .stat b{font-size:14px}
+.hud .spacer{flex:1}
+.iconbtn{width:32px;height:32px;flex:none;border:2px solid var(--cocoa);border-radius:12px;
+  background:var(--frost);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.iconbtn.off{opacity:.45}
+.autobar{position:absolute;left:10px;right:10px;bottom:-9px;height:7px;border:2px solid var(--cocoa);
+  border-radius:10px;background:var(--frost);overflow:hidden;z-index:4}
+.autobar i{display:block;height:100%;background:var(--caramel);transition:width .3s}
+
+/* ============ 舞台 ============ */
+.stage{position:relative;z-index:2;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;scrollbar-color:var(--caramel) transparent}
+.view{display:none;padding:12px 12px 16px;min-height:100%}
+.view.on{display:block;animation:fadein .22s ease}
+@keyframes fadein{from{transform:translateY(6px)}to{transform:none}}
+
+.panel{background:var(--paper);border:var(--line) solid var(--cocoa);border-radius:20px;
+  padding:12px;box-shadow:0 5px 0 rgba(90,59,46,.13);margin-bottom:10px}
+.panel h2{font-size:16px;margin:0 0 8px;display:flex;align-items:center;gap:7px}
+.panel h2 .num{font-size:11px;background:var(--peach);border:2px solid var(--cocoa);
+  border-radius:12px;padding:1px 7px}
+.muted{font-size:11px;opacity:.68;line-height:1.6}
+.tagline{font-size:12px;line-height:1.7}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:var(--line) solid var(--cocoa);border-radius:18px;padding:10px 16px;font-size:14px;font-weight:700;
+  background:var(--caramel);box-shadow:0 4px 0 rgba(90,59,46,.28);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(90,59,46,.28)}
+.btn.sec{background:var(--frost);box-shadow:0 4px 0 rgba(90,59,46,.18)}
+.btn.sec:active{box-shadow:0 1px 0 rgba(90,59,46,.18)}
+.btn.wide{width:100%}
+.btn.sm{padding:7px 11px;font-size:12px;border-radius:14px}
+.btn:disabled{opacity:.42;cursor:not-allowed;box-shadow:none;transform:none}
+.btn.frost{background:var(--frost)}
+.btn.berry{background:var(--berry);color:var(--frost)}
+.row{display:flex;gap:8px;align-items:center}
+.row.wrap{flex-wrap:wrap}
+.grow{flex:1}
+
+/* ============ 标题页 ============ */
+.hero{text-align:center;padding:18px 12px 12px}
+.hero .logo{font-size:30px;font-weight:900;letter-spacing:2px;margin:0}
+.hero .logo span{color:var(--berry)}
+.hero .eng{font-size:11px;letter-spacing:3px;opacity:.6;margin:4px 0 12px}
+.hero img{width:112px;height:112px;object-fit:contain;display:block;margin:0 auto}
+.hero .book{font-size:12px;opacity:.8;margin-top:4px}
+.hero .desc{font-size:13px;line-height:1.8;margin:12px 0 16px}
+.hero .desc em{font-style:normal;background:var(--frost);border:2px solid var(--cocoa);
+  border-radius:10px;padding:1px 6px;display:inline-block;margin:2px}
+.mini-legend{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.mini-legend span{font-size:10px;border:2px solid var(--cocoa);border-radius:12px;padding:3px 8px;background:var(--frost)}
+
+/* ============ 营业页 ============ */
+.shopbar{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.shopbar .day{font-size:13px;font-weight:800;background:var(--frost);border:2px solid var(--cocoa);
+  border-radius:14px;padding:5px 10px}
+.shopbar .orders{font-size:12px;flex:1;text-align:right}
+.today-gross{font-size:12px;color:var(--cocoa);font-weight:700}
+.tip-strip{font-size:11px;background:var(--peach);border:2px solid var(--cocoa);border-radius:14px;
+  padding:6px 9px;margin-bottom:9px;line-height:1.5}
+.tip-strip.gray{background:var(--frost)}
+
+.cust-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.cust{display:flex;gap:9px;align-items:center;background:var(--paper);border:var(--line) solid var(--cocoa);
+  border-radius:18px;padding:8px 9px;box-shadow:0 4px 0 rgba(90,59,46,.14);
+  cursor:pointer;transition:transform .12s,background .12s;position:relative;animation:slidein .25s ease}
+@keyframes slidein{from{transform:translateX(20px)}to{transform:none}}
+.cust.sel{background:var(--frost);transform:translateX(3px);box-shadow:0 4px 0 var(--caramel)}
+.cust.urgent{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.cust .face{width:44px;height:44px;flex:none;border-radius:50%;border:var(--line) solid var(--cocoa);
+  display:flex;align-items:center;justify-content:center;font-size:19px;background:var(--peach);overflow:hidden}
+.cust .face img{width:100%;height:100%;object-fit:cover}
+.cust .info{flex:1;min-width:0}
+.cust .who{font-size:11px;opacity:.7;display:flex;align-items:center;gap:5px}
+.cust .who .first{font-size:10px;background:var(--berry);color:var(--frost);border-radius:8px;padding:1px 5px}
+.cust .dish{font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px;margin:1px 0 4px}
+.cust .dish svg{flex:none}
+.pat{display:flex;align-items:center;gap:5px}
+.pat .track{flex:1;height:10px;border:2px solid var(--cocoa);border-radius:10px;background:var(--frost);overflow:hidden}
+.pat .track i{display:block;height:100%;background:var(--caramel);transition:width .1s linear}
+.pat.half .track i{background:var(--peach)}
+.pat.low .track i{background:var(--berry)}
+.pat .pct{font-size:10px;width:32px;text-align:right;opacity:.75}
+.pat .clock{font-size:12px;display:none}
+.pat.low .clock{display:block}
+.cust .emoji{position:absolute;right:9px;top:7px;font-size:13px}
+
+.bench{background:var(--paper);border:var(--line) solid var(--cocoa);border-radius:20px;
+  padding:11px;box-shadow:0 5px 0 rgba(90,59,46,.13)}
+.bench .head{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;margin-bottom:7px}
+.bench .head .step{margin-left:auto;font-size:11px;font-weight:600;opacity:.7}
+.hint{font-size:11px;line-height:1.6;background:var(--cream);border:2px dashed var(--cocoa);
+  border-radius:12px;padding:6px 8px;margin-bottom:9px}
+.hint b{color:var(--cocoa)}
+.hint .q{display:inline-block;width:20px;height:20px;line-height:18px;text-align:center;
+  border:2px solid var(--cocoa);border-radius:8px;background:var(--frost);margin-right:3px;font-weight:800}
+.hint .done{color:var(--berry)}
+.ing-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-bottom:9px}
+.ing{width:84px;min-height:74px;border:var(--line) solid var(--cocoa);border-radius:16px;background:var(--frost);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:5px 2px;box-shadow:0 3px 0 rgba(90,59,46,.2);transition:transform .09s,box-shadow .09s,background .12s;position:relative}
+.ing:active{transform:translateY(3px);box-shadow:none}
+.ing .nm{font-size:10px;font-weight:700;white-space:nowrap}
+.ing.picked{background:var(--frost);border-color:var(--berry);opacity:.55}
+.ing.picked::after{content:"✓";position:absolute;top:2px;right:5px;font-size:11px;color:var(--berry);font-weight:900}
+.ing.auto{background:var(--peach)}
+.ing.auto::before{content:"自动";position:absolute;top:2px;left:4px;font-size:9px;
+  background:var(--caramel);border:1.5px solid var(--cocoa);border-radius:7px;padding:0 3px}
+.ing.wrong{animation:shake .3s}
+.chosen{display:flex;gap:5px;align-items:center;min-height:26px;margin-bottom:8px;flex-wrap:wrap}
+.chosen .slot{width:24px;height:24px;border:2px solid var(--cocoa);border-radius:9px;
+  background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:10px}
+.chosen .slot.ok{background:var(--caramel)}
+.chosen .slot.auto{background:var(--peach)}
+.chosen .arrow{font-size:11px;opacity:.5}
+.bench .acts{display:flex;gap:7px}
+.mastery{margin-top:9px;border-top:2px dashed rgba(90,59,46,.3);padding-top:8px}
+.mastery .line{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
+.mastery .mbar{height:12px;border:2px solid var(--cocoa);border-radius:10px;background:var(--frost);overflow:hidden}
+.mastery .mbar i{display:block;height:100%;background:var(--caramel)}
+.mastery .foot{display:flex;justify-content:space-between;font-size:10px;opacity:.72;margin-top:4px}
+
+/* ============ 账本 / 投资 / 练习 ============ */
+.ledger{font-size:13px}
+.ledger .lr{display:flex;justify-content:space-between;padding:7px 2px;border-bottom:2px dotted rgba(90,59,46,.25)}
+.ledger .lr:last-child{border-bottom:none}
+.ledger .lr.minus span:last-child{color:var(--berry)}
+.ledger .lr.total{font-weight:900;font-size:15px;border-top:var(--line) solid var(--cocoa);margin-top:5px;padding-top:9px}
+.ledger .note{font-size:10px;opacity:.65;margin-top:2px}
+.shop-item{border:var(--line) solid var(--cocoa);border-radius:16px;background:var(--paper);
+  padding:10px;margin-bottom:9px;box-shadow:0 4px 0 rgba(90,59,46,.13)}
+.shop-item .t{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800;margin-bottom:4px}
+.shop-item .t .price{margin-left:auto;font-size:13px;background:var(--frost);border:2px solid var(--cocoa);
+  border-radius:12px;padding:2px 8px}
+.shop-item .d{font-size:11px;line-height:1.6;opacity:.82;margin-bottom:7px}
+.shop-item .d .no{color:var(--berry);font-weight:700}
+.shop-item .owned{font-size:11px;font-weight:700;color:var(--berry)}
+.pcard{display:flex;align-items:center;gap:9px;border:var(--line) solid var(--cocoa);border-radius:16px;
+  background:var(--paper);padding:9px;margin-bottom:8px;box-shadow:0 4px 0 rgba(90,59,46,.13)}
+.pcard .info{flex:1;min-width:0}
+.pcard .nm{font-size:13px;font-weight:800;display:flex;align-items:center;gap:5px}
+.pcard .pbar{height:9px;border:2px solid var(--cocoa);border-radius:9px;background:var(--frost);
+  overflow:hidden;margin:5px 0 3px}
+.pcard .pbar i{display:block;height:100%;background:var(--caramel)}
+.pcard .meta{font-size:10px;opacity:.72}
+
+/* ============ 菜谱 ============ */
+.bookgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.page{aspect-ratio:3/4;border:var(--line) solid var(--cocoa);border-radius:14px;background:var(--frost);
+  padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;position:relative;box-shadow:0 3px 0 rgba(90,59,46,.14)}
+.page .pn{position:absolute;top:4px;left:6px;font-size:9px;opacity:.55}
+.page .pn2{position:absolute;bottom:4px;right:6px;font-size:9px;opacity:.55}
+.page .nm{font-size:11px;font-weight:800;line-height:1.3;margin-top:4px}
+.page .mm{font-size:10px;margin-top:3px}
+.page .mbar{width:80%;height:7px;border:2px solid var(--cocoa);border-radius:8px;background:var(--cream);
+  overflow:hidden;margin-top:4px}
+.page .mbar i{display:block;height:100%;background:var(--caramel)}
+.page.blank{background:var(--cream);opacity:.55}
+.page.blank .nm{font-size:10px;font-weight:400}
+.page.learned{background:var(--paper)}
+.page.sealed{background:var(--cream);opacity:.6}
+.page.sealed::after{content:"封";position:absolute;font-size:26px;font-weight:900;color:var(--berry);
+  border:var(--line) solid var(--berry);border-radius:10px;padding:0 8px;transform:rotate(-12deg);opacity:.8}
+.page.final{background:var(--frost);border-color:var(--berry)}
+.sugar-dot{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--frost);
+  border:1.5px solid var(--cocoa);animation:floatup 1.6s infinite ease-in}
+@keyframes floatup{0%{transform:translateY(6px);opacity:0}40%{opacity:1}100%{transform:translateY(-16px);opacity:0}}
+
+/* ============ 浮层 ============ */
+.overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
+  padding:16px;background:rgba(90,59,46,.42)}
+.overlay.on{display:flex;animation:fadein .2s ease}
+.modal{width:100%;max-height:100%;overflow-y:auto;background:var(--paper);border:var(--line) solid var(--cocoa);
+  border-radius:22px;padding:15px;box-shadow:0 8px 0 rgba(90,59,46,.3)}
+.modal h2{font-size:17px;margin:0 0 4px}
+.modal .kicker{font-size:10px;letter-spacing:1px;opacity:.6;margin-bottom:10px}
+.speaker{display:flex;gap:9px;align-items:flex-start;margin-bottom:9px}
+.speaker .av{width:42px;height:42px;flex:none;border-radius:50%;border:var(--line) solid var(--cocoa);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;overflow:hidden}
+.speaker .av img{width:100%;height:100%;object-fit:cover}
+.speaker .say{background:var(--frost);border:2px solid var(--cocoa);border-radius:14px;
+  padding:8px 10px;font-size:13px;line-height:1.65;flex:1}
+.speaker .say b{display:block;font-size:11px;opacity:.65;margin-bottom:2px}
+.story-effect{margin:10px 0;padding:8px 10px;background:var(--peach);border:2px solid var(--cocoa);
+  border-radius:14px;font-size:12px;line-height:1.6}
+.story-effect b{display:block;margin-bottom:2px}
+.guide h3{font-size:13px;margin:14px 0 6px;border-left:5px solid var(--caramel);padding-left:7px}
+.growitem{border:2px solid rgba(90,59,46,.25);border-radius:12px;padding:7px 9px;margin-bottom:7px;background:var(--frost)}
+.gt{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;font-weight:800}
+.gt span{font-size:10px;opacity:.6;font-weight:600;white-space:nowrap}
+.gs{font-size:11px;line-height:1.6;margin-top:3px}
+.gm{font-size:10px;opacity:.72;margin-top:2px}
+.guide code{background:var(--paper);border:1.5px solid var(--cocoa);border-radius:6px;padding:0 4px;font-size:10px}
+.logitem{font-size:11px;line-height:1.5;padding:5px 0;border-bottom:2px dotted rgba(90,59,46,.2)}
+.logitem b{color:var(--berry)}
+
+/* 顶部单句气泡 G2（绝不弹全屏） */
+.bubble{position:absolute;z-index:15;left:14px;right:14px;top:62px;display:none;
+  background:var(--frost);border:var(--line) solid var(--cocoa);border-radius:16px;
+  padding:8px 11px;font-size:12px;line-height:1.5;box-shadow:0 4px 0 rgba(90,59,46,.2)}
+.bubble.on{display:block;animation:fadein .18s ease}
+.bubble b{color:var(--berry)}
+.toast{position:absolute;z-index:16;left:50%;bottom:78px;transform:translateX(-50%);
+  background:var(--cocoa);color:var(--frost);font-size:12px;padding:7px 13px;border-radius:16px;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;max-width:92%}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(-6px)}
+.fx{position:absolute;inset:0;z-index:14;pointer-events:none;overflow:hidden}
+.coinfly{position:absolute;font-size:17px;font-weight:900;color:var(--caramel);
+  -webkit-text-stroke:1.5px var(--cocoa);animation:coinfly 1s ease-out forwards}
+@keyframes coinfly{from{opacity:1;transform:translateY(0) scale(.8)}to{opacity:0;transform:translateY(-70px) scale(1.25)}}
+.spark{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--frost);
+  border:2px solid var(--cocoa);animation:spark 1.15s ease-out forwards}
+@keyframes spark{from{opacity:1;transform:translateY(0) scale(.5)}to{opacity:0;transform:translateY(-110px) scale(1.1)}}
+.bigword{position:absolute;left:50%;top:38%;transform:translateX(-50%);font-size:30px;font-weight:900;
+  color:var(--frost);-webkit-text-stroke:3px var(--cocoa);text-shadow:0 5px 0 var(--caramel);
+  animation:bigword 1.05s ease-out forwards;white-space:nowrap}
+@keyframes bigword{0%{opacity:0;transform:translateX(-50%) scale(.5)}25%{opacity:1;transform:translateX(-50%) scale(1.12)}
+  70%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-24px) scale(1)}}
+
+/* ============ 底栏 ============ */
+.dock{position:relative;z-index:3;flex:none;display:flex;align-items:center;gap:8px;padding:9px 11px;
+  background:var(--paper);border-top:var(--line) solid var(--cocoa)}
+.dock .hintline{font-size:11px;opacity:.72;flex:1;line-height:1.4}
+
+/* ============ 结局 ============ */
+.ending{text-align:center;padding:14px 4px}
+.ending h2{font-size:24px;margin:8px 0 4px}
+.ending .p101{font-size:15px;line-height:1.9;background:var(--frost);border:var(--line) solid var(--cocoa);
+  border-radius:18px;padding:14px;margin:12px 0}
+.group{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:14px 0}
+.group .who{width:52px;text-align:center;font-size:10px}
+.group .av{width:46px;height:46px;border-radius:50%;border:var(--line) solid var(--cocoa);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;margin-bottom:3px;overflow:hidden}
+.group .av img{width:100%;height:100%;object-fit:cover}
+.stamp{display:inline-block;font-size:11px;background:var(--peach);border:2px solid var(--cocoa);
+  border-radius:12px;padding:3px 9px;margin:2px}
+</style>
+</head>
+<body>
+<div class="desk">
+  <aside class="side">
+    <h1>一勺糖 · 可玩原型</h1>
+    <p class="sub">《欢闹厨房》玩法流程设计 v2.0 的浏览器垂直切片。<br>经营是主体，剧情由经营长出来。</p>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--caramel)"></span>三个动词</h3>
+      <ul>
+        <li><b>递出去</b>：按序点食材 → 提交</li>
+        <li><b>抽开手</b>：雇人 / 升设备 → 少点几下</li>
+        <li><b>练回去</b>：练习 → 熟练度 → 完美率</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--peach)"></span>色彩板</h3>
+      <span class="pill">焦糖橘 #E8A05C</span><span class="pill">蜜桃粉 #F3BFC0</span>
+      <span class="pill">糖霜白 #FFF7EA</span><span class="pill">莓果红 #D9534F</span>
+      <span class="pill">奶油杏 #F5E4C9</span><span class="pill">焙茶棕 #5A3B2E</span>
+      <p class="kbd">糖霜白只用于显形 / 选中 / 完美，日常 UI 不占用。</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--berry)"></span>怎么玩</h3>
+      <ul>
+        <li>点一张顾客卡选中</li>
+        <li>按配方顺序点食材</li>
+        <li>点「提交给顾客」出餐</li>
+        <li>打烊后雇人 / 升设备 / 练一道</li>
+      </ul>
+      <p class="kbd">顶栏 ☰ 可打开「设计对照」，逐条查看本原型实现的机制与调档值。</p>
+    </div>
+  </aside>
+
+  <div class="phone">
+    <div class="screen" id="screen">
+      <div class="bg" id="bg"></div>
+      <div class="bg-veil" id="veil"></div>
+
+      <header class="hud">
+        <span class="rank" id="hudRank">无勺</span>
+        <span class="stat">🪙 <b id="hudCoins">0</b></span>
+        <span class="stat">自动 <b id="hudAuto">0%</b></span>
+        <span class="spacer"></span>
+        <button class="iconbtn" data-act="toggle-sound" id="soundBtn" title="声音">♪</button>
+        <button class="iconbtn" data-act="open-book" title="菜谱">书</button>
+        <button class="iconbtn" data-act="open-guide" title="设计对照">☰</button>
+        <div class="autobar"><i id="autoFill" style="width:0%"></i></div>
+      </header>
+
+      <main class="stage" id="stage">
+        <!-- 标题 -->
+        <section class="view on" id="v-title"></section>
+        <!-- 营业 -->
+        <section class="view" id="v-open">
+          <div class="shopbar">
+            <span class="day" id="shopDay">第 1 天</span>
+            <span class="orders" id="shopOrders"></span>
+          </div>
+          <div class="tip-strip" id="shopTip"></div>
+          <div class="cust-list" id="custList"></div>
+          <div class="bench" id="bench"></div>
+          <div class="panel" id="goalCard"></div>
+        </section>
+        <!-- 账本 -->
+        <section class="view" id="v-settle"></section>
+        <!-- 投资 -->
+        <section class="view" id="v-invest"></section>
+        <!-- 练习 -->
+        <section class="view" id="v-practice"></section>
+        <!-- 结局 -->
+        <section class="view" id="v-ending"></section>
+      </main>
+
+      <footer class="dock" id="dock"></footer>
+
+      <div class="bubble" id="bubble"></div>
+      <div class="toast" id="toast"></div>
+      <div class="fx" id="fx"></div>
+      <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="card">
+      <h3><span class="dot" style="background:var(--frost)"></span>这一版实现了什么</h3>
+      <ul>
+        <li>P1 接单经营（主体）</li>
+        <li>P2 练习 → 熟练度 M</li>
+        <li>P4 / P5 雇人 · 升设备（只减负）</li>
+        <li>P6 打烊账本（持续 sink）</li>
+        <li>P7 段位评定 / 页显形</li>
+        <li>P8 剧情由 T1–T5 触发</li>
+        <li>V1 干扰 · V2 无配方 · V4 自由炉</li>
+        <li>3-3 剥离：自动化归零</li>
+        <li>5-2/3/4 入队 → A 70%</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--berry)"></span>刻意不做</h3>
+      <ul>
+        <li>装备加完美率（违反 P3）</li>
+        <li>扣金币 / 掉熟练度（违反 P4）</li>
+        <li>托管整局（违反 P5）</li>
+        <li>售卖配方 / 页数 / 熟练度</li>
+      </ul>
+      <p class="kbd">所有数值均为 demo 调档值，非最终平衡数值；正式数值见《数值调优表》并需 playtest 验证。</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+'use strict';
+/* ================================================================
+   《欢闹厨房》可玩垂直切片 · 玩法流程设计 v2.0
+   单文件、无外部依赖。所有 [PLACEHOLDER] 数值在此为 demo 调档值，
+   不写回设计文档；正式数值以 output/欢闹厨房_数值调优表.csv 为准。
+   ================================================================ */
+const C = {caramel:'#E8A05C',peach:'#F3BFC0',frost:'#FFF7EA',berry:'#D9534F',cream:'#F5E4C9',cocoa:'#5A3B2E'};
+const ASSET = {
+  char:'../art/generated/batch01/final/char_maixiaoman_normal_v1.png',
+  pudding:'../art/generated/batch01/final/img_dessert_pudding_v1.png',
+  s1:'../art/generated/batch02_scenes/final/env_s1_kitchen_bg_v1.jpg',
+  s2:'../art/generated/batch02_scenes/final/env_s2_hall_bg_v1.jpg',
+  s3:'../art/generated/batch02_scenes/final/env_s3_street_bg_v1.jpg',
+  s4:'../art/generated/batch02_scenes/final/env_s4_recipe_bg_v1.jpg'
+};
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => {const r=a.slice();for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r};
+
+/* ---------- 食材与点心：全部内联 SVG，图片里不放文字 ---------- */
+const ING = {
+  egg:      {n:'鸡蛋', c:'#F6D98A', s:'egg'},
+  milk:     {n:'牛奶', c:'#FFF7EA', s:'bottle'},
+  caramel:  {n:'焦糖', c:'#D89A4E', s:'wave'},
+  salt:     {n:'海盐', c:'#E7EEF0', s:'grains'},
+  cream:    {n:'奶油', c:'#FFF1DC', s:'swirl'},
+  dough:    {n:'面团', c:'#EFCB9A', s:'blob'},
+  butter:   {n:'黄油', c:'#F2D36B', s:'cube'},
+  frost:    {n:'糖霜', c:'#FFFFFF', s:'dots'},
+  berry:    {n:'草莓', c:'#E58A84', s:'fruit'},
+  rice:     {n:'米粉', c:'#F7EEDC', s:'bowl'},
+  osmanthus:{n:'桂花', c:'#F2C86B', s:'flower'},
+  honey:    {n:'蜂蜜', c:'#E8B45C', s:'drop'}
+};
+function ingIcon(key,size){
+  const it=ING[key], z=size||38, h=z/2, k=z/40;
+  const ST=`stroke="${C.cocoa}" stroke-width="${2.1*k}" stroke-linecap="round" stroke-linejoin="round"`;
+  let g='';
+  const P=(x,y)=>`${(h+x*k).toFixed(1)},${(h+y*k).toFixed(1)}`;
+  switch(it.s){
+    case 'egg': g=`<ellipse cx="${h}" cy="${h}" rx="${7*k}" ry="${9*k}" fill="#FFF9E6" ${ST}/><circle cx="${h-2*k}" cy="${h-3*k}" r="${1.4*k}" fill="${C.frost}"/>`;break;
+    case 'bottle': g=`<rect x="${h-5*k}" y="${h-7*k}" width="${10*k}" height="${15*k}" rx="${3*k}" fill="#FFFDF6" ${ST}/><path d="M${P(-3,-7)} L${P(-3,-11)} L${P(3,-11)} L${P(3,-7)}" fill="none" ${ST}/><rect x="${h-4*k}" y="${h-1*k}" width="${8*k}" height="${5*k}" rx="${2*k}" fill="#F3BFC0"/>`;break;
+    case 'wave': g=`<path d="M${P(-10,-2)} Q${P(-5,-9)} ${P(0,-2)} T${P(10,-2)}" fill="none" ${ST}/><path d="M${P(-9,4)} Q${P(-4,-3)} ${P(1,4)} T${P(9,4)}" fill="none" ${ST}/>`;break;
+    case 'grains': g=`<circle cx="${h-5*k}" cy="${h+3*k}" r="${2.6*k}" fill="#FFFFFF" ${ST}/><circle cx="${h+1*k}" cy="${h+4*k}" r="${2.6*k}" fill="#FFFFFF" ${ST}/><circle cx="${h-2*k}" cy="${h-3*k}" r="${2.6*k}" fill="#FFFFFF" ${ST}/><circle cx="${h+5*k}" cy="${h-2*k}" r="${2.6*k}" fill="#FFFFFF" ${ST}/>`;break;
+    case 'swirl': g=`<path d="M${P(-8,6)} C${P(-10,-4)} ${P(4,-10)} ${P(8,-2)} C${P(11,5)} ${P(2,8)} ${P(-1,2)} C${P(-3,-2)} ${P(2,-4)} ${P(3,0)}" fill="none" ${ST}/>`;break;
+    case 'blob': g=`<path d="M${P(-9,3)} C${P(-11,-7)} ${P(-2,-10)} ${P(3,-8)} C${P(11,-8)} ${P(11,2)} ${P(7,7)} C${P(1,11)} ${P(-8,10)} ${P(-9,3)}Z" fill="#F6DFB8" ${ST}/><circle cx="${h-3*k}" cy="${h-2*k}" r="${1.3*k}" fill="${C.cocoa}"/><circle cx="${h+4*k}" cy="${h}" r="${1.3*k}" fill="${C.cocoa}"/>`;break;
+    case 'cube': g=`<rect x="${h-8*k}" y="${h-6*k}" width="${16*k}" height="${12*k}" rx="${3*k}" fill="#FBE49A" ${ST}/><path d="M${P(-8,-1)} L${P(8,-1)}" fill="none" ${ST}/>`;break;
+    case 'dots': g=`<circle cx="${h-5*k}" cy="${h-4*k}" r="${2.6*k}" fill="#FFFFFF" ${ST}/><circle cx="${h+4*k}" cy="${h-3*k}" r="${2.2*k}" fill="#FFFFFF" ${ST}/><circle cx="${h-1*k}" cy="${h+4*k}" r="${3*k}" fill="#FFFFFF" ${ST}/><circle cx="${h+7*k}" cy="${h+5*k}" r="${1.8*k}" fill="#FFFFFF" ${ST}/>`;break;
+    case 'fruit': g=`<path d="M${P(-8,-2)} C${P(-9,7)} ${P(-2,10)} ${P(0,10)} C${P(3,10)} ${P(9,7)} ${P(8,-2)} C${P(7,-6)} ${P(-7,-6)} ${P(-8,-2)}Z" fill="#E58A84" ${ST}/><path d="M${P(-5,-6)} Q${P(0,-11)} ${P(5,-6)}" fill="none" ${ST}/><circle cx="${h-2*k}" cy="${h+1*k}" r="${1*k}" fill="${C.frost}"/><circle cx="${h+3*k}" cy="${h+3*k}" r="${1*k}" fill="${C.frost}"/>`;break;
+    case 'bowl': g=`<path d="M${P(-10,-2)} L${P(10,-2)} C${P(9,7)} ${P(4,9)} ${P(0,9)} C${P(-4,9)} ${P(-9,7)} ${P(-10,-2)}Z" fill="#FFFDF6" ${ST}/><path d="M${P(-7,-2)} Q${P(0,-8)} ${P(7,-2)}" fill="#F7EEDC" ${ST}/>`;break;
+    case 'flower': for(let i=0;i<5;i++){const a=i*Math.PI*2/5-Math.PI/2;g+=`<circle cx="${(h+Math.cos(a)*5.2*k).toFixed(1)}" cy="${(h+Math.sin(a)*5.2*k).toFixed(1)}" r="${2.7*k}" fill="#FFE9A8" ${ST}/>`;} g+=`<circle cx="${h}" cy="${h}" r="${2.2*k}" fill="${C.caramel}" ${ST}/>`;break;
+    case 'drop': g=`<path d="M${P(0,-9)} C${P(6,-2)} ${P(8,2)} ${P(8,4)} C${P(8,9)} ${P(4,10)} ${P(0,10)} C${P(-4,10)} ${P(-8,9)} ${P(-8,4)} C${P(-8,2)} ${P(-6,-2)} ${P(0,-9)}Z" fill="#F3C470" ${ST}/>`;break;
+  }
+  return `<svg viewBox="0 0 ${z} ${z}" width="${z}" height="${z}" aria-hidden="true"><circle cx="${h}" cy="${h}" r="${z*0.46}" fill="${it.c}" ${ST}/>${g}</svg>`;
+}
+function dishIcon(rid,size){
+  const z=size||34,k=z/40,h=z/2,W=`stroke="${C.cocoa}" stroke-width="${2.1*k}" stroke-linecap="round" stroke-linejoin="round"`;
+  const P=(x,y)=>`${(h+x*k).toFixed(1)},${(h+y*k).toFixed(1)}`;
+  let g='';
+  if(rid==='pudding') g=`<path d="M${P(-10,2)} C${P(-10,-8)} ${P(10,-8)} ${P(10,2)} C${P(10,8)} ${P(-10,8)} ${P(-10,2)}Z" fill="#F0BE72" ${W}/><ellipse cx="${h}" cy="${h+5*k}" rx="${13*k}" ry="${3*k}" fill="${C.frost}" ${W}/><path d="M${P(-7,-5)} Q${P(0,-9)} ${P(7,-5)}" fill="none" ${W}/>`;
+  else if(rid==='salt') g=`<rect x="${h-10*k}" y="${h-6*k}" width="${20*k}" height="${14*k}" rx="${4*k}" fill="#D89A4E" ${W}/><circle cx="${h-5*k}" cy="${h-1*k}" r="${1.5*k}" fill="${C.frost}"/><circle cx="${h+2*k}" cy="${h+2*k}" r="${1.5*k}" fill="${C.frost}"/><circle cx="${h+6*k}" cy="${h-3*k}" r="${1.5*k}" fill="${C.frost}"/>`;
+  else if(rid==='mille') g=`<rect x="${h-10*k}" y="${h-6*k}" width="${20*k}" height="${4*k}" rx="${2*k}" fill="#EFCB9A" ${W}/><rect x="${h-9*k}" y="${h-1*k}" width="${18*k}" height="${4*k}" rx="${2*k}" fill="#FFF1DC" ${W}/><rect x="${h-10*k}" y="${h+4*k}" width="${20*k}" height="${4*k}" rx="${2*k}" fill="#EFCB9A" ${W}/><circle cx="${h+6*k}" cy="${h-8*k}" r="${2.5*k}" fill="${C.peach}" ${W}/>`;
+  else if(rid==='osman') g=`<rect x="${h-10*k}" y="${h-7*k}" width="${20*k}" height="${15*k}" rx="${4*k}" fill="#F7EEDC" ${W}/><circle cx="${h-4*k}" cy="${h-2*k}" r="${2*k}" fill="${C.caramel}"/><circle cx="${h+4*k}" cy="${h+2*k}" r="${2*k}" fill="${C.caramel}"/><circle cx="${h+5*k}" cy="${h-4*k}" r="${1.6*k}" fill="${C.caramel}"/>`;
+  else g=`<circle cx="${h}" cy="${h}" r="${9*k}" fill="${C.peach}" ${W}/>`;
+  return `<svg viewBox="0 0 ${z} ${z}" width="${z}" height="${z}" aria-hidden="true">${g}</svg>`;
+}
+
+/* ---------- 菜谱：页号沿用设定锚定的显形区间 ---------- */
+const RECIPES = [
+  {id:'pudding',name:'焦糖布丁',page:1, B:12,ing:['egg','milk','caramel'],col:'#E8A05C'},
+  {id:'salt',   name:'海盐焦糖',page:4, B:17,ing:['caramel','salt','cream','egg'],col:'#D89A4E'},
+  {id:'mille',  name:'千层酥',  page:12,B:23,ing:['dough','butter','frost','berry'],col:'#EFCB9A'},
+  {id:'osman',  name:'桂花糕',  page:53,B:29,ing:['rice','osmanthus','honey','frost'],col:'#F2C86B'}
+];
+const RANKS = ['无勺','铜勺','银勺','琉璃勺','云顶勺'];
+const GUESTS = [
+  {n:'豆豆',c:'#F2CE72',e:'◕'},
+  {n:'周伯',c:'#A08D78',e:'◡'},
+  {n:'街坊阿姨',c:'#F3BFC0',e:'◠'},
+  {n:'邮差小哥',c:'#84A6BB',e:'◔'},
+  {n:'放学的孩子',c:'#89A578',e:'◕'},
+  {n:'隔壁掌柜',c:'#C3A2BE',e:'◡'}
+];
+const CREW = [
+  {n:'麦小满',c:'#E8A05C',img:ASSET.char},
+  {n:'糖老书',c:'#E5CF9E'},{n:'豆豆',c:'#F2CE72'},{n:'周伯',c:'#A08D78'},
+  {n:'雷千层',c:'#84A6BB'},{n:'顾苦',c:'#89A578'},{n:'沈如意',c:'#C3A2BE'}
+];
+
+/* ---------- 剧情节点：每个都绑定可观测经营量（R5 / R6） ---------- */
+const STORY = {
+  'intro':{slot:'G1',tag:'G1 开门钩子',title:'0-1 · 捡到一本书，先开个店',trigger:'开局 · 首次开门',
+    lines:[['糖老书','「捡到我的时候，你连焦糖和酱油都分不清。」'],
+           ['麦小满','「今天不一样！我买了鸡蛋、牛奶，还有……」'],
+           ['糖老书','「……那我们先从别把蛋壳放进去开始。」']],
+    effect:'今天只卖焦糖布丁：3 个食材、1 位客人、全手动（A = 0%）。点顾客 → 按序点食材 → 提交。',apply(){}},
+  '0-5':{slot:'G3',tag:'T1 经营里程碑',title:'0-5 · 第 1 页长出糖霜',trigger:'首次完成一局营业',
+    lines:[['糖老书','「……这一炉，勉强能算个东西。」'],['麦小满','「才一页！还有一百页呢！」']],
+    effect:'第 1 页学成 · 显形仪式建立',apply(){learn('pudding',true)}},
+  '1-4':{slot:'G2',tag:'T2 解锁特定点心',title:'1-4 · 顾苦把糖罐换成了盐',trigger:'累计出餐 3 单（V1 干扰首次命中）',
+    lines:[],effect:'本单点击步数 +1 · 「海盐焦糖」页显形',apply(){reveal('salt')}},
+  '1-7':{slot:'G3',tag:'T3 段位评定',title:'1-7 · 铜勺',trigger:'累计出餐 8 单',
+    lines:[['周伯','「……再来一块。」'],['糖老书','「他这辈子没夸过第二家。」'],['麦小满','「那我是不是……」']],
+    effect:'铜勺 · 第 2 页显形 · 开放首个员工岗位槽（P4）',apply(){S.rankIdx=1;S.staffSlot=1;reveal('salt')}},
+  '1-3':{slot:'G1',tag:'T4 自动化与队伍',title:'1-3 · 沈如意来应聘',trigger:'首位员工上岗',
+    lines:[['沈如意','「我算账很快，真的。」'],['麦小满','「你为什么戴着墨镜？」'],['沈如意','……「防晒。」']],
+    effect:'备料岗开始自动接管已学会菜品的固定步骤（A 20%）',apply(){}},
+  '2-6':{slot:'G3',tag:'T3 段位评定',title:'2-6 · 平局',trigger:'累计出餐 14 单',
+    lines:[['雷千层','「一千零二十四层，你只叠了九百。」'],['周伯','（默默把「好吃」票推过去）'],['糖老书','「平局也算赢一半。」']],
+    effect:'银勺 · 第 12 页千层酥显形 · 3 位顾客并行 · 设备可升 L2',apply(){S.rankIdx=2;reveal('mille');S.concurrency=3}},
+  '3-3':{slot:'G3',tag:'T4 自动化与队伍',title:'3-3 · 摘星封炉扣书',trigger:'累计出餐 18 单',
+    lines:[['沈如意','「账本我先带走，别找我。」'],['顾苦','「……我什么都没干啊。」'],['糖老书','「书被扣了。今天开始，全靠你的手。」']],
+    effect:'下一局：员工离岗 / 设备停机 / 菜谱置灰 / A 归零（唯一一次倒退）',
+    apply(){S.leaveNextDay=true}},
+  '3-6':{slot:'G3',tag:'T5 异常经营事件',title:'3-6 · 顾苦那袋糖',trigger:'剥离局结束',
+    lines:[['顾苦','「……我带了袋糖回来。别说是我拿的。」'],['麦小满','「那今天这炉，一起？」']],
+    effect:'临时帮工回归 · 自动化率首次回升 · 下一局进入无配方期（V2）',
+    apply(){S.staff.prep=true;S.noRecipeNextDay=true}},
+  '4-1':{slot:'G1',tag:'T2 / V2',title:'4-1 · 三十天不许用菜谱',trigger:'V2 无配方规则态开启',
+    lines:[['糖老书','「字我藏起来了。」'],['麦小满','「那我怎么知道该点哪个？」'],['糖老书','「……第三格。我什么都没说。」']],
+    effect:'食材名称与配方提示隐藏，只能凭记忆点选；设备不显示名称提示',apply(){}},
+  '4-7':{slot:'G3',tag:'T3 段位评定',title:'4-7 · 条例加了一行「谁在吃」',trigger:'累计出餐 24 单',
+    lines:[['周伯','「我是糖勺榜的人。」'],['雷千层','「……条例里没有『好吃』这一项。」'],['周伯','「现在有了。」']],
+    effect:'累计好评率进入评定公式 · 琉璃勺 · 第 53 页桂花糕显形 · 菜谱归还',
+    apply(){S.rankIdx=3;reveal('osman');S.ratingIncludesGood=true;S.confiscated=false}},
+  '5-234':{slot:'G3',tag:'T4 三次入队',title:'5-2 / 5-3 / 5-4 · 三个人来帮少点几下',trigger:'累计出餐 30 单',
+    lines:[['雷千层','「我只是来校准火候。」'],['顾苦','「鸽子比我乖，真的。」'],['沈如意','「账我重新算过了。今天不累。」']],
+    effect:'练习 / 提交 / 结算三条自动化线接通 · A 跃升至 70% · 七人同框',
+    apply(){S.joined=true;S.staff.prep=true;S.staff.serve=true;S.staff.cashier=true;S.device=Math.max(S.device,3)}},
+  '6-3':{slot:'G3',tag:'V4 自由炉',title:'6-3 · 因为你还想再做一炉',trigger:'玩家主动关闭全部自动化后再烤一炉',
+    lines:[['麦小满','「今天不排名、不算钱。」'],['糖老书','「那一百零一页，写什么？」'],['麦小满','「就写这个。」']],
+    effect:'第 101 页显字 · 全员同框 · 主线闭环',apply(){S.ending=true}}
+};
+
+/* ---------- 状态 ---------- */
+const SAVE_KEY='joyful_kitchen_demo_v1';
+let S=null, tickTimer=null, audioCtx=null, uid=0, bubbleTimer=null, toastTimer=null, overlayMode='';
+
+function newState(){
+  return {
+    day:1,phase:'title',coins:0,gross:0,dayGross:0,rankIdx:0,
+    served:0,dayServed:0,dayLost:0,perfect:0,good:0,mid:0,bad:0,lost:0,
+    recent:[],noPerfectStreak:0,failStreak:0,
+    recipes:RECIPES.map(r=>({...r,M:0,revealed:r.id==='pudding',learned:false,perfect20:0,recent:[]})),
+    staff:{prep:false,serve:false,cashier:false},staffSlot:0,device:1,
+    concurrency:1,dayOrders:6,onLeave:false,leaveNextDay:false,confiscated:false,
+    noRecipe:false,noRecipeNextDay:false,noRecipeHinted:false,
+    interferenceDone:false,pendingInterference:false,joined:false,freeStove:false,
+    ratingIncludesGood:false,ending:false,strikeActive:false,
+    triggered:{},queueG1:[],queueG3:[],storyLog:[],
+    customers:[],activeId:null,progress:[],autoFilled:0,benchKeys:[],
+    lastLedger:null,log:[],sound:true,practiceDone:false,investDone:false
+  };
+}
+const rec = id => S.recipes.find(r=>r.id===id);
+const revealed = () => S.recipes.filter(r=>r.revealed);
+const goodRate = () => {const n=S.good+S.mid+S.bad;return n?S.good/n:0};
+function reveal(id){const r=rec(id);if(r&&!r.revealed){r.revealed=true;addLog(`第 ${r.page} 页显形：${r.name}（显形 ≠ 学会）`)}}
+function learn(id,silent){const r=rec(id);if(r&&!r.learned){r.learned=true;addLog(`《${r.name}》首次做出，页学成并长糖霜插图`);if(!silent)queueLearnStory('learn:'+id)}}
+function addLog(t){S.log.unshift(`第 ${S.day} 天 · ${t}`);if(S.log.length>60)S.log.length=60}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...S,customers:[],activeId:null,progress:[],phase:S.phase==='open'?'title':S.phase}))}catch(e){}}
+function hasSave(){try{return !!localStorage.getItem(SAVE_KEY)}catch(e){return false}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(!d||!d.recipes)return false;
+  S={...newState(),...d};S.customers=[];S.activeId=null;S.progress=[];S.phase='title';return true}catch(e){return false}}
+
+/* ---------- 数值模型（与玩法文档 3.1 / 3.2 / 3.3 一致） ---------- */
+function pPerfect(M){return clamp(0.05+0.0055*M,0.05,0.60)}
+function pFail(M){return clamp(0.20-0.0018*M,0.02,0.20)}
+function rollQuality(M){
+  if(S.noPerfectStreak>=8) return 'perfect';            // 保底 N=8（demo 调档）
+  const p=pPerfect(M),f=pFail(M),r=Math.random();
+  if(r<p)return 'perfect';if(r<p+f)return 'fail';return 'normal';
+}
+const QOF={perfect:1.5,normal:1.0,fail:0.5};
+function autoRate(){
+  if(S.freeStove||S.onLeave||S.confiscated)return 0;
+  let r=0;
+  if(S.staff.prep)r+=.20;
+  if(S.device>=2)r+=.20;
+  if(S.device>=3)r+=.10;
+  if(S.staff.serve)r+=.10;
+  if(S.staff.cashier)r+=.10;
+  if(S.joined)r+=.30;
+  return clamp(r,0,.70);
+}
+function autoSteps(n){return Math.floor(n*autoRate())}
+function P0(steps){return (6+2.6*steps)*(1-0.05*S.rankIdx)}
+
+/* ---------- 声音（WebAudio 合成，无外部资源） ---------- */
+function beep(freq,dur,type,vol,delay){
+  if(!S||!S.sound)return;
+  try{
+    if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const t=audioCtx.currentTime+(delay||0),o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type=type||'sine';o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||.09,t+.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+(dur||.1));
+    o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+(dur||.1)+.02);
+  }catch(e){}
+}
+const sfx={
+  tap(){beep(620,.07,'triangle',.06)},
+  ok(){beep(760,.09,'sine',.07);beep(1040,.12,'sine',.06,.07)},
+  coin(){beep(880,.08,'square',.045);beep(1320,.13,'sine',.05,.07)},
+  perfect(){beep(660,.12,'sine',.07);beep(880,.12,'sine',.07,.09);beep(1180,.24,'sine',.08,.18)},
+  fail(){beep(400,.14,'triangle',.06);beep(280,.2,'triangle',.05,.1)},
+  leave(){beep(340,.13,'sine',.05);beep(240,.2,'sine',.045,.1)},
+  story(){beep(520,.1,'sine',.05);beep(700,.14,'sine',.05,.1)}
+};
+
+/* ---------- 通用 UI ---------- */
+function setBG(url,soft){
+  $('#bg').style.backgroundImage=`url("${url}")`;
+  $('#veil').classList.toggle('soft',!!soft);
+}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===id))}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>e.classList.remove('on'),1500)}
+function bubble(html,ms){
+  const e=$('#bubble');e.innerHTML=html;e.classList.add('on');clearTimeout(bubbleTimer);
+  bubbleTimer=setTimeout(()=>e.classList.remove('on'),ms||2600);
+}
+function fxWord(t,cls){
+  const e=document.createElement('div');e.className=cls||'bigword';e.textContent=t;$('#fx').appendChild(e);
+  setTimeout(()=>e.remove(),1200);
+}
+function fxSparks(n){
+  const box=$('#fx'),r=box.getBoundingClientRect();
+  for(let i=0;i<(n||14);i++){
+    const s=document.createElement('div');s.className='spark';
+    s.style.left=(r.width*.2+Math.random()*r.width*.6)+'px';
+    s.style.top=(r.height*.42+Math.random()*60)+'px';
+    s.style.animationDelay=(Math.random()*.25)+'s';box.appendChild(s);setTimeout(()=>s.remove(),1500);
+  }
+}
+function fxCoin(txt){
+  const e=document.createElement('div');e.className='coinfly';e.textContent=txt;
+  e.style.left='50%';e.style.top='58%';$('#fx').appendChild(e);setTimeout(()=>e.remove(),1050);
+}
+function avatar(name,size){
+  const c=CREW.find(x=>x.n===name);
+  if(c&&c.img)return `<img src="${c.img}" alt="${name}" style="width:${size||42}px;height:${size||42}px;border-radius:50%;border:3px solid ${C.cocoa};object-fit:cover">`;
+  return `<span style="display:flex;width:${size||42}px;height:${size||42}px;border-radius:50%;border:3px solid ${C.cocoa};background:${c?c.c:C.peach};align-items:center;justify-content:center;font-size:15px;font-weight:800">${name.slice(0,1)}</span>`;
+}
+function renderHUD(){
+  $('#hudRank').textContent=S.freeStove?'自由炉':RANKS[S.rankIdx];
+  $('#hudCoins').textContent=S.coins;
+  $('#hudAuto').textContent=Math.round(autoRate()*100)+'%';
+  $('#autoFill').style.width=Math.round(autoRate()*100)+'%';
+  $('#soundBtn').classList.toggle('off',!S.sound);
+  $('#soundBtn').textContent=S.sound?'♪':'×';
+}
+function renderDock(){
+  const d=$('#dock'),p=S.phase;
+  if(p==='title'){
+    d.innerHTML=`<span class="hintline">经营是主体，剧情由经营长出来。</span>
+      ${hasSave()?'<button class="btn sm sec" data-act="continue">继续</button>':''}
+      <button class="btn sm" data-act="start">开始试营业</button>`;
+  }else if(p==='open'){
+    d.innerHTML=`<span class="hintline" id="dockHint">选顾客 → 按序点食材 → 提交</span>
+      ${S.joined&&!S.freeStove?'<button class="btn sm sec" data-act="free-stove">自由炉</button>':''}
+      <button class="btn sm sec" data-act="close-shop">打烊</button>`;
+  }else if(p==='settle'){
+    d.innerHTML=`<span class="hintline">收入 − 原料 − 工资 − 维护 = 可支配余额</span>
+      <button class="btn sm" data-act="settle-next">去投资 →</button>`;
+  }else if(p==='invest'){
+    d.innerHTML=`<span class="hintline">雇人 / 升设备只减点击，不提高完美率（P3）</span>
+      <button class="btn sm" data-act="invest-next">去练习 →</button>`;
+  }else if(p==='practice'){
+    d.innerHTML=`<span class="hintline">练习只提升熟练度，金币买不到 M</span>
+      <button class="btn sm" data-act="practice-next">收工 →</button>`;
+  }else if(p==='ending'){
+    d.innerHTML=`<span class="hintline">《一百零一页》· 全员同框</span>
+      <button class="btn sm sec" data-act="reset">再开一局</button>`;
+  }else d.innerHTML='';
+}
+
+/* ---------- 标题页 ---------- */
+function renderTitle(){
+  setBG(ASSET.s3,false);
+  $('#v-title').innerHTML=`
+    <div class="hero panel">
+      <p class="logo">一勺<span>糖</span></p>
+      <p class="eng">A SPOON OF SUGAR · PLAYABLE SLICE</p>
+      <img src="${ASSET.char}" alt="麦小满">
+      <p class="book">《欢闹厨房》· 玩法流程设计 v2.0 可玩垂直切片</p>
+      <p class="desc">捡到一本<span class="tagline"><em>《一百零一页》</em></span>之后，<br>
+        麦小满决定先开一家甜品店。<br>
+        <em>点食材</em> → <em>递给客人</em> → <em>赚金币</em> → <em>雇人升设备</em> → <em>练一道</em></p>
+      <button class="btn wide" data-act="start">开门营业</button>
+      ${hasSave()?'<button class="btn wide sec" style="margin-top:8px" data-act="continue">继续上次（第 '+((JSON.parse(localStorage.getItem(SAVE_KEY)||'{}').day)||1)+' 天）</button>':''}
+      <div class="mini-legend">
+        <span>完美率 = 0.05 + 0.0055M</span><span>收益 = B × Q × (0.5+0.5p)</span>
+        <span>自动化 ≤ 70%</span><span>失败不扣金币</span>
+      </div>
+      <p class="muted" style="margin-top:12px">点顶栏 ☰ 查看「设计对照」：每条机制、每处 demo 调档值都列得出来。</p>
+    </div>`;
+  renderDock();
+}
+
+/* ---------- 营业：顾客 ---------- */
+function guestFace(g){
+  return `<div class="face" style="background:${g.c}">${g.e}</div>`;
+}
+function spawnCustomer(){
+  if(S.dayServed+S.dayLost+S.customers.length>=S.dayOrders)return;
+  if(S.customers.length>=S.concurrency)return;
+  const pool=revealed().filter(r=>!S.freeStove?true:r.id==='pudding');
+  const r=rnd(pool.length?pool:revealed());
+  let ing=r.ing.slice(),firstTry=!r.learned;
+  // V1 干扰：第一局第 3 位顾客，糖罐换盐 → 真实增加一次点击
+  if(!S.interferenceDone&&S.served+S.dayServed>=2&&!S.freeStove){
+    ing.splice(Math.min(2,ing.length),0,'salt');
+    S.interferenceDone=true;
+    firstTry=false;
+    queueStory('1-4');
+  }
+  const P0v=P0(ing.length);
+  const c={id:++uid,guest:rnd(GUESTS),rid:r.id,ing,P0:P0v,remain:P0v,firstTry,disturbed:ing.length>r.ing.length,auto:0,el:null};
+  S.customers.push(c);
+  renderCustomers();
+  if(c.disturbed)bubble('<b>顾苦</b>：「我就想借点糖……」　这单 +1 步；将错就错，<b>「海盐焦糖」页显形</b>（T2 剧情回喂经营）。',3400);
+}
+function renderCustomers(){
+  const box=$('#custList');
+  box.innerHTML=S.customers.map(c=>{
+    const r=rec(c.rid),pct=clamp(c.remain/c.P0,0,1);
+    const cls=pct<.3?'low':pct<.6?'half':'';
+    return `<div class="cust ${S.activeId===c.id?'sel':''}" data-id="${c.id}" data-act="pick-cust">
+      ${guestFace(c.guest)}
+      <div class="info">
+        <div class="who">${c.guest.n}${c.firstTry?'<span class="first">首次试做</span>':''}${c.disturbed?'<span class="first" style="background:'+C.caramel+'">糖罐被换了</span>':''}</div>
+        <div class="dish">${dishIcon(r.id,26)} ${r.name}</div>
+        <div class="pat ${cls}"><span class="clock">⌛</span><div class="track"><i style="width:${(pct*100).toFixed(1)}%"></i></div><span class="pct">${Math.round(pct*100)}%</span></div>
+      </div>
+      <span class="emoji">${pct<.3?'😵':pct<.6?'😟':'😊'}</span>
+    </div>`;
+  }).join('') || '<div class="panel muted" style="text-align:center">暂时没有客人，稍等一下……</div>';
+  updatePatienceBars();
+}
+function updatePatienceBars(){
+  if(S.phase!=='open'||S.freeStove)return;
+  document.querySelectorAll('.cust').forEach(node=>{
+    const c=S.customers.find(x=>x.id===Number(node.dataset.id));if(!c)return;
+    const pct=clamp(c.remain/c.P0,0,1),pat=node.querySelector('.pat'),bar=node.querySelector('.track i'),p=node.querySelector('.pct');
+    pat.classList.toggle('low',pct<.3);pat.classList.toggle('half',pct>=.3&&pct<.6);
+    bar.style.width=(pct*100).toFixed(1)+'%';p.textContent=Math.round(pct*100)+'%';
+    node.querySelector('.emoji').textContent=pct<.3?'😵':pct<.6?'😟':'😊';
+  });
+}
+
+/* ---------- 营业：食材台 ---------- */
+function pickCustomer(id){
+  const c=S.customers.find(x=>x.id===id);if(!c)return;
+  S.activeId=id;S.progress=[];S.autoFilled=0;
+  S.benchKeys=buildBenchKeys(c);
+  renderCustomers();renderBench();
+  // 自动接管：只接已学会菜品的固定步骤，界面仍显示「自动完成」（P5 可见性）
+  if(!S.freeStove&&rec(c.rid).learned&&!c.disturbed){
+    const n=autoSteps(c.ing.length);
+    if(n>0){
+      S.activeId=id;
+      for(let i=0;i<n;i++)S.progress.push({k:c.ing[i],auto:true});
+      S.autoFilled=n;
+      renderBench();
+      toast(`备料岗自动完成 ${n} 步 · 还得自己点剩下 ${c.ing.length-n} 步`);
+    }
+  }
+}
+function buildBenchKeys(c){
+  let keys=[...new Set(c.ing)];
+  if(S.rankIdx>=2&&!S.freeStove){
+    const extra=Object.keys(ING).filter(k=>!keys.includes(k));
+    if(extra.length)keys.push(rnd(extra));   // 一枚「隔壁桌的」干扰食材
+  }
+  return shuffle(keys);
+}
+function renderBench(){
+  const box=$('#bench'),c=S.customers.find(x=>x.id===S.activeId);
+  if(!c){
+    box.innerHTML=`<div class="head">🍳 后厨食材台<span class="step">S1 · P1</span></div>
+      <div class="muted" style="padding:14px 4px;text-align:center;line-height:1.8">
+        先点上面任意一张顾客卡，<br>再按配方顺序点食材，最后点「提交给顾客」。<br>
+        <span style="opacity:.7">（员工接管的步骤会标「自动」，但提交永远要你自己点）</span></div>`;
+    $('#shopTip').innerHTML='<b>操作链</b>：选顾客 → 按序点食材 → 提交。点错可以撤销，不扣耐心。';
+    $('#shopTip').className='tip-strip';
+    return;
+  }
+  const r=rec(c.rid),need=c.ing.length,done=S.progress.length;
+  const hint=S.noRecipe
+    ? c.ing.map((k,i)=>`<span class="q ${i<done?'done':''}">?</span>`).join('')
+    : c.ing.map((k,i)=>`<span class="${i<done?'done':''}">${ING[k].n}${i<need-1?' → ':''}</span>`).join('');
+  $('#shopTip').innerHTML=S.freeStove
+    ? '<b>V4 自由炉</b>：金币、耐心、评分、全部自动化都关掉了。只留手动一炉，全员在场。'
+    : S.noRecipe
+    ? '<b>V2 无配方</b>：名称被藏起来了，凭手感点。糖老书说：「第三格，我什么都没说。」'
+    : (c.disturbed?'<b>V1 干扰</b>：糖罐被换成盐，这单要多点一步，配方已临时改写。':'<b>提示</b>：按配方顺序点食材；耐心越低，收益与评价越低。完美会强制好评。');
+  $('#shopTip').className='tip-strip'+(S.noRecipe||S.freeStove?' gray':'');
+  const slots=c.ing.map((k,i)=>`<div class="slot ${i<done?(S.progress[i]&&S.progress[i].auto?'auto':'ok'):''}">${i<done?'✓':i+1}</div>`).join('<span class="arrow">·</span>');
+  const autoKeys=S.progress.filter(p=>p.auto).map(p=>p.k);
+  const ingBtns=S.benchKeys.map(k=>{
+    const used=S.progress.filter(p=>p.k===k).length, need=c.ing.filter(x=>x===k).length;
+    return `<button class="ing ${autoKeys.includes(k)?'auto':''} ${used>=need?'picked':''}" data-act="tap-ing" data-key="${k}">
+      ${ingIcon(k,38)}<span class="nm">${S.noRecipe?'???':ING[k].n}</span></button>`;
+  }).join('');
+  const M=r.M,pp=pPerfect(M);
+  box.innerHTML=`
+    <div class="head">🍳 后厨食材台<span class="step">${done} / ${need} 步</span></div>
+    <div class="hint">${S.noRecipe?'<b>配方：?</b>　':'<b>配方：</b>'}${hint}</div>
+    <div class="ing-grid">${ingBtns}</div>
+    <div class="chosen">${slots}</div>
+    <div class="acts">
+      <button class="btn sm sec" data-act="undo" ${done?'':'disabled'}>↩ 撤销</button>
+      <button class="btn sm grow" data-act="submit" ${done===need?'':'disabled'}>提交给 ${c.guest.n} →</button>
+    </div>
+    <div class="mastery">
+      <div class="line"><span><b>${r.name}</b> 熟练度 M</span><span>完美率 ${(pp*100).toFixed(1)}% ｜ 失手率 ${(pFail(M)*100).toFixed(1)}%</span></div>
+      <div class="mbar"><i style="width:${M}%"></i></div>
+      <div class="foot"><span>M = ${M.toFixed(1)} / 100（金币买不到）</span><span>近 20 单完美 ${r.perfect20} 次 ｜ 保底 ${Math.max(0,8-S.noPerfectStreak)} 单</span></div>
+    </div>`;
+}
+function tapIng(key){
+  const c=S.customers.find(x=>x.id===S.activeId);
+  if(!c){toast('先点一张顾客卡');return}
+  const idx=S.progress.length;
+  if(idx>=c.ing.length){toast('已经点齐了，该提交了');return}
+  const want=c.ing[idx];
+  if(key!==want){
+    sfx.fail();
+    const btn=document.querySelector(`.ing[data-key="${key}"]`);
+    if(btn){btn.classList.add('wrong');setTimeout(()=>btn.classList.remove('wrong'),320)}
+    if(S.noRecipe&&!S.noRecipeHinted){
+      S.noRecipeHinted=true;
+      bubble('<b>糖老书</b>：「……是那个圆的。我可什么都没说。」',2400);
+    }else toast(`下一步该点「${ING[want].n}」`);
+    return;
+  }
+  S.progress.push({k:key,auto:false});sfx.tap();renderBench();
+  if(S.progress.length===c.ing.length)sfx.ok();
+}
+function undoStep(){
+  if(!S.progress.length)return;
+  const last=S.progress[S.progress.length-1];
+  if(last.auto){toast('自动完成的步骤不用撤');return}
+  S.progress.pop();sfx.tap();renderBench();
+}
+
+/* ---------- 提交与结算（五步顺序，唯一） ---------- */
+function submitDish(){
+  const c=S.customers.find(x=>x.id===S.activeId);
+  if(!c||S.progress.length!==c.ing.length)return;
+  // V4 自由炉：关闭金币 / 耐心 / 评分 / 全部自动化，这一炉不产出任何数值
+  if(S.freeStove){
+    sfx.perfect();fxSparks(16);fxWord('自 己 烤 的');
+    bubble('<b>麦小满</b>：「故意焦一角。」　这一炉不排名、不算钱、不评分。',2800);
+    removeCustomer(c.id);S.activeId=null;S.progress=[];
+    finishFreeStove();return;
+  }
+  const r=rec(c.rid);
+  const q=rollQuality(r.M);                                  // 1 判品质
+  const p=clamp(c.remain/c.P0,0,1);                          // 2 锁存耐心
+  const gain=Math.round(r.B*QOF[q]*(0.5+0.5*p));             // 3 Q × T(p)
+  const review=q==='perfect'?'good':q==='fail'?'bad':(p>=.6?'good':p>=.3?'mid':'bad'); // 4 评价档
+  // 5 发放
+  S.dayGross+=gain;S.gross+=gain;S.served++;S.dayServed++;
+  if(review==='good')S.good++;else if(review==='mid')S.mid++;else S.bad++;
+  r.recent.push(q);if(r.recent.length>20)r.recent.shift();
+  r.perfect20=r.recent.filter(y=>y==='perfect').length;
+  if(q==='perfect'){S.perfect++;S.noPerfectStreak=0;S.failStreak=0}
+  else{S.noPerfectStreak++;if(q==='fail')S.failStreak++;else S.failStreak=0}
+  if(q!=='fail'){r.M=clamp(r.M+0.5,0,100);addLog(`出餐《${r.name}》· ${q} · +${gain} 金币`)}
+  else addLog(`出餐《${r.name}》· 失手（材料按成本价返还）· +${gain} 金币`);
+  if(!r.learned)learn(r.id);                                 // 首次成功做出＝页学成
+  if(q==='perfect'){sfx.perfect();fxWord('完 美 ！');fxSparks(18)}
+  else if(q==='fail'){sfx.fail();fxWord('糊 啦 ~');bubble('<b>面团糊脸</b>：客人笑了，材料按成本价返还，笑完接着来。',2400)}
+  else sfx.ok();
+  sfx.coin();fxCoin('+'+gain);
+  if(q!=='fail')toast(`${q==='perfect'?'完美':'普通'} · 好评 +${gain} 金币 · 耐心 ${Math.round(p*100)}%`);
+  else toast(`失手 · 差评 +${gain} 金币（不扣钱）`);
+  removeCustomer(c.id);
+  S.activeId=null;S.progress=[];S.autoFilled=0;
+  checkTriggers();
+  renderHUD();renderDock();updateOrdersBar();
+  afterServiceStep();
+}
+function loseCustomer(c){
+  S.dayLost++;S.lost++;S.failStreak++;
+  sfx.leave();
+  bubble(`<b>${c.guest.n}</b> 等走了。本单收益 0，记一次流失——不扣金币、不掉熟练度（P4）。`,2600);
+  addLog(`${c.guest.n} 耐心归零离场 · 记流失`);
+  removeCustomer(c.id);
+  if(S.activeId===c.id){S.activeId=null;S.progress=[]}
+  checkTriggers();updateOrdersBar();
+  afterServiceStep();
+}
+function removeCustomer(id){
+  S.customers=S.customers.filter(c=>c.id!==id);
+  renderCustomers();
+  if(S.activeId===id){S.activeId=null;S.progress=[];renderBench()}
+}
+function afterServiceStep(){
+  if(S.freeStove){finishFreeStove();return}
+  if(S.dayServed+S.dayLost>=S.dayOrders&&S.customers.length===0){
+    setTimeout(finishDay,650);return;
+  }
+  renderCustomers();renderBench();
+  setTimeout(()=>{if(S.phase==='open'&&!S.freeStove){spawnCustomer();if(S.activeId)renderBench()}},420);
+}
+
+/* ---------- 剧情触发器：全部由可观测经营量派生（R5 / R6） ---------- */
+function queueStory(id){
+  const n=STORY[id];if(!n)return;
+  if(S.triggered[id])return;S.triggered[id]=true;
+  S.storyLog.unshift({id,day:S.day,trigger:n.trigger});
+  if(n.slot==='G2'){bubble(`<b>${n.title}</b>　${n.effect}`,3200);n.apply()}
+  else (n.slot==='G1'?S.queueG1:S.queueG3).push(id);
+}
+function queueLearnStory(key){
+  const id=key.split(':')[1],r=rec(id);if(!r)return;
+  const sid='learn:'+id;if(S.triggered[sid])return;S.triggered[sid]=true;
+  S.queueG3.push(sid);
+  S.storyLog.unshift({id:sid,day:S.day,trigger:`首次成功做出《${r.name}》（T2）`});
+}
+function checkTriggers(){
+  const n=S.served;
+  if(n>=8)queueStory('1-7');
+  if(n>=14)queueStory('2-6');
+  if(n>=18)queueStory('3-3');
+  if(n>=24)queueStory('4-7');
+  if(n>=30)queueStory('5-234');
+  if(S.staff.prep&&!S.triggered['1-3'])queueStory('1-3');
+  if(S.failStreak>=3&&!S.triggered['t5-fail']){
+    S.triggered['t5-fail']=true;
+    bubble('<b>顾苦</b>：「连糊三炉……这回真不是我干的。」',2600);
+  }
+  if(S.dayLost>=2&&!S.triggered['t5-lost']){
+    S.triggered['t5-lost']=true;
+    bubble('<b>糖老书</b>：「走两位也没关系，明天他们还来。」',2600);
+  }
+}
+function playStories(slot,done){
+  const q=slot==='G1'?S.queueG1:S.queueG3;
+  if(!q.length){done();return}
+  const id=q.shift();
+  showStoryCard(id,()=>playStories(slot,done));
+}
+function showStoryCard(id,next){
+  let n=STORY[id];
+  if(id.startsWith('learn:')){
+    const r=rec(id.split(':')[1]);
+    n={slot:'G3',tag:'T2 菜谱解锁特定点心',title:`第 ${r.page} 页 · 长糖霜了`,trigger:`首次成功做出《${r.name}》`,
+      lines:[['糖老书','「……嗯。这一页，算你的了。」'],['麦小满','「那我明天再做一炉！」']],
+      effect:`《${r.name}》学成：进入可制作列表，开始累计熟练度 M`,apply(){}};
+  }
+  if(!n){next();return}
+  n.apply();
+  sfx.story();
+  const lines=n.lines.map(([who,text])=>`<div class="speaker">${avatar(who,42)}<div class="say"><b>${who}</b>${text}</div></div>`).join('');
+  openOverlay('story',`
+    <div class="kicker">${n.slot} 插入口 · ${n.tag}</div>
+    <h2>${n.title}</h2>
+    <p class="muted" style="margin:0 0 10px">触发条件：${n.trigger}　｜　第 ${S.day} 天</p>
+    ${lines||'<div class="muted">（营业中的一句短气泡，不打断操作）</div>'}
+    <div class="story-effect"><b>剧情回喂经营</b>${n.effect}</div>
+    ${n.slot==='G3'&&id==='5-234'?'<button class="btn wide frost" style="margin-bottom:8px" data-act="free-stove">明天想自己再烤一炉（V4 自由炉）</button>':''}
+    <div class="row"><button class="btn sec grow" data-act="story-skip">略过本段</button>
+    <button class="btn grow" data-act="story-next">继续 →</button></div>
+    <p class="muted" style="margin:9px 0 0">主线剧情在下一个开门 / 关门时播放，永远不打断营业（R6）。</p>`);
+  window.__storyNext=next;
+}
+
+/* ---------- 浮层：菜谱 / 设计对照 / 剧情回顾 ---------- */
+function openOverlay(mode,html){
+  overlayMode=mode;$('#modal').innerHTML=html;$('#overlay').classList.add('on');
+}
+function closeOverlay(){overlayMode='';$('#overlay').classList.remove('on')}
+function openBook(){
+  setBG(ASSET.s4,true);
+  const shown=S.recipes.slice();
+  let cells=shown.map(r=>{
+    const cls=S.confiscated?'sealed':r.learned?'learned':r.revealed?'':'blank';
+    const dots=r.learned?`<span class="sugar-dot" style="left:18%;top:14%"></span><span class="sugar-dot" style="right:16%;top:22%;animation-delay:.5s"></span>`:'';
+    return `<div class="page ${cls}">
+      <span class="pn">P.${r.page}</span>${dots}
+      ${r.revealed?dishIcon(r.id,40):'<div style="font-size:22px;opacity:.4">· · ·</div>'}
+      <div class="nm">${S.confiscated?'（扣书）':r.revealed?r.name:'尚未显形'}</div>
+      ${r.revealed&&!S.confiscated?`<div class="mbar"><i style="width:${r.M}%"></i></div>
+        <div class="mm">M ${r.M.toFixed(1)} ｜ 近 20 单完美 ${r.perfect20}</div>
+        <div class="mm" style="color:${r.learned?C.berry:C.cocoa}">${r.learned?'已学成 · 糖霜插图':'显形 ≠ 学会'}</div>`:''}
+      <span class="pn2">${r.id==='pudding'?'1':'·'}</span>
+    </div>`;
+  }).join('');
+  cells+=`<div class="page final"><span class="pn">P.101</span>
+    <div style="font-size:22px">🍮</div><div class="nm">${S.ending?'因为你还想再做一炉':'仍是一片空白'}</div></div>`;
+  for(let i=0;i<2;i++)cells+='<div class="page blank"><div class="nm">· · ·</div></div>';
+  openOverlay('book',`
+    <div class="kicker">S4 ·《一百零一页》</div>
+    <h2>菜谱与熟练度总览</h2>
+    <p class="muted">已显形 ${revealed().length} / 101 页（本原型只排入 4 道可制作点心）。
+    ${S.confiscated?'<b style="color:'+C.berry+'">扣书期：整本置灰并叠封条，熟练度条不可见。</b>':'显形只给题目，首次做出才算学成。'}</p>
+    <div class="bookgrid">${cells}</div>
+    <div class="story-effect" style="margin-top:12px"><b>评价回收口</b>
+      累计好评率 ${(goodRate()*100).toFixed(0)}%${S.ratingIncludesGood?' · 已进入评定公式（4-7 条例松口）':' · 尚未进入评定公式'}；
+      流失 ${S.lost} 位会压低当日评价上限。</div>
+    ${S.phase==='open'?'<p class="muted">营业中翻书，客人可不等你（耐心照常走）。</p>':''}
+    <button class="btn wide" data-act="close-overlay">合上菜谱</button>`);
+}
+function openGuide(){
+  const rows=[
+    ['P1 接单经营','选顾客 → 按序点食材 → 提交','2.2 / 2.3','实际操作链'],
+    ['模型 A','完美率 <code>clamp(.05+.0055M,.05,.60)</code>；失手率 <code>clamp(.20−.0018M,.02,.20)</code>','3.1','逐字实现，含保底 N=8'],
+    ['模型 B','<code>T(p)=.5+.5p</code>；<code>收益=B×Q×T(p)</code>；评价阶梯 .6 / .3','3.2','逐字实现'],
+    ['结算优先级','完美强制好评但耐心系数照常生效（默认方案 A）','3.3','五步顺序固定'],
+    ['耐心归零','离场、收益 0、记流失，不扣金币 / 不掉 M','3.2 / P4','已实现'],
+    ['P2 练习','唯一输出是 M；经营出餐 M+0.5，练习 +8~12','3.1','金币买不到 M'],
+    ['P4/P5 减负','员工 / 设备只接管点击步数，不改 M / 完美率 / B / P0','4.1 / P3','A ≤ 70%'],
+    ['P6 账本','收入 − 原料 − 工资 − 维护；工资与维护是持续 sink','7.1','已实现'],
+    ['P7 段位','铜 / 银 / 琉璃 / 云顶，显形新页与菜单宽度','6.4','按累计出餐量派生'],
+    ['P8 剧情','T1–T5 五类触发器，只用可观测经营量；G1/G2/G3 三插入口','6.2 / R5 / R6','剧情不阻挡营业'],
+    ['V1 干扰','糖罐换盐 → 真实 +1 点击步，必带喜剧落点','5.4','第一局中段'],
+    ['V2 无配方','隐藏名称与配方提示，设备不提示','5.4','剥离回暖后一局'],
+    ['V4 自由炉','关闭金币 / 耐心 / 评分 / 全部自动化','5.4','入队后可主动开启'],
+    ['3-3 剥离','员工离岗、设备停机、S4 置灰、A 归零','4.6','全作唯一一次倒退'],
+    ['三次入队','练习 / 提交 / 结算三条自动化线，A 跃升 70%','4.5 / R3','当场可操作'],
+    ['大团圆','第 101 页显字、七人同框','STORY_BIBLE','结局页']
+  ];
+  openOverlay('guide',`
+    <div class="kicker">玩法流程设计 v2.0 · 原型对照</div>
+    <h2>这一版到底做了什么</h2>
+    <p class="muted">下表逐条对应设计文档章节。所有数值为 <b>demo 调档值</b>，用于跑通手感，不写回《数值调优表》；正式数值需 playtest 验证。</p>
+    <div class="guide">${rows.map(r=>`<div class="growitem">
+      <div class="gt"><b>${r[0]}</b><span>${r[2]}</span></div>
+      <div class="gs">${r[1]}</div><div class="gm">${r[3]}</div>
+    </div>`).join('')}</div>
+    <h3>剧情触发记录（R5：只用可观测经营量）</h3>
+    ${S.storyLog.length?S.storyLog.slice(0,12).map(x=>`<div class="logitem"><b>第 ${x.day} 天</b> · ${STORY[x.id]?STORY[x.id].title:x.id.replace('learn:','学成 · ')}　<span class="muted">${x.trigger}</span></div>`).join(''):'<div class="muted">还没有触发剧情。先做几单看看。</div>'}
+    <h3>经营日志</h3>
+    ${S.log.slice(0,8).map(x=>`<div class="logitem">${x}</div>`).join('')||'<div class="muted">暂无。</div>'}
+    <button class="btn wide" style="margin-top:12px" data-act="close-overlay">返回游戏</button>`);
+}
+
+/* ---------- 一天的流程状态机 ---------- */
+function startDay(){
+  S.phase='title';
+  if(S.leaveNextDay){S.onLeave=true;S.leaveNextDay=false;S.confiscated=true;S.strikeActive=true}
+  else S.onLeave=false;
+  if(S.noRecipeNextDay){S.noRecipe=true;S.noRecipeNextDay=false;S.noRecipeHinted=false}
+  else S.noRecipe=false;
+  S.dayGross=0;S.dayServed=0;S.dayLost=0;S.practiceDone=false;S.investDone=false;
+  S.customers=[];S.activeId=null;S.progress=[];
+  if(S.noRecipe)queueStory('4-1');
+  S.staffSlot=Math.max(S.staffSlot,S.rankIdx>=3?3:S.rankIdx>=2?2:S.rankIdx>=1?1:0);
+  playStories('G1',()=>{
+    if(S.freeStove){beginFreeStove();return}
+    beginService();
+  });
+  renderHUD();
+}
+function beginService(){
+  S.phase='open';setBG(ASSET.s2,false);showView('v-open');
+  const gc=$('#goalCard');if(gc)gc.style.display='';
+  S.dayOrders=clamp(6+S.rankIdx+Math.round(goodRate()*2),4,12);
+  S.concurrency=S.freeStove?1:clamp(1+S.rankIdx,1,3);
+  if(S.joined)S.concurrency=4;
+  $('#shopDay').textContent=`第 ${S.day} 天`+(S.onLeave?' · 封炉':S.noRecipe?' · 无配方':'');
+  renderHUD();renderDock();renderCustomers();renderBench();
+  updateOrdersBar();
+  for(let i=0;i<S.concurrency;i++)spawnCustomer();
+  if(S.onLeave)bubble('<b>3-3 剥离</b>：人走了、炉子停了、书被扣了。今天所有步骤都要自己点。',4000);
+  startTick();
+}
+function updateOrdersBar(){
+  $('#shopOrders').innerHTML=`今日订单 <b>${S.dayServed+S.dayLost}/${S.dayOrders}</b>　营业额 <span class="today-gross">${S.dayGross}</span> 🪙
+    <br><span class="muted">并行 ${S.concurrency} 位 · 自动化 ${Math.round(autoRate()*100)}%</span>`;
+  renderGoal();
+}
+function renderGoal(){
+  const box=$('#goalCard');if(!box)return;
+  const ms=[
+    {n:8,id:'1-7',t:'1-7 铜勺评定 · 开放首个员工岗位槽'},
+    {n:14,id:'2-6',t:'2-6 平局 · 千层酥显形 · 3 位顾客并行'},
+    {n:18,id:'3-3',t:'3-3 摘星封炉扣书 · 自动化归零'},
+    {n:24,id:'4-7',t:'4-7 条例松口 · 桂花糕显形'},
+    {n:30,id:'5-234',t:'5-2/3/4 三人入队 · 三条自动化线接通'}
+  ];
+  const next=ms.find(m=>!S.triggered[m.id]);
+  if(!next){
+    box.innerHTML=`<h2><span class="num">R5</span> 经营里程碑已走完</h2>
+      <p class="tagline">累计出餐 ${S.served} 单，全部主线节点都由经营进度触发过了。<br>
+      ${S.joined?'点底栏「自由炉」，关掉数值与自动化，自己再烤一炉。':''}</p>`;
+    return;
+  }
+  const pct=clamp(S.served/next.n,0,1)*100;
+  box.innerHTML=`<h2><span class="num">R5</span> 下一个经营里程碑</h2>
+    <p class="tagline">累计出餐 <b>${S.served} / ${next.n}</b> 单 → ${next.t}</p>
+    <div style="height:12px;border:2px solid var(--cocoa);border-radius:10px;background:var(--frost);overflow:hidden;margin:7px 0">
+      <i style="display:block;height:100%;width:${pct}%;background:var(--caramel)"></i></div>
+    <p class="muted">主线剧情只由可观测经营量触发，在下一个开门 / 关门时播放，不打断营业（R5 / R6）。</p>`;
+}
+function startTick(){
+  clearInterval(tickTimer);
+  tickTimer=setInterval(()=>{
+    if(S.phase!=='open'||S.freeStove){return}
+    S.customers.forEach(c=>{c.remain=Math.max(0,c.remain-0.1)});
+    updatePatienceBars();
+    for(const c of S.customers.slice()){
+      if(c.remain<=0){loseCustomer(c);if(S.phase!=='open')return}
+    }
+  },100);
+}
+function finishDay(){
+  clearInterval(tickTimer);
+  S.customers=[];S.activeId=null;S.progress=[];
+  S.phase='settle';
+  const labor=(S.staff.prep?1:0)+(S.staff.serve?1:0)+(S.staff.cashier?1:0);
+  const onLeave=S.onLeave;
+  const wages=onLeave?0:labor*6;
+  const upkeep=onLeave?0:(S.device-1)*5;
+  const material=(S.dayServed+S.dayLost)*2;
+  const canPay=S.coins+S.dayGross>=wages+upkeep+material;
+  const net=S.dayGross-material-wages-upkeep;
+  S.lastLedger={gross:S.dayGross,material,wages,upkeep,net,canPay,onLeave};
+  if(!canPay&&labor>0&&!onLeave){
+    bubble('<b>沈如意</b>：「今天工资发不出，我请个假，明天还来。」（不裁员、不扣进度）',3600);
+  }
+  queueStory('0-5');
+  renderSettle();
+}
+function renderSettle(){
+  setBG(ASSET.s2,true);showView('v-settle');renderHUD();renderDock();
+  const L=S.lastLedger;
+  $('#v-settle').innerHTML=`
+    <div class="panel"><h2><span class="num">P6</span> 第 ${S.day} 天 · 打烊账本</h2>
+      <p class="muted">营业额在营业中已逐单跳字；这里扣掉成本，净额入余额。</p>
+      <div class="ledger">
+        <div class="lr"><span>出餐营业额（${S.dayServed} 单）</span><span>+ ${L.gross} 🪙</span></div>
+        <div class="lr minus"><span>原料采购（${S.dayServed+S.dayLost} 单 × 2）</span><span>− ${L.material}</span></div>
+        <div class="lr minus"><span>员工工资${L.onLeave?'（剥离期停收）':''}</span><span>− ${L.wages}</span></div>
+        <div class="lr minus"><span>设备维护${L.onLeave?'（停机）':''}</span><span>− ${L.upkeep}</span></div>
+        <div class="lr total"><span>今日净额</span><span style="color:${L.net>=0?C.cocoa:C.berry}">${L.net>=0?'+':''}${L.net} 🪙</span></div>
+      </div>
+      <p class="note">评价回收口：累计好评率 ${(goodRate()*100).toFixed(0)}% → 次日客流基数；今日流失 ${S.dayLost} 位 → 当日评价上限封顶（系数 [PLACEHOLDER] 待 playtest）；差评只压好评率、不扣金币。</p>
+    </div>
+    <div class="panel"><h2><span class="num">统计</span> 今天手上有多忙</h2>
+      <p class="tagline">服务 ${S.dayServed} 单 · 流失 ${S.dayLost} 位 · 累计完美 ${S.perfect} 次 ·
+      累计出餐 ${S.served} 单 · 好评率 ${(goodRate()*100).toFixed(0)}% · 自动化率 ${Math.round(autoRate()*100)}%</p>
+      <p class="muted">失败不扣金币、不掉熟练度。糊了、走了，都还有笑声兜底（P4）。</p>
+    </div>`;
+  S.coins+=L.net;S.coins=Math.max(0,S.coins);
+  renderHUD();save();
+}
+function renderInvest(){
+  S.phase='invest';setBG(ASSET.s1,true);showView('v-invest');renderHUD();renderDock();
+  const ar=autoRate();
+  const staffCard=(role,name,price,desc,need)=>`
+    <div class="shop-item">
+      <div class="t">${name}<span class="price">${price} 🪙</span></div>
+      <div class="d">${desc}<br><span class="no">不会</span>提高完美率 / 熟练度 / 单价 / 顾客耐心（P3）。</div>
+      ${S.staff[role]?'<div class="owned">✔ 已上岗 · 每局工资 6 🪙（持续 sink）</div>'
+        :`<button class="btn sm" data-act="hire" data-role="${role}" ${(S.coins<price||S.staffSlot<need||S.onLeave)?'disabled':''}>雇佣</button>
+          ${S.staffSlot<need?`<span class="muted"> · 需先升到${need===1?'铜勺':'更高段位'}开放岗位槽</span>`:''}
+          ${S.onLeave?'<span class="muted"> · 剥离期岗位清空</span>':''}`}
+    </div>`;
+  const devPrice=70+(S.device-1)*45;
+  $('#v-invest').innerHTML=`
+    <div class="panel"><h2><span class="num">P4 / P5</span> 把钱花在「少点几下」上</h2>
+      <p class="muted">当前金币 <b>${S.coins} 🪙</b> ｜ 自动化率 <b>${Math.round(ar*100)}%</b> ｜ 上限 70%（A6：排序、投资、新菜首做仍要你决定）。</p>
+      <p class="tagline">雇人与升设备<b>只减负</b>：减少手动点击步数、提高并行顾客数。练习才提高完美率——两条投资必须交替推进。</p>
+    </div>
+    ${staffCard('prep','🍳 备料岗（自动点前 N 个食材）',60,'自动接管已学会菜品的固定步骤；新菜首做、异常订单强制手动。',1)}
+    ${staffCard('serve','🕊 上菜岗（自动选中耐心最低的顾客）',90,'帮你排序，但「提交」永远由你点（P5 决策不消失）。',2)}
+    ${staffCard('cashier','📒 收银岗（账本自动平账）',120,'工资与维护费自动列支，打烊账本不再手算。',3)}
+    <div class="shop-item">
+      <div class="t">🔥 烤炉升级 → L${S.device+1}<span class="price">${devPrice} 🪙</span></div>
+      <div class="d">每级减少 1 个手动步骤 / 缩短出餐等待；<span class="no">不改</span>配方、不显示品质提示。
+        当前 L${S.device}，每局维护费 ${(S.device-1)*5} 🪙（持续 sink）。<br><span class="muted">漏雨屋顶仍然不修（设定红线）。</span></div>
+      ${S.device>=5?'<div class="owned">✔ 已升至 L5 封顶</div>':
+        `<button class="btn sm" data-act="upgrade" ${(S.coins<devPrice||S.onLeave)?'disabled':''}>升级</button>
+         ${S.onLeave?'<span class="muted"> · 剥离期设备停机</span>':''}`}
+    </div>
+    <div class="panel"><p class="muted">「存着」也是合法选择：不投资、不练习，纯缓冲。点右下角「去练习」直接跳过本轮投资。</p></div>`;
+}
+function renderPractice(){
+  S.phase='practice';setBG(ASSET.s4,true);showView('v-practice');renderHUD();renderDock();
+  $('#v-practice').innerHTML=`
+    <div class="panel"><h2><span class="num">P2</span> 打烊后 · 练哪一道</h2>
+      <p class="muted">练习<b>唯一</b>的产出是熟练度 M。金币买原料，但买不到 M（不可作弊铁律）。
+      经营出餐每单只给 M+0.5，练习才给 +8~12。当前金币 <b>${S.coins} 🪙</b>。</p>
+      <p class="tagline">练过的那道，完美概率会明显上去——熟练度条与「近 20 单完美次数」常驻可见（P2）。</p>
+    </div>
+    ${revealed().map(r=>{
+      const cost=8+Math.round(r.B/2);
+      return `<div class="pcard">${dishIcon(r.id,40)}
+        <div class="info"><div class="nm">${r.name} <span class="muted">P.${r.page}</span></div>
+          <div class="pbar"><i style="width:${r.M}%"></i></div>
+          <div class="meta">M ${r.M.toFixed(1)} ｜ 完美率 ${(pPerfect(r.M)*100).toFixed(1)}% ｜ 近 20 单完美 ${r.perfect20} ｜ ${r.learned?'已学成':'显形 ≠ 学会'}</div></div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <button class="btn sm" data-act="practice" data-id="${r.id}" ${(S.coins<cost||S.practiceDone)?'disabled':''}>练习 ${cost}🪙</button>
+          ${S.joined?`<button class="btn sm sec" data-act="delegate" data-id="${r.id}" ${S.practiceDone?'disabled':''}>委托练习</button>`:''}
+        </div></div>`;
+    }).join('')}
+    <div class="panel"><p class="muted">${S.joined?'5-2 雷千层入队：委托练习按他的标准自动累计 M（+50%），但首次学成仍要自己做出（不代替学成）。':'三次入队后可解锁「练习自动化」，现在还没人会替你练。'}</p>
+      <p class="muted">练习产物按低价卖给街坊，返还 3 🪙；练习永远不是开店的前置条件（P1）。</p></div>`;
+}
+function doPractice(id,delegated){
+  const r=rec(id);if(!r||S.practiceDone)return;
+  const cost=delegated?0:8+Math.round(r.B/2);
+  if(S.coins<cost){toast('金币不够买练习原料');return}
+  S.coins-=cost;
+  const gain=Math.max(3,Math.round(12*(1-r.M/120)))*(delegated?1.5:1);
+  r.M=clamp(r.M+gain,0,100);
+  S.coins+=3;
+  S.practiceDone=true;
+  if(!r.learned)learn(r.id);
+  sfx.perfect();fxSparks(10);
+  toast(`《${r.name}》M +${gain.toFixed(1)} → ${r.M.toFixed(1)}　完美率 ${(pPerfect(r.M)*100).toFixed(1)}%`);
+  addLog(`练习《${r.name}》· M +${gain.toFixed(1)}${delegated?'（委托 · 练习自动化）':''}`);
+  renderHUD();renderPractice();save();
+}
+function endPractice(){
+  closeOverlay();
+  if(S.onLeave){
+    S.onLeave=false;S.confiscated=false;S.staff.prep=false;
+    queueStory('3-6');
+  }
+  checkTriggers();
+  playStories('G3',()=>{
+    S.day++;
+    save();
+    startDay();
+  });
+}
+
+/* ---------- V4 自由炉 ---------- */
+function beginFreeStove(){
+  S.phase='open';S.freeStove=true;S.noRecipe=false;S.onLeave=false;S.confiscated=false;
+  S.dayOrders=1;S.dayServed=0;S.dayLost=0;S.dayGross=0;S.customers=[];S.activeId=null;S.progress=[];
+  setBG(ASSET.s1,false);showView('v-open');renderHUD();renderDock();
+  const gc=$('#goalCard');if(gc)gc.style.display='none';
+  $('#shopDay').textContent='终章 · 自由炉';
+  $('#shopTip').innerHTML='<b>V4 自由炉</b>：金币、耐心、评分、全部自动化都关掉了。只留手动一炉，全员在场。';
+  $('#shopTip').className='tip-strip gray';
+  spawnCustomer();renderCustomers();renderBench();
+  $('#dock').innerHTML='<span class="hintline">这一炉不产出任何数值。</span>';
+}
+function finishFreeStove(){
+  clearInterval(tickTimer);
+  queueStory('6-3');
+  playStories('G3',()=>renderEnding());
+}
+function renderEnding(){
+  clearInterval(tickTimer);S.phase='ending';S.ending=true;
+  setBG(ASSET.s3,false);showView('v-ending');renderHUD();renderDock();
+  $('#v-ending').innerHTML=`
+    <div class="ending">
+      <p class="kicker" style="font-size:10px;letter-spacing:2px;opacity:.6">V4 · 自由炉 · 主线闭环</p>
+      <h2>今天不累。</h2>
+      <p class="muted">主角学会了全部菜谱，店里也全自动了，<br>却选择自己动手再烤一炉。故意焦一角的布丁。</p>
+      <img src="${ASSET.pudding}" alt="焦糖布丁" style="width:120px;height:120px;object-fit:contain;margin:6px auto;display:block">
+      <div class="p101">第 101 页显字：<br><b style="font-size:19px">「因为你还想再做一炉。」</b></div>
+      <div class="group">${CREW.map(c=>`<div class="who"><div class="av" style="background:${c.c}">${c.img?`<img src="${c.img}" alt="${c.n}">`:c.n.slice(0,1)}</div>${c.n}</div>`).join('')}</div>
+      <div><span class="stamp">累计出餐 ${S.served} 单</span><span class="stamp">完美 ${S.perfect} 次</span>
+        <span class="stamp">好评率 ${(goodRate()*100).toFixed(0)}%</span><span class="stamp">七人同框</span></div>
+      <p class="muted" style="margin-top:14px">书灵没有散去，变成了菜单本。没有一个人离场。</p>
+      <button class="btn wide sec" style="margin-top:12px" data-act="reset">再开一局</button>
+    </div>`;
+  sfx.perfect();fxSparks(24);save();
+}
+
+/* ---------- 事件总线（统一委托，重建 DOM 不丢事件） ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act]');if(!t)return;
+  const a=t.dataset.act;
+  if(a==='toggle-sound'){S.sound=!S.sound;renderHUD();save();return}
+  if(a==='open-guide'){openGuide();return}
+  if(a==='open-book'){openBook();return}
+  if(a==='close-overlay'){
+    closeOverlay();
+    setBG(S.phase==='open'?ASSET.s2:S.phase==='practice'?ASSET.s4:S.phase==='title'?ASSET.s3:ASSET.s2,false);
+    return;
+  }
+  if(a==='reset'){if(confirm('重新开始一局？当前进度会被清空。')){localStorage.removeItem(SAVE_KEY);resetAll()}return}
+  if(a==='start'){resetAll();return}
+  if(a==='continue'){
+    if(load()){S.phase='title';renderHUD();beginService();}else{toast('没有可继续的进度')}
+    return;
+  }
+  if(a==='story-next'){closeOverlay();const f=window.__storyNext;window.__storyNext=null;if(f)f();return}
+  if(a==='story-skip'){
+    closeOverlay();
+    const f=window.__storyNext;window.__storyNext=null;if(f)f();return;
+  }
+  if(a==='free-stove'){
+    closeOverlay();S.queueG1.length=0;S.queueG3.length=0;
+    window.__storyNext=null;clearInterval(tickTimer);
+    S.customers=[];S.activeId=null;S.progress=[];
+    S.day++;beginFreeStove();return;
+  }
+  if(a==='pick-cust'){pickCustomer(Number(t.dataset.id));return}
+  if(a==='tap-ing'){tapIng(t.dataset.key);return}
+  if(a==='undo'){undoStep();return}
+  if(a==='submit'){submitDish();return}
+  if(a==='close-shop'){
+    if(S.phase!=='open'||S.freeStove)return;
+    clearInterval(tickTimer);S.customers=[];finishDay();return;
+  }
+  if(a==='settle-next'){renderInvest();return}
+  if(a==='invest-next'){renderPractice();return}
+  if(a==='practice-next'){endPractice();return}
+  if(a==='hire'){
+    const role=t.dataset.role,price=role==='prep'?60:role==='serve'?90:120;
+    if(S.coins<price)return;S.coins-=price;S.staff[role]=true;
+    sfx.ok();toast('新员工上岗：下一局开始自动接管');
+    addLog(`雇佣 ${role==='prep'?'备料岗':role==='serve'?'上菜岗':'收银岗'} · −${price} 金币`);
+    queueStory('1-3');renderHUD();renderInvest();save();return;
+  }
+  if(a==='upgrade'){
+    const price=70+(S.device-1)*45;if(S.coins<price||S.device>=5)return;
+    S.coins-=price;S.device++;sfx.ok();toast(`烤炉升到 L${S.device} · 手动步骤 −1`);
+    addLog(`设备升级至 L${S.device} · −${price} 金币`);
+    renderHUD();renderInvest();save();return;
+  }
+  if(a==='practice'){doPractice(t.dataset.id,false);return}
+  if(a==='delegate'){doPractice(t.dataset.id,true);return}
+});
+function resetAll(){
+  clearInterval(tickTimer);closeOverlay();
+  S=newState();try{localStorage.removeItem(SAVE_KEY)}catch(e){}
+  S.phase='title';renderHUD();renderTitle();showView('v-title');save();
+  startDayFlow();
+}
+function startDayFlow(){
+  // 首次开局：先播 G1 开门钩子，再进入营业
+  S.queueG1.push('intro');
+  playStories('G1',()=>beginService());
+}
+
+/* ---------- 原型自检 / 截图入口（仅 ?selftest=1 / ?shot=1 时执行） ---------- */
+function runSelfTest(){
+  const out=[];
+  const ok=(n,c,x)=>out.push((c?'PASS':'FAIL')+' | '+n+(x?' | '+x:''));
+  try{
+    ok('完美率 M=0 → 0.05',Math.abs(pPerfect(0)-0.05)<1e-9,String(pPerfect(0)));
+    ok('完美率 M=100 → 0.60',Math.abs(pPerfect(100)-0.60)<1e-9,String(pPerfect(100)));
+    ok('失手率 M=0 → 0.20',Math.abs(pFail(0)-0.20)<1e-9,String(pFail(0)));
+    ok('失手率 M=100 → 0.02',Math.abs(pFail(100)-0.02)<1e-9,String(pFail(100)));
+    ok('收益 B12 Q1.5 p1 → 18',Math.round(12*1.5*(0.5+0.5*1))===18);
+    ok('收益 B12 Q0.5 p0 → 3',Math.round(12*0.5*(0.5+0))===3);
+    resetAll();S.queueG1.length=0;closeOverlay();beginService();
+    ok('开局生成顾客',S.customers.length>0,'共 '+S.customers.length+' 位');
+    const c=S.customers[0];pickCustomer(c.id);
+    ok('可选中顾客',S.activeId===c.id);
+    c.ing.forEach((k,i)=>{if(S.progress.length<=i)tapIng(k)});
+    ok('按序点齐食材',S.progress.length===c.ing.length,S.progress.length+'/'+c.ing.length);
+    const before=S.served;submitDish();
+    ok('提交后出餐 +1',S.served===before+1);
+    ok('营业额大于 0',S.dayGross>0,'+'+S.dayGross);
+    ok('首次做出即学成',rec('pudding').learned===true);
+    S.phase='selftest';clearInterval(tickTimer);
+    const coins0=S.coins,m0=rec('pudding').M;
+    S.customers=[{id:9999,guest:GUESTS[0],rid:'pudding',ing:['egg','milk','caramel'],P0:10,remain:0,firstTry:false,disturbed:false}];
+    loseCustomer(S.customers[0]);
+    ok('耐心归零记流失',S.lost===1);
+    ok('流失不扣金币',S.coins===coins0);
+    ok('流失不掉熟练度',rec('pudding').M===m0);
+    S.phase='open';finishDay();
+    ok('账本已生成',!!S.lastLedger,'净额 '+S.lastLedger.net);
+    ok('净额 = 营业额 − 原料 − 工资 − 维护',
+      S.lastLedger.net===S.lastLedger.gross-S.lastLedger.material-S.lastLedger.wages-S.lastLedger.upkeep);
+    S.coins=300;renderPractice();
+    const pm=rec('pudding').M;doPractice('pudding',false);
+    ok('练习提升熟练度 M',rec('pudding').M>pm,pm.toFixed(1)+' → '+rec('pudding').M.toFixed(1));
+    const pp0=pPerfect(rec('pudding').M),b0=rec('pudding').B,p00=P0(3);
+    S.staff.prep=true;S.device=2;
+    ok('雇人 + 设备 L2 → A 40%',Math.abs(autoRate()-0.40)<1e-9,String(autoRate()));
+    ok('减负不改完美率',pPerfect(rec('pudding').M)===pp0);
+    ok('减负不改基础价',rec('pudding').B===b0);
+    ok('减负不改耐心初值',P0(3)===p00);
+    S.joined=true;
+    ok('三次入队 → A 封顶 70%',Math.abs(autoRate()-0.70)<1e-9,String(autoRate()));
+    S.onLeave=true;ok('3-3 剥离 → A 归零',autoRate()===0);
+    S.onLeave=false;S.freeStove=true;ok('V4 自由炉 → A 归零',autoRate()===0);
+    S.freeStove=false;S.served=8;checkTriggers();
+    ok('累计出餐 8 单触发 1-7（G3）',S.queueG3.includes('1-7'));
+    S.served=30;checkTriggers();
+    ok('累计出餐 30 单触发三次入队',S.queueG3.includes('5-234'));
+    // 状态机：G3 → G1 链式推进（剧情只解锁，不阻挡经营）
+    const origShow=showStoryCard;
+    showStoryCard=(id,next)=>{const n=STORY[id];if(n&&n.apply)n.apply();next()};
+    S=newState();S.phase='practice';S.served=8;checkTriggers();endPractice();
+    ok('G3 → G1 链式推进到营业',S.phase==='open');
+    ok('铜勺已生效',S.rankIdx===1);
+    ok('岗位槽已开放',S.staffSlot===1);
+    clearInterval(tickTimer);
+    // 第三章剥离 → 回暖 → 无配方
+    S=newState();S.phase='practice';S.served=18;S.rankIdx=2;S.staff.prep=true;S.device=2;S.staffSlot=2;
+    checkTriggers();endPractice();
+    ok('剥离局 A 归零',autoRate()===0);
+    ok('剥离局菜谱置灰',S.confiscated===true);
+    clearInterval(tickTimer);
+    S.phase='practice';endPractice();
+    ok('回暖后进入无配方期',S.noRecipe===true);
+    ok('回暖后 A 首次回升',autoRate()>0,String(autoRate()));
+    clearInterval(tickTimer);
+    // 三次入队 → 自由炉
+    S=newState();S.joined=true;S.staff.prep=true;S.staff.serve=true;S.staff.cashier=true;S.device=3;
+    ok('入队后 A 封顶 70%',Math.abs(autoRate()-0.70)<1e-9);
+    S.freeStove=true;ok('自由炉关闭自动化',autoRate()===0);
+    showStoryCard=origShow;
+    clearInterval(tickTimer);S.phase='selftest';
+  }catch(e){out.push('FAIL | 运行异常 | '+e.message+' @ '+(e.stack||'').split('\n')[1])}
+  const pre=document.createElement('pre');pre.id='selftest';pre.textContent=out.join('\n');
+  document.body.appendChild(pre);
+}
+
+/* ---------- 启动 ---------- */
+S=newState();
+renderHUD();renderTitle();showView('v-title');
+document.addEventListener('pointerdown',()=>{if(S.sound&&!audioCtx){try{audioCtx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}},{once:true});
+const QS=new URLSearchParams(location.search);
+if(QS.get('selftest')==='1'){setTimeout(runSelfTest,60)}
+else if(QS.get('shot')){setTimeout(()=>{
+  resetAll();S.queueG1.length=0;closeOverlay();
+  const mode=QS.get('shot');
+  if(mode==='guide'){openGuide()}
+  else if(mode==='book'){openBook()}
+  else {beginService();if(S.customers.length)pickCustomer(S.customers[0].id)}
+},60)}
+</script>
+</body>
+</html>
