@@ -271,10 +271,6 @@ svg{display:block}
   border-radius:18px;padding:12px 20px;text-align:center;line-height:1.7}
 .pro-book span{display:block;font-size:13px;font-weight:700;color:var(--caramel);letter-spacing:1px}
 .pro-pagebox .page{width:112px;margin:0 auto}
-.pro-laws{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.pro-law{background:var(--paper);border:2px solid var(--cocoa);border-radius:12px;padding:7px 9px;font-size:10.5px;line-height:1.6}
-.pro-law b{display:block;font-size:12px;color:var(--caramel);margin-bottom:2px}
-.pro-law i{font-style:normal;background:var(--frost);border:1.5px solid var(--cocoa);border-radius:6px;padding:0 4px}
 .pro-sign{font-size:28px;font-weight:900;letter-spacing:4px;background:var(--paper);border:3px solid var(--cocoa);
   border-radius:18px;padding:9px 24px}
 .pro-sign span{color:var(--berry)}
@@ -349,7 +345,7 @@ svg{display:block}
       <h3><span class="dot" style="background:var(--berry)"></span>怎么玩</h3>
       <ul>
         <li>点一张顾客卡选中</li>
-        <li>按配方顺序点食材</li>
+        <li>按料单次序点食材</li>
         <li>点「提交给顾客」出餐</li>
         <li>打烊后雇人 / 升设备 / 练一道</li>
       </ul>
@@ -532,9 +528,9 @@ const CREW = [
 /* ---------- 剧情节点：每个都绑定可观测经营量（R5 / R6） ---------- */
 const STORY = {
   'intro':{slot:'G1',tag:'G1 开门钩子',title:'第 1 天 · 「要有人吃」',trigger:'序章结束 · 首次开门',
-    lines:[['糖老书','「书只是书。想长糖霜，得有人愿意吃你的布丁。」'],
-           ['麦小满','「门口那位就是『有人吃』？我这就去！」'],
-           ['糖老书','「按第一页的顺序备料。快——客人的耐心，比我的瞌睡短得多。」']],
+    lines:[['糖老书','「书是死的。没人吃，你那页就长不出糖霜来。」'],
+           ['麦小满','「外头那位，就是『有人吃』？」'],
+           ['糖老书','「照料单上的次序来。手快点——客人可没我这么好说话。」']],
     effect:'今天只卖焦糖布丁：3 个食材、1 位客人、全手动（A = 0%）。点顾客 → 按序点食材 → 提交。',apply(){}},
   '0-5':{slot:'G3',tag:'T1 经营里程碑',title:'0-5 · 第 1 页长出糖霜',trigger:'首次完成一局营业',
     lines:[['糖老书','「……这一炉，勉强能算个东西。」'],['麦小满','「才一页！还有一百页呢！」']],
@@ -560,7 +556,7 @@ const STORY = {
     apply(){S.staff.prep=true;S.noRecipeNextDay=true}},
   '4-1':{slot:'G1',tag:'T2 / V2',title:'4-1 · 三十天不许用菜谱',trigger:'V2 无配方规则态开启',
     lines:[['糖老书','「字我藏起来了。」'],['麦小满','「那我怎么知道该点哪个？」'],['糖老书','「……第三格。我什么都没说。」']],
-    effect:'食材名称与配方提示隐藏，只能凭记忆点选；设备不显示名称提示',apply(){}},
+    effect:'料单与食材名一并隐藏，只能凭记忆点选；设备不显示名称提示',apply(){}},
   '4-7':{slot:'G3',tag:'T3 段位评定',title:'4-7 · 条例加了一行「谁在吃」',trigger:'累计出餐 24 单',
     lines:[['周伯','「我是糖勺榜的人。」'],['雷千层','「……条例里没有『好吃』这一项。」'],['周伯','「现在有了。」']],
     effect:'累计好评率进入评定公式 · 琉璃勺 · 第 53 页桂花糕显形 · 菜谱归还',
@@ -590,15 +586,14 @@ const PROLOGUE = [
    narr:['书页里慢吞吞浮出一张皱脸，戴一副糖丝眼镜，说两句就打瞌睡。他叫<b>糖老书</b>。'],
    art:`<div class="pro-pagebox"><div class="page"><span class="pn">P.1</span>${dishIcon('pudding',44)}<div class="nm">焦糖布丁</div><div class="mm">提示：别看钟。</div></div></div>`,
    say:[['糖老书','「我不教笨蛋。」'],
-        ['糖老书','「第一页自己看：菜名我给，配方不给——配方得你自己的炉子写出来。」']]},
-  {k:'世界观 · 这本书的四条铁律',bg:ASSET.s4,
-   art:`<div class="pro-laws">
-      <div class="pro-law"><b>① 显形</b>页面原本空白。店铺在糖勺榜升段，下一页才显出题目——只给菜名和一句提示，<i>不给配方</i>。</div>
-      <div class="pro-law"><b>② 三重磨炼</b><i>显形 ≠ 学会</i>。每道菜要过三关：练（反复实操）、悟（做给谁吃）、战（限时与捣乱里做出来）。</div>
-      <div class="pro-law"><b>③ 不可作弊</b>照抄配方、请人代做，页面会褪回空白、长出霉斑——喜剧惩罚，从头再练。</div>
-      <div class="pro-law"><b>④ 越往后越挑人</b>第 100 页要把所有失败过的菜重做一遍；第 101 页，永不因排名显形。</div>
-    </div>`,
-   say:[['糖老书','「记不住没关系。反正你摔一跤，就记住了。」']]},
+        ['糖老书','「自己翻。菜名、要用的料，我都写着。放几克、火多大——一个字没有，那得你自己试。我又不能替你尝。」']]},
+  {k:'世界观 · 这本书的四条规矩',bg:ASSET.s4,
+   narr:['糖老书从书脊里探出半张脸，伸出一根手指，一条一条地数。'],
+   say:[['糖老书','「头一条。页子本来是白的，你店里那个勺榜往上爬一格，才翻得出下一页。翻出来也就一个菜名、一张料单，几克糖、火多大、等多久，统统不写。」'],
+        ['糖老书','「第二条。看着会了不算会。得自己上手练，得想明白这口是做给谁吃的，还得赶上客人催、有人捣乱，照样端得出来。」'],
+        ['糖老书','「第三条。抄别人的方子、找人代手，页子自己就褪成白的，还长毛。别问我怎么知道的。」'],
+        ['糖老书','「第四条。越往后越难伺候。第一百页，要你把从前做砸的菜，一炉一炉重做一遍。至于第一百零一页——它不看排名，永远不显。」'],
+        ['糖老书','「记不住就记不住。摔两回，自个儿就记住了。」']]},
   {k:'序章 0-3 · 连焦三炉',bg:ASSET.s1,
    narr:['借了面包房打烊后的烤炉，照着菜名硬试。','第一炉，糊了。第二炉，还是糊了。第三炉——厨房飘出黑烟。'],
    say:[['糖老书','「（打瞌睡）……习惯就好。」'],
@@ -615,7 +610,7 @@ const PROLOGUE = [
    narr:['书末写着一行小字：「要有人吃。」','于是——租下街角漏雨的旧仓库，挂上一块新招牌。'],
    art:'<div class="pro-sign">一勺<span>糖</span></div>',
    say:[['麦小满','「今天开业！第一位客人——来块布丁吗？」'],
-        ['糖老书','「记住：别看钟，听糖。」']]}
+        ['糖老书','「记着，别盯着钟，听糖。」']]}
 ];
 
 /* ---------- 状态 ---------- */
@@ -743,7 +738,7 @@ function renderDock(){
       ${hasSave()?'<button class="btn sm sec" data-act="continue">继续</button>':''}
       <button class="btn sm" data-act="start">开始试营业</button>`;
   }else if(p==='open'){
-    d.innerHTML=`<span class="hintline" id="dockHint">选顾客 → 按序点食材 → 提交</span>
+    d.innerHTML=`<span class="hintline" id="dockHint">选顾客 → 按料单次序点食材 → 提交</span>
       ${S.joined&&!S.freeStove?'<button class="btn sm sec" data-act="free-stove">自由炉</button>':''}
       <button class="btn sm sec" data-act="close-shop">打烊</button>`;
   }else if(p==='settle'){
@@ -904,9 +899,9 @@ function renderBench(){
   if(!c){
     box.innerHTML=`<div class="head">🍳 后厨食材台<span class="step">S1 · P1</span></div>
       <div class="muted" style="padding:14px 4px;text-align:center;line-height:1.8">
-        先点上面任意一张顾客卡，<br>再按配方顺序点食材，最后点「提交给顾客」。<br>
+        先点上面任意一张顾客卡，<br>再按料单次序点食材，最后点「提交给顾客」。<br>
         <span style="opacity:.7">（员工接管的步骤会标「自动」，但提交永远要你自己点）</span></div>`;
-    $('#shopTip').innerHTML='<b>操作链</b>：选顾客 → 按序点食材 → 提交。点错可以撤销，不扣耐心。';
+    $('#shopTip').innerHTML='<b>操作链</b>：选顾客 → 按料单次序点食材 → 提交。点错可以撤销，不扣耐心。';
     $('#shopTip').className='tip-strip';
     return;
   }
@@ -917,8 +912,8 @@ function renderBench(){
   $('#shopTip').innerHTML=S.freeStove
     ? '<b>V4 自由炉</b>：金币、耐心、评分、全部自动化都关掉了。只留手动一炉，全员在场。'
     : S.noRecipe
-    ? '<b>V2 无配方</b>：名称被藏起来了，凭手感点。糖老书说：「第三格，我什么都没说。」'
-    : (c.disturbed?'<b>V1 干扰</b>：糖罐被换成盐，这单要多点一步，配方已临时改写。':'<b>提示</b>：按配方顺序点食材；耐心越低，收益与评价越低。完美会强制好评。');
+    ? '<b>V2 无配方</b>：连料单上的字都藏了，凭手感点。糖老书说：「第三格，我什么都没说。」'
+    : (c.disturbed?'<b>V1 干扰</b>：糖罐被换成盐，这单要多点一步，料单临时改写。':'<b>提示</b>：按料单次序点食材；耐心越低，收益与评价越低。完美会强制好评。');
   $('#shopTip').className='tip-strip'+(S.noRecipe||S.freeStove?' gray':'');
   const slots=c.ing.map((k,i)=>`<div class="slot ${i<done?(S.progress[i]&&S.progress[i].auto?'auto':'ok'):''}">${i<done?'✓':i+1}</div>`).join('<span class="arrow">·</span>');
   const autoKeys=S.progress.filter(p=>p.auto).map(p=>p.k);
@@ -930,7 +925,7 @@ function renderBench(){
   const M=r.M,pp=pPerfect(M);
   box.innerHTML=`
     <div class="head">🍳 后厨食材台<span class="step">${done} / ${need} 步</span></div>
-    <div class="hint">${S.noRecipe?'<b>配方：?</b>　':'<b>配方：</b>'}${hint}</div>
+    <div class="hint">${S.noRecipe?'<b>料单：?</b>　':'<b>料单：</b>'}${hint}</div>
     <div class="ing-grid">${ingBtns}</div>
     <div class="chosen">${slots}</div>
     <div class="acts">
@@ -1142,7 +1137,7 @@ function openGuide(){
     ['P7 段位','铜 / 银 / 琉璃 / 云顶，显形新页与菜单宽度','6.4','按累计出餐量派生'],
     ['P8 剧情','T1–T5 五类触发器，只用可观测经营量；G1/G2/G3 三插入口','6.2 / R5 / R6','剧情不阻挡营业'],
     ['V1 干扰','糖罐换盐 → 真实 +1 点击步，必带喜剧落点','5.4','第一局中段'],
-    ['V2 无配方','隐藏名称与配方提示，设备不提示','5.4','剥离回暖后一局'],
+    ['V2 无配方','隐藏名称与料单，设备不提示','5.4','剥离回暖后一局'],
     ['V4 自由炉','关闭金币 / 耐心 / 评分 / 全部自动化','5.4','入队后可主动开启'],
     ['开场序章','世界观四铁律 + 序章 0-1~0-6 逐拍，首开必播、可跳过','故事企划书 v1.1 · 序章','已实现（标题页可重看）'],
     ['3-3 剥离','员工离岗、设备停机、S4 置灰、A 归零','4.6','全作唯一一次倒退'],
@@ -1297,7 +1292,7 @@ function renderInvest(){
     ${staffCard('cashier','📒 收银岗（账本自动平账）',120,'工资与维护费自动列支，打烊账本不再手算。',3)}
     <div class="shop-item">
       <div class="t">🔥 烤炉升级 → L${S.device+1}<span class="price">${devPrice} 🪙</span></div>
-      <div class="d">每级减少 1 个手动步骤 / 缩短出餐等待；<span class="no">不改</span>配方、不显示品质提示。
+      <div class="d">每级减少 1 个手动步骤 / 缩短出餐等待；<span class="no">不改</span>料单、不显示品质提示。
         当前 L${S.device}，每局维护费 ${(S.device-1)*5} 🪙（持续 sink）。<br><span class="muted">漏雨屋顶仍然不修（设定红线）。</span></div>
       ${S.device>=5?'<div class="owned">✔ 已升至 L5 封顶</div>':
         `<button class="btn sm" data-act="upgrade" ${(S.coins<devPrice||S.onLeave)?'disabled':''}>升级</button>
