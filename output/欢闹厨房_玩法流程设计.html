@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>《欢闹厨房》玩法流程设计 · 经营养成 GDD-Light</title>
+<title>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</title>
 <style>
   :root{
     --paper:#FFFDF7; --ink:#3A2E24; --ink2:#6B5947; --ink3:#9A876F;
@@ -16,11 +16,11 @@
   body{margin:0;background:#F4EEE2;color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,sans-serif;line-height:1.8;counter-reset:page}
   .sheet{width:920px;max-width:100%;margin:28px auto;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:52px 60px 36px;counter-increment:page;position:relative;box-shadow:0 2px 14px rgba(90,70,40,.06)}
   .pagefoot{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);letter-spacing:.5px}
-  .pagefoot::after{content:"第 " counter(page) " 页"}
-  h1,h2,h3{font-weight:600;letter-spacing:.5px}
+  .pagefoot::after{content:"第 " counter(page) " 页 / 共 10 页"}
+  h1,h2,h3,h4{font-weight:600;letter-spacing:.5px}
   h2{font-size:24px;margin:0 0 8px;padding-bottom:14px;border-bottom:2px solid var(--caramel)}
-  h3{font-size:17px;margin:28px 0 10px;color:var(--caramel)}
-  h4{font-size:14px;margin:20px 0 6px;color:var(--ink2)}
+  h3{font-size:17px;margin:26px 0 10px;color:var(--caramel)}
+  h4{font-size:14px;margin:18px 0 6px;color:var(--ink2)}
   p{margin:10px 0;font-size:14.5px}
   .lead{font-size:15.5px;color:var(--ink2)}
   .eyebrow{font-size:12px;letter-spacing:3px;color:var(--caramel);text-transform:uppercase;margin:0 0 14px}
@@ -29,7 +29,7 @@
   .cover .band{position:absolute;left:0;top:0;width:100%;height:12px;background:linear-gradient(90deg,var(--caramel) 0 25%,var(--pink) 25% 50%,var(--green) 50% 75%,var(--blue) 75% 100%)}
   .cover h1{font-size:50px;margin:24px 0 6px;letter-spacing:4px}
   .cover .en{font-size:12.5px;letter-spacing:4px;color:var(--ink3);margin-bottom:34px}
-  .cover .tagline{font-size:17px;color:var(--ink2);max-width:640px;line-height:2;margin-bottom:38px}
+  .cover .tagline{font-size:17px;color:var(--ink2);max-width:660px;line-height:2;margin-bottom:38px}
   .cover .meta{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 36px;border-top:1px solid var(--line);padding-top:22px;font-size:13px;color:var(--ink2)}
   .cover .meta b{color:var(--caramel);font-weight:600;margin-right:10px}
   .deco{position:absolute;right:-30px;bottom:-40px;width:300px;height:300px;border-radius:50%;border:36px solid var(--caramel-l);opacity:.75}
@@ -60,6 +60,7 @@
   .callout{background:var(--pink-l);border-left:3px solid var(--pink);padding:13px 18px;margin:18px 0;font-size:13.5px;color:var(--ink2);border-radius:0 4px 4px 0}
   .callout.blue{background:var(--blue-l);border-left-color:var(--blue)}
   .callout.green{background:var(--green-l);border-left-color:var(--green)}
+  .callout.red{background:var(--red-l);border-left-color:var(--red)}
   .hypo{background:#FBF5E9;border:1px solid #E8CFA6;border-radius:6px;padding:20px 24px;margin:16px 0}
   .hypo .k{font-size:11.5px;letter-spacing:2px;color:var(--caramel);display:block;margin-bottom:8px}
   .hypo .txt{font-size:18px;font-weight:600;line-height:1.9;color:var(--ink)}
@@ -74,6 +75,7 @@
   .ph{color:var(--red);font-size:11.5px;white-space:nowrap}
   .ok{color:var(--green);font-weight:600}
   .big{font-size:19px;color:var(--caramel);font-weight:600;line-height:1.9}
+  .chg{font-size:13px;color:var(--ink2)}
   @media print{body{background:#fff}.sheet{margin:0;box-shadow:none;border:none;page-break-after:always;width:100%}}
   @media (max-width:760px){.sheet{padding:30px 20px}.grid,.grid3,.footgrid{grid-template-columns:1fr}.cover h1{font-size:36px}.deco,.deco2,.deco3{display:none}}
 </style>
@@ -83,20 +85,20 @@
 <!-- 1 封面 -->
 <section class="sheet cover">
   <div class="band"></div>
-  <p class="eyebrow">Game Design Document · Gameplay Flow</p>
+  <p class="eyebrow">Game Design Document · Gameplay Flow · v2.0</p>
   <h1>欢闹厨房</h1>
-  <p class="en">GAMEPLAY FLOW &amp; SYSTEM SPEC · GDD-LIGHT</p>
-  <p class="tagline">把一炉「做砸了」的点心，靠反复练、忽然懂、临场稳住，<br>变成一会长糖霜插图的菜谱；<br>而每翻过一页，店里就多一个人坐到同一张桌子上。</p>
+  <p class="en">MANAGEMENT-FIRST GAMEPLAY &amp; SYSTEM SPEC</p>
+  <p class="tagline">手忙脚乱地把一份点心递到快要不耐烦的客人面前，<br>偶尔端出一炉「完美」的；<br>赚来的钱让店里越来越不需要自己动手，<br>省下的时间又能回去把某一道练到炉火纯青。</p>
   <div class="meta">
     <div><b>文档类型</b>玩法流程设计 / 系统规格</div>
-    <div><b>版本</b>v1.0 · 基于大纲 v1.1 大团圆版</div>
-    <div><b>品类</b>休闲烹饪经营 + 队伍养成</div>
+    <div><b>版本</b>v2.0 · 结构性修订，取代 v1.0</div>
+    <div><b>品类</b>休闲烹饪经营（主体）+ 熟练度养成</div>
     <div><b>场景</b>9 个（4 常驻 / 3 章节 / 2 入队解锁）</div>
     <div><b>玩法</b>8 种常规 + 4 种章节规则态</div>
     <div><b>主线</b>7 幕 · 25 session（待验证）</div>
   </div>
   <div class="deco"></div><div class="deco2"></div><div class="deco3"></div>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
 </section>
 
 <!-- 2 目录 -->
@@ -105,471 +107,605 @@
   <h2>目录</h2>
   <p class="sub">点击条目可直接跳转 · 共 10 页</p>
   <div class="toc">
-    <a href="#s1"><span class="n">01</span><span class="t">设计前提：假设、Fun Hypothesis、4 条支柱</span><span class="d">先摆假设</span></a>
-    <a href="#s2"><span class="n">02</span><span class="t">玩法流程总览：三层循环与一周目流程</span><span class="d">流程图</span></a>
-    <a href="#s3"><span class="n">03</span><span class="t">场景清单：9 个场景，分三批开放</span><span class="d">开放节奏甘特图</span></a>
-    <a href="#s4"><span class="n">04</span><span class="t">玩法类型：8 种常规 + 4 种规则态</span><span class="d">系统规格表</span></a>
-    <a href="#s5"><span class="n">05</span><span class="t">主线剧情穿插：三个插入口与四条咬合规则</span><span class="d">16 个节拍</span></a>
-    <a href="#s6"><span class="n">06</span><span class="t">章节 × 玩法 × 场景 流程表</span><span class="d">七幕 + 队伍曲线</span></a>
-    <a href="#s7"><span class="n">07</span><span class="t">经济系统、数值与调优表</span><span class="d">Sources / Sinks</span></a>
-    <a href="#s8"><span class="n">08</span><span class="t">交互矩阵、失败信号、Playtest 与自检</span><span class="d">验收单</span></a>
+    <a href="#s1"><span class="n">01</span><span class="t">设计前提：变更对照、Fun Hypothesis、5 条支柱</span><span class="d">先摆假设</span></a>
+    <a href="#s2"><span class="n">02</span><span class="t">核心循环：经营是骨架</span><span class="d">三层循环 + 单局流程图</span></a>
+    <a href="#s3"><span class="n">03</span><span class="t">四条核心机制与数值模型</span><span class="d">熟练度 / 耐心 / 结算</span></a>
+    <a href="#s4"><span class="n">04</span><span class="t">减负与自动化曲线</span><span class="d">0→20→40→0→30→70%</span></a>
+    <a href="#s5"><span class="n">05</span><span class="t">玩法类型：8 种常规 + 4 种规则态</span><span class="d">系统规格表</span></a>
+    <a href="#s6"><span class="n">06</span><span class="t">场景清单与主线剧情穿插（含剧情触发器）</span><span class="d">五类触发器 + 七幕主表</span></a>
+    <a href="#s7"><span class="n">07</span><span class="t">经济系统：持续 sink 与数值调优</span><span class="d">Sources / Sinks</span></a>
+    <a href="#s8"><span class="n">08</span><span class="t">交互矩阵、失败信号、自检与待商讨</span><span class="d">验收单</span></a>
   </div>
-  <div class="callout green"><b>先给结论</b>　这套故事不需要发明新系统：「显形 ≠ 学会」是传动轴，三重磨炼是关卡模板，三个入队节点是养成解锁点。9 个场景、8 种玩法，原样从设定里翻译出来。</div>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
+  <div class="callout green"><b>先给结论</b>　这版没有发明新系统：把「练」拆成熟练度、把「战」放回经营现场、把「三个人入队」翻译成三条自动化线。第三章的背叛变成「手忽然变忙」，终章的自由炉变成「自己再动手一次」。故事一个字没改，改的是玩家的手在做什么。</div>
+  <div class="callout blue"><b>变更性质</b>　v1.0 的「练 / 悟 / 战三段式关卡为骨架」作废；9 个场景、8 种玩法、4 种规则态、七幕主线、101 页、五阶排名、三次入队、大团圆铁律全部保留。</div>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
 </section>
 
 <!-- 3 设计前提 -->
 <section class="sheet" id="s1">
   <p class="eyebrow">01 / Assumptions &amp; Pillars</p>
   <h2>设计前提</h2>
-  <p class="sub">品类已给定；平台、目标用户、单局时长未定——先摆假设，并写清「测出来不是这样要重画哪一块」</p>
+  <p class="sub">本版推翻骨架、保留设定；未给定的四项仍先摆假设，写清「测出来不是这样要重画哪一块」</p>
 
   <div class="hypo">
     <span class="k">FUN HYPOTHESIS · 一句话</span>
-    <div class="txt">好玩的核心是：把一炉「做砸了」的点心，靠反复练、忽然懂、临场稳住，变成一页会长糖霜插图的菜谱；而每翻过一页，店里就多一个人坐到同一张桌子上。</div>
+    <div class="txt">好玩的核心是：手忙脚乱地把一份点心递到快要不耐烦的客人面前，偶尔端出一炉「完美」的；赚来的钱让店里越来越不需要自己动手，而省下的时间又能回去把某一道练到炉火纯青。</div>
   </div>
-  <p>拆开只有两个动词：<b>烤出来</b>（操作爽点）、<b>留下来</b>（养成爽点）。任何系统若不服务其中一个，删掉。</p>
+  <p>三个动词：<b>递出去</b>（操作爽点）、<b>抽开手</b>（减负爽点）、<b>练回去</b>（养成爽点）。任何系统不服务其中一个，删掉。</p>
 
-  <h3>五条工作假设</h3>
+  <h3>1.1 本版推翻了什么</h3>
   <table class="sm">
-    <thead><tr><th style="width:5%">#</th><th style="width:11%">假设</th><th style="width:29%">取值</th><th>若不成立，重画什么</th></tr></thead>
+    <thead><tr><th style="width:14%">维度</th><th style="width:36%">v1.0（作废）</th><th>v2.0（本版）</th></tr></thead>
     <tbody>
-      <tr><td>A1</td><td>平台</td><td>手机为主、PC 兼容；竖屏单手可完成一次出餐</td><td>若纯 PC 横屏，多桌并行可从 3 桌提到 5 桌，制作步数可加深</td></tr>
-      <tr><td>A2</td><td>目标用户</td><td>轻度休闲泛用户，无硬核时间管理经验</td><td>若是硬核经营用户，「战」关限时与并发压力整体上调一档</td></tr>
-      <tr><td>A3</td><td>单局时长</td><td><span class="ph">[PLACEHOLDER]</span> 8 分钟 / session（假设 5–10 分钟）</td><td><b>波次数与 25 个 session 的切分全部作废重画</b>；若只有 4 分钟，三重磨炼要拆到跨 session</td></tr>
-      <tr><td>A4</td><td>商业化</td><td>未定，本文不做付费与数值售卖设计</td><td>确定内购后需重审「不可作弊」铁律与 sink 结构，不卖配方</td></tr>
-      <tr><td>A5</td><td>主线体量</td><td><span class="ph">[PLACEHOLDER]</span> 25 session / 一周目 8–12 小时</td><td>若要求 20 小时以上，靠支线扩（两文钱、看炉、失败品收藏册），不能拖长单局</td></tr>
+      <tr><td>骨架</td><td>每道菜走「练 / 悟 / 战」三段式关卡</td><td><b>每个 session 以开店经营为主体</b>；关卡退为规则态与支线</td></tr>
+      <tr><td>练习关</td><td>用来「学会一页」，攒手感值</td><td><b>只提升该点心的熟练度 M</b>；学成＝首次成功做出</td></tr>
+      <tr><td>手感值</td><td>模糊软通货，溢出转收藏册</td><td>删除，改为每道菜独立 <b>M ∈ [0,100]</b></td></tr>
+      <tr><td>出餐品质</td><td>火候判定给分</td><td><b>熟练度决定完美概率</b>，完美＝更高收益 + 好评</td></tr>
+      <tr><td>顾客</td><td>有耐心值但未接进收益公式</td><td><b>耐心驱动收益系数与评价，归零即离场</b></td></tr>
+      <tr><td>点击操作</td><td>「选料 → 火候 → 出餐」抽象描述</td><td><b>点击食材 → 提交给顾客</b> 的显式两步链</td></tr>
+      <tr><td>金币用途</td><td>装扮、器具（一次性 sink 为主）</td><td><b>雇员工 + 升设备，只做减负</b>；工资与维护为持续 sink</td></tr>
+      <tr><td>长线目标</td><td>队伍长度＝进度条</td><td><b>自动化率＝进度条</b>，越到后期自动化越高</td></tr>
     </tbody>
   </table>
-  <div class="callout"><b>这不是免责声明，是重画清单。</b>A3 一变，第六节整张流程表的 session 列作废。</div>
 
-  <h3>Design Pillars（4 条，用来否决需求）</h3>
-  <div class="grid">
-    <div class="card"><span class="name">P1　每一页都得自己烤出来</span><p>玩家感受：「这页是我练出来的，不是解锁出来的」。</p><p><b>否决</b>：用金币直接买菜谱页 → 违反「显形 ≠ 学会」与不可作弊。</p></div>
-    <div class="card"><span class="name">P2　失败永远有笑声兜底</span><p>玩家感受：砸了也想再来一炉，不会烦躁退出。</p><p><b>否决</b>：干扰事件造成真实进度损失且无喜剧落点。</p></div>
-    <div class="card"><span class="name">P3　队伍长度就是进度条</span><p>玩家感受：每多一个队友，柜台多一副碗筷、多一个按钮。</p><p><b>否决</b>：队友只出现在剧情里、不进操作系统。</p></div>
-    <div class="card"><span class="name">P4　排名是解锁器，不是分数墙</span><p>玩家感受：升段是为了看见下一页，不是为了被卡住。</p><p><b>否决</b>：评定失败要重刷三天日常。</p></div>
+  <h3>1.2 剧情铁律的玩法层重解释（STORY_BIBLE 原文未改）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:20%">铁律</th><th style="width:44%">v2.0 玩法映射</th><th>结论</th></tr></thead>
+    <tbody>
+      <tr><td>显形 ≠ 学会</td><td>显形仍由段位解锁、仍只给题目；首次成功做出＝页学成 + 糖霜插图</td><td class="ok">不冲突</td></tr>
+      <tr><td>练（反复实操）</td><td>练习关 → 熟练度 M ↑，M 决定完美率</td><td class="ok">输出被量化</td></tr>
+      <tr><td>悟（做给谁吃）</td><td>保留剧情关，<b>改由 T1–T5 经营触发器驱动</b>，在 G1 / G3 播放，不占营业时段主体</td><td class="ok">剧情仍在</td></tr>
+      <tr><td>战（限时客人下做出来）</td><td>经营中的高压时段：限时客流、干扰、评定，全部发生在接单经营里</td><td class="ok">更贴合原文</td></tr>
+      <tr><td>不可作弊</td><td>新增禁售：熟练度、完美率、自动化跳过</td><td class="ok">扩充不改写</td></tr>
+      <tr><td>越后越挑人</td><td>第 100 页回想＝重做失败过 / 熟练度最低的菜，补足 M</td><td class="ok">输出改为 M</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 Design Pillars（5 条，用来否决需求）</h3>
+  <div class="grid3">
+    <div class="card"><span class="name">P1 经营永远是主体</span><p>打开游戏先看到客人和订单，不是关卡列表。练习不得设成开店前置。</p></div>
+    <div class="card"><span class="name">P2 练了一定看得见</span><p>熟练度条与近 20 单完美次数常驻，用可观测频率替代概率说明。</p></div>
+    <div class="card hero"><span class="name">P3 减负不增伤</span><p>雇人买设备只为少点几下。设备 +10% 完美率、员工加单价 → 否决。</p></div>
+    <div class="card"><span class="name">P4 失败有笑声兜底</span><p>客人走了、点心焦了，不扣金币、不掉熟练度，必带喜剧落点。</p></div>
+    <div class="card"><span class="name">P5 自动化不吃掉决策</span><p>上限 70% <span class="ph">[PLACEHOLDER]</span>；排序、投资、新菜首做强制手动。</p></div>
+    <div class="card"><span class="name">A3 单局时长</span><p><span class="ph">[PLACEHOLDER]</span> 8 分钟；一变，营业时段与 25 session 切分全部重画。</p></div>
   </div>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
 </section>
 
-<!-- 4 流程总览 -->
+<!-- 4 核心循环 -->
 <section class="sheet" id="s2">
-  <p class="eyebrow">02 / Core Loops</p>
-  <h2>玩法流程总览</h2>
-  <p class="sub">三层循环各司其职：0–30 秒给反馈，5–10 分钟给结果，8–12 小时给牵挂</p>
+  <p class="eyebrow">02 / Core Loop</p>
+  <h2>核心循环：经营是骨架</h2>
+  <p class="sub">三层循环全表重写；每个 session 从开门到关门，主体始终是「点食材 → 提交」</p>
 
-  <div class="fig">
-    <svg viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
-      <rect x="0" y="0" width="800" height="250" fill="#FFFDF7"/>
-      <text x="14" y="24" font-size="13" font-weight="600" fill="#B4702E">Moment-to-moment · 0–30 秒</text>
-      <g font-size="12" fill="#3A2E24" text-anchor="middle">
-        <rect x="14" y="36" width="130" height="44" rx="6" fill="#FAEBD3" stroke="#B4702E"/><text x="79" y="63">接单</text>
-        <rect x="164" y="36" width="130" height="44" rx="6" fill="#FAEBD3" stroke="#B4702E"/><text x="229" y="63">选料 / 操作</text>
-        <rect x="314" y="36" width="130" height="44" rx="6" fill="#FBEAF0" stroke="#C55F82"/><text x="379" y="63">火候判定（听声）</text>
-        <rect x="464" y="36" width="130" height="44" rx="6" fill="#FAEBD3" stroke="#B4702E"/><text x="529" y="63">出餐 / 结算</text>
-        <rect x="614" y="36" width="172" height="44" rx="6" fill="#E9F4EC" stroke="#5E9B77"/><text x="700" y="63">糖霜插图 + 吐槽气泡</text>
-      </g>
-      <g stroke="#B4702E" fill="none" stroke-width="1.4">
-        <path d="M144 58 L160 58"/><path d="M294 58 L310 58"/><path d="M444 58 L460 58"/><path d="M594 58 L610 58"/>
-      </g>
-      <text x="14" y="112" font-size="13" font-weight="600" fill="#4C7EA8">Session loop · 5–10 分钟 [PLACEHOLDER]</text>
-      <g font-size="12" fill="#3A2E24" text-anchor="middle">
-        <rect x="14" y="124" width="104" height="44" rx="6" fill="#E9F2F9" stroke="#4C7EA8"/><text x="66" y="151">开门 G1</text>
-        <rect x="138" y="124" width="118" height="44" rx="6" fill="#E9F2F9" stroke="#4C7EA8"/><text x="197" y="151">2–3 波订单</text>
-        <rect x="276" y="124" width="118" height="44" rx="6" fill="#FBECE9" stroke="#B75B52"/><text x="335" y="151">干扰事件 G2</text>
-        <rect x="414" y="124" width="118" height="44" rx="6" fill="#E9F2F9" stroke="#4C7EA8"/><text x="473" y="151">三重磨炼一关</text>
-        <rect x="552" y="124" width="104" height="44" rx="6" fill="#E9F2F9" stroke="#4C7EA8"/><text x="604" y="151">结算</text>
-        <rect x="676" y="124" width="110" height="44" rx="6" fill="#E9F4EC" stroke="#5E9B77"/><text x="731" y="151">显形 G3</text>
-      </g>
-      <g stroke="#4C7EA8" fill="none" stroke-width="1.4">
-        <path d="M118 146 L134 146"/><path d="M256 146 L272 146"/><path d="M394 146 L410 146"/><path d="M532 146 L548 146"/><path d="M656 146 L672 146"/>
-      </g>
-      <text x="14" y="200" font-size="13" font-weight="600" fill="#C55F82">Long-term · 8–12 小时 [PLACEHOLDER]</text>
-      <g font-size="12" fill="#3A2E24" text-anchor="middle">
-        <rect x="14" y="212" width="140" height="34" rx="17" fill="#FBEAF0" stroke="#C55F82"/><text x="84" y="234">升段 → 新页显形</text>
-        <rect x="182" y="212" width="140" height="34" rx="17" fill="#FBEAF0" stroke="#C55F82"/><text x="252" y="234">练 / 悟 / 战</text>
-        <rect x="350" y="212" width="140" height="34" rx="17" fill="#FBEAF0" stroke="#C55F82"/><text x="420" y="234">页学成 · 客流涨</text>
-        <rect x="518" y="212" width="140" height="34" rx="17" fill="#FBEAF0" stroke="#C55F82"/><text x="588" y="234">新场景 + 新队友</text>
-        <rect x="686" y="212" width="100" height="34" rx="17" fill="#F0EDFA" stroke="#7A6BB0"/><text x="736" y="234">第 101 页</text>
-      </g>
-      <g stroke="#C55F82" fill="none" stroke-width="1.4">
-        <path d="M154 229 L178 229"/><path d="M322 229 L346 229"/><path d="M490 229 L514 229"/><path d="M658 229 L682 229"/>
-      </g>
-    </svg>
-    <div class="cap">图 1　三层核心循环：G1 / G2 / G3 是三个剧情插入口，不另开时间线</div>
-  </div>
-
-  <h3>一周目七幕流程 · 25 session</h3>
-  <div class="fig">
-    <svg viewBox="0 0 800 176" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
-      <rect x="0" y="0" width="800" height="176" fill="#FFFDF7"/>
-      <g font-size="11.5" fill="#3A2E24" text-anchor="middle">
-        <rect x="10" y="30" width="96" height="52" rx="6" fill="#FAEBD3" stroke="#B4702E"/><text x="58" y="50">序章</text><text x="58" y="68" font-size="10.5" fill="#6B5947">1 session</text>
-        <rect x="118" y="30" width="96" height="52" rx="6" fill="#FAEBD3" stroke="#B4702E"/><text x="166" y="50">第一章</text><text x="166" y="68" font-size="10.5" fill="#6B5947">4</text>
-        <rect x="226" y="30" width="96" height="52" rx="6" fill="#E9F2F9" stroke="#4C7EA8"/><text x="274" y="50">第二章</text><text x="274" y="68" font-size="10.5" fill="#6B5947">5</text>
-        <rect x="334" y="30" width="96" height="52" rx="6" fill="#FBECE9" stroke="#B75B52"/><text x="382" y="50">第三章</text><text x="382" y="68" font-size="10.5" fill="#6B5947">3 · 低谷</text>
-        <rect x="442" y="30" width="96" height="52" rx="6" fill="#E9F4EC" stroke="#5E9B77"/><text x="490" y="50">第四章</text><text x="490" y="68" font-size="10.5" fill="#6B5947">6 · 无配方</text>
-        <rect x="550" y="30" width="118" height="52" rx="6" fill="#FBEAF0" stroke="#C55F82"/><text x="609" y="50">第五章</text><text x="609" y="68" font-size="10.5" fill="#6B5947">5 · 三次入队</text>
-        <rect x="680" y="30" width="106" height="52" rx="6" fill="#F0EDFA" stroke="#7A6BB0"/><text x="733" y="50">终章</text><text x="733" y="68" font-size="10.5" fill="#6B5947">1 · 自由炉</text>
-      </g>
-      <g stroke="#B4702E" fill="none" stroke-width="1.4"><path d="M106 56 L114 56"/><path d="M214 56 L222 56"/><path d="M322 56 L330 56"/><path d="M430 56 L438 56"/><path d="M538 56 L546 56"/><path d="M668 56 L676 56"/></g>
-      <g font-size="11" fill="#6B5947" text-anchor="middle">
-        <text x="58" y="104">捡书 · 听声</text><text x="166" y="104">接单 · 换盐</text><text x="274" y="104">擀制 · 平局</text>
-        <text x="382" y="104">扣书 · 失去</text><text x="490" y="104">重铸 · 复原</text><text x="609" y="104">回想 · 百页齐鸣</text><text x="733" y="104">第 101 页</text>
-      </g>
-      <text x="10" y="142" font-size="11.5" fill="#B4702E">出口条件：每幕以「页学成 / 段位 / 入队」为硬门槛，不以分数或刷日常为门槛（P4）</text>
-    </svg>
-    <div class="cap">图 2　七幕流程与 session 分配；25 由 16 道招牌菜 × 1.5 session 反推，属 [PLACEHOLDER]</div>
-  </div>
-
-  <h3>必须现在就切的一刀：101 页 ≠ 303 个关卡</h3>
   <table class="sm">
-    <thead><tr><th style="width:16%">菜式层</th><th style="width:12%">数量</th><th style="width:34%">磨炼规格</th><th>绑定内容</th></tr></thead>
+    <thead><tr><th style="width:16%">层级</th><th style="width:12%">时间尺度</th><th style="width:42%">循环</th><th>失败兜底</th></tr></thead>
     <tbody>
-      <tr><td><b>招牌菜</b></td><td><span class="ph">[PLACEHOLDER]</span> 24</td><td>完整三段式（练 / 悟 / 战），专属对话与插图</td><td>焦糖布丁、海盐焦糖、千层酥、无配方桂花糕、苦甜交织等剧情节点</td></tr>
-      <tr><td><b>常驻菜</b></td><td><span class="ph">[PLACEHOLDER]</span> 76</td><td>练 1 次 + 战 1 次；「悟」并入已有剧情对话</td><td>菜单宽度、订单组合、经营收入</td></tr>
-      <tr><td><b>回想菜</b></td><td>动态</td><td>玩家失败过的菜，第 100 页一次性重做</td><td>V3 回想关卡，不新增菜式</td></tr>
+      <tr><td><b>Moment-to-moment</b></td><td>0–30 秒</td><td>顾客进门 → 点击食材 → 提交 → 品质判定 → 耐心结算 → 金币 + 评价</td><td>等走 → 本单收益 0、记流失，不扣金币 / 熟练度</td></tr>
+      <tr><td><b>Session loop</b></td><td>5–10 分钟 <span class="ph">[PLACEHOLDER]</span></td><td>开门 G1 → 备料 → 营业 N 波 → 中段干扰 / 评定 → 打烊结算 → 投资决策 → 练习 1–2 道 → G3</td><td>收入低只影响可投资额，不扣已有进度</td></tr>
+      <tr><td><b>Long-term</b></td><td>8–12 小时 <span class="ph">[PLACEHOLDER]</span></td><td>升段 → 显形 → 学成 → 练 M → 完美率 ↑ → 收益 ↑ → 雇人 / 升设备 → 自动化率 ↑ → 吞吐 ↑ → 升段</td><td>低谷仅第三章一幕，3-6 即回暖</td></tr>
     </tbody>
   </table>
-  <p>关卡单元总量 <code>24×3 + 76×2 = 224</code> <span class="ph">[PLACEHOLDER]</span>。若每页都完整走三段就是 300 个单元，单关卡单元按 1.5 分钟 <span class="ph">[PLACEHOLDER]</span> 计会超出主线体量，且同一操作模板连续重复会拉低重复感评分。<b>第 101 页不是菜</b>，不进关卡池、不产出数值。</p>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
+
+  <div class="fig">
+    <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="单局经营循环流程">
+      <rect x="0" y="0" width="800" height="200" fill="#FFFDF7"/>
+      <rect x="12" y="62" width="108" height="56" rx="10" fill="#FAEBD3" stroke="#B4702E" stroke-width="2"/>
+      <text x="66" y="86" text-anchor="middle" font-size="13" fill="#3A2E24">开门 G1</text>
+      <text x="66" y="104" text-anchor="middle" font-size="11" fill="#6B5947">备料 / 目标</text>
+      <rect x="138" y="62" width="108" height="56" rx="10" fill="#FBEAF0" stroke="#C55F82" stroke-width="2"/>
+      <text x="192" y="86" text-anchor="middle" font-size="13" fill="#3A2E24">顾客进门</text>
+      <text x="192" y="104" text-anchor="middle" font-size="11" fill="#6B5947">订单 + 耐心条</text>
+      <rect x="264" y="62" width="118" height="56" rx="10" fill="#FBEAF0" stroke="#C55F82" stroke-width="2"/>
+      <text x="323" y="86" text-anchor="middle" font-size="13" fill="#3A2E24">点击食材</text>
+      <text x="323" y="104" text-anchor="middle" font-size="11" fill="#6B5947">3–6 步 [PLACEHOLDER]</text>
+      <rect x="400" y="62" width="108" height="56" rx="10" fill="#FBEAF0" stroke="#C55F82" stroke-width="2"/>
+      <text x="454" y="86" text-anchor="middle" font-size="13" fill="#3A2E24">提交</text>
+      <text x="454" y="104" text-anchor="middle" font-size="11" fill="#6B5947">锁存剩余耐心</text>
+      <rect x="526" y="62" width="118" height="56" rx="10" fill="#E9F2F9" stroke="#4C7EA8" stroke-width="2"/>
+      <text x="585" y="86" text-anchor="middle" font-size="13" fill="#3A2E24">品质判定</text>
+      <text x="585" y="104" text-anchor="middle" font-size="11" fill="#6B5947">完美 / 普通 / 失手</text>
+      <rect x="662" y="62" width="126" height="56" rx="10" fill="#E9F4EC" stroke="#5E9B77" stroke-width="2"/>
+      <text x="725" y="86" text-anchor="middle" font-size="13" fill="#3A2E24">金币 + 评价</text>
+      <text x="725" y="104" text-anchor="middle" font-size="11" fill="#6B5947">下一单</text>
+      <path d="M121 90 L136 90 M247 90 L262 90 M383 90 L398 90 M509 90 L524 90 M645 90 L660 90" stroke="#B4702E" stroke-width="2" fill="none"/>
+      <path d="M725 120 L725 150 L66 150 L66 120" stroke="#9A876F" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
+      <text x="396" y="170" text-anchor="middle" font-size="11.5" fill="#6B5947">循环 N 波后 → 打烊结算 → 投资决策 → 练习 → 关门 G3</text>
+      <text x="396" y="30" text-anchor="middle" font-size="14" font-weight="600" fill="#B4702E">单局主体：营业时段的循环</text>
+    </svg>
+    <div class="cap">图 1 · Moment-to-moment 与 session 的衔接；中段干扰 / 评定只插入一次，不叠加</div>
+  </div>
+
+  <h3>2.1 点击食材 → 提交（显式规格）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:16%">项</th><th>定义</th></tr></thead>
+    <tbody>
+      <tr><td>Purpose</td><td>有限耐心下做两件事：按对顺序点食材、决定先服务哪位顾客</td></tr>
+      <tr><td>Inputs</td><td>顾客订单卡（点心 + 耐心条）、食材台（每道 3–6 个按钮 <span class="ph">[PLACEHOLDER]</span>）、熟练度 M、自动化率 A</td></tr>
+      <tr><td>玩家动作</td><td>① 选目标顾客 → ② 按配方顺序点击食材 → ③ 点「提交」把成品递给该顾客</td></tr>
+      <tr><td>Outputs</td><td>品质结果、单笔金币、评价档、耐心剩余、保底计数更新</td></tr>
+      <tr><td>Failure</td><td>点错可撤销；耐心归零 → 离场、收益 0；失手 → 低价卖出 + 喜剧气泡</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><b>反馈通道优先</b>　玩家说「感觉不对」时，先查耐心条是否看得见、完美特效是否够响、食材按下是否即时高亮，再怀疑概率模型。这是通道问题，不是数值问题。</div>
+
+  <h3>2.2 长期闭环：金币与时间的双向投资</h3>
+  <div class="fig">
+    <svg viewBox="0 0 800 168" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="金币与时间双向投资闭环">
+      <rect x="0" y="0" width="800" height="168" fill="#FFFDF7"/>
+      <rect x="30" y="46" width="230" height="72" rx="10" fill="#FAEBD3" stroke="#B4702E" stroke-width="2"/>
+      <text x="145" y="74" text-anchor="middle" font-size="14" font-weight="600" fill="#3A2E24">经营（营业时段）</text>
+      <text x="145" y="96" text-anchor="middle" font-size="11.5" fill="#6B5947">点食材 → 提交 → 耐心 → 金币</text>
+      <rect x="540" y="16" width="230" height="60" rx="10" fill="#E9F4EC" stroke="#5E9B77" stroke-width="2"/>
+      <text x="655" y="40" text-anchor="middle" font-size="13" fill="#3A2E24">雇人 / 升设备 → 自动化率 ↑</text>
+      <text x="655" y="60" text-anchor="middle" font-size="11.5" fill="#6B5947">单位时间接待更多顾客</text>
+      <rect x="540" y="92" width="230" height="60" rx="10" fill="#E9F2F9" stroke="#4C7EA8" stroke-width="2"/>
+      <text x="655" y="116" text-anchor="middle" font-size="13" fill="#3A2E24">买练习原料 → 熟练度 ↑</text>
+      <text x="655" y="136" text-anchor="middle" font-size="11.5" fill="#6B5947">完美率 ↑ → 单笔收益 ↑</text>
+      <path d="M260 70 L540 46 M260 94 L540 122" stroke="#B4702E" stroke-width="2" fill="none"/>
+      <path d="M540 60 L300 112 M540 116 L300 88" stroke="#9A876F" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
+      <text x="400" y="30" text-anchor="middle" font-size="11.5" fill="#B4702E">金币 → 投资</text>
+      <text x="400" y="158" text-anchor="middle" font-size="11.5" fill="#6B5947">省下的操作时间 / 更高的单笔收益 → 回到经营</text>
+    </svg>
+    <div class="cap">图 2 · 两条投资不是「哪个更优」，是必须交替推进</div>
+  </div>
+  <div class="callout red"><b>摊开讲这处张力</b>　练习不直接产金币，却要占打烊后的时间与原料。全投自动化会发现完美率原地踏步；只练不雇人则接不完客人。文档不假装它们一致：第七节用 sources/sinks 量化，第八节把「玩家只投一边」列为失败信号 F。</div>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
 </section>
 
-<!-- 5 场景清单 -->
+<!-- 5 核心机制 -->
 <section class="sheet" id="s3">
-  <p class="eyebrow">03 / Scenes</p>
-  <h2>场景清单：9 个，分三批开放</h2>
-  <p class="sub">4 个常驻 + 3 个章节限定 + 2 个入队解锁；另有两个地点刻意不建场景</p>
-
-  <div class="grid3">
-    <div class="card hero"><span class="name">常驻 · 4</span><p>序章起一直可用，是每日 session 的舞台。S4 是元场景（菜谱界面），不作物理空间。</p></div>
-    <div class="card"><span class="name">章节限定 · 3</span><p>评定场每章末复用；小摊在 5-4 撤摊；大会场仅第五章。</p></div>
-    <div class="card"><span class="name">入队解锁 · 2</span><p>5-2 技法台、5-3 外送站。沈如意不新增场景，直接回 S2 柜台。</p></div>
-  </div>
-
-  <h3>1）常驻场景</h3>
-  <table class="sm">
-    <thead><tr><th style="width:5%">ID</th><th style="width:19%">场景</th><th style="width:24%">承载玩法</th><th style="width:26%">剧情职能</th><th>不可穿帮的细节</th></tr></thead>
-    <tbody>
-      <tr><td><b>S1</b></td><td>一勺糖 · <b>后厨</b></td><td>P1 练习关 / P3 挑战关 / V2 无配方</td><td>连焦三炉 0-3、面团山 2-3、摔模具 3-5、通宵百页 5-5</td><td>序章冒黑烟；终章故意焦一角的布丁在此出炉</td></tr>
-      <tr><td><b>S2</b></td><td>一勺糖 · <b>大堂与柜台</b></td><td>P4 接单 / P5 装扮 / P6 结算 / P8 派遣</td><td>开张 1-1、账本「对不住」3-3、6-7 全员写「今天不累。」</td><td>屋顶<b>一直漏</b>；周伯靠窗位；账本 v1.1 起摊在柜台上；终章书灵趴这里当菜单本</td></tr>
-      <tr><td><b>S3</b></td><td><b>巷口街面</b>（含门口空地）</td><td>P4 排队客流 / 外送接单 / 街边事件</td><td>捡书 0-1、当街开炉 2-1、排队到街口、5-4 豆豆留人</td><td>第三章生意顶点；终章咕咕外送队挂牌处</td></tr>
-      <tr><td><b>S4</b></td><td><b>《一百零一页》界面</b>（元场景）</td><td>显形 / 熟练度 / 插图 / V3 回想 / 段位进度</td><td>0-3 显形、3-9 撕纸角、4-8 归还、5-6 百页齐鸣、6-5 第 101 页</td><td>只给题目不给配方；学会才长糖霜插图；扣书期整本置灰</td></tr>
-    </tbody>
-  </table>
-  <div class="callout blue"><b>最省成本、最出效果的一屏是 S4。</b>它同时是进度条、主线钩子和第 100 页回想关入口。别把它做成普通图鉴。</div>
-
-  <h3>2）章节限定 &amp; 3）入队解锁</h3>
-  <table class="sm">
-    <thead><tr><th style="width:5%">ID</th><th style="width:20%">场景</th><th style="width:17%">开放窗口</th><th style="width:25%">承载玩法</th><th>剧情职能 / 入队即解锁</th></tr></thead>
-    <tbody>
-      <tr><td><b>S5</b></td><td>糖勺榜评定场（含当街开炉）</td><td>一章末起，每章末复用</td><td>P7 段位评定 / 挑战赛</td><td>2-2 惨败、2-6 平局、4-1 三十天重考、4-7 条例松口</td></tr>
-      <tr><td><b>S6</b></td><td>街对面「代记账」小摊</td><td>三章末 ~ 5-4 撤摊</td><td>支线观察 / 送单 / 喜剧事件</td><td>沈如意拙劣伪装；周伯每天照顾生意；豆豆报告「算盘拿反了」。<b>5-4 后关闭，转 S2 柜台</b></td></tr>
-      <tr><td><b>S7</b></td><td>云端食榜 · 全国甜点大会</td><td>仅第五章</td><td>极高压多线订单 / 三线同场</td><td>5-1 换苦精、5-2/5-3/5-4 入队仪式、5-6 百页齐鸣、5-7 封神</td></tr>
-      <tr><td><b>S8</b></td><td>一勺糖 · 雷记分店技法台</td><td><span class="tag t-blue">5-2 解锁</span></td><td>技法研发 / 精准度挑战 / 新人培训</td><td>雷千层入队，成为可派遣岗位；<b>同一张桌子的延长</b>，不是独立对立的店</td></tr>
-      <tr><td><b>S9</b></td><td>咕咕外送站（门口空地）</td><td><span class="tag t-green">5-3 解锁</span></td><td>外送订单 / 防捣乱演练 / 试味加成</td><td>鸽子收编为外送队；六种捣乱手法转为演练教材</td></tr>
-    </tbody>
-  </table>
-  <p><b>刻意不建场景</b>：顾苦童年那家甜品店门口（只作回忆画面）、雷记老店（只存在于雷千层讲述）——依 LOCATIONS.md 红线，不浪费美术资源。<b>沈如意不新增场景</b>：归队就是回到原来的位置，账本重新摊开，比给她一间新办公室更对。</p>
+  <p class="eyebrow">03 / Core Mechanics</p>
+  <h2>四条核心机制与数值模型</h2>
+  <p class="sub">熟练度 → 完美率 → 收益；耐心 → 收益与评价；两条链在提交瞬间合并结算</p>
 
   <div class="fig">
-    <svg viewBox="0 0 800 214" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
-      <rect x="0" y="0" width="800" height="214" fill="#FFFDF7"/>
-      <g font-size="11" fill="#6B5947">
-        <text x="8" y="20">序章</text><text x="128" y="20">一章</text><text x="248" y="20">二章</text><text x="368" y="20">三章</text><text x="488" y="20">四章</text><text x="608" y="20">五章</text><text x="728" y="20">终章</text>
-      </g>
-      <g stroke="#E8DDC9" stroke-dasharray="3 4"><path d="M96 26 L96 196"/><path d="M216 26 L216 196"/><path d="M336 26 L336 196"/><path d="M456 26 L456 196"/><path d="M576 26 L576 196"/><path d="M696 26 L696 196"/></g>
-      <g font-size="11" fill="#3A2E24">
-        <text x="8" y="45">S1 后厨</text><rect x="96" y="34" width="686" height="13" rx="6" fill="#FAEBD3" stroke="#B4702E"/>
-        <text x="8" y="67">S2 大堂</text><rect x="96" y="56" width="686" height="13" rx="6" fill="#FAEBD3" stroke="#B4702E"/>
-        <text x="8" y="89">S3 街面</text><rect x="96" y="78" width="686" height="13" rx="6" fill="#FAEBD3" stroke="#B4702E"/>
-        <text x="8" y="111">S4 菜谱</text><rect x="96" y="100" width="240" height="13" rx="6" fill="#F0EDFA" stroke="#7A6BB0"/><rect x="336" y="100" width="120" height="13" rx="6" fill="#FBECE9" stroke="#B75B52"/><rect x="456" y="100" width="326" height="13" rx="6" fill="#F0EDFA" stroke="#7A6BB0"/>
-        <text x="8" y="133">S5 评定场</text><rect x="216" y="122" width="470" height="13" rx="6" fill="#E9F2F9" stroke="#4C7EA8"/>
-        <text x="8" y="155">S6 小摊</text><rect x="336" y="144" width="270" height="13" rx="6" fill="#FBECE9" stroke="#B75B52"/>
-        <text x="8" y="177">S7 大会场</text><rect x="576" y="166" width="120" height="13" rx="6" fill="#FBEAF0" stroke="#C55F82"/>
-        <text x="8" y="197">S8 / S9</text><rect x="606" y="188" width="176" height="13" rx="6" fill="#E9F4EC" stroke="#5E9B77"/>
-      </g>
-      <text x="342" y="115" font-size="9.5" fill="#B75B52" text-anchor="middle">扣书置灰</text>
+    <svg viewBox="0 0 800 176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="熟练度与耐心汇入单笔收益">
+      <rect x="0" y="0" width="800" height="176" fill="#FFFDF7"/>
+      <rect x="16" y="20" width="150" height="52" rx="10" fill="#E9F2F9" stroke="#4C7EA8" stroke-width="2"/>
+      <text x="91" y="42" text-anchor="middle" font-size="13" fill="#3A2E24">练习关 P2</text>
+      <text x="91" y="60" text-anchor="middle" font-size="11" fill="#6B5947">唯一 M 主要来源</text>
+      <rect x="190" y="20" width="150" height="52" rx="10" fill="#E9F2F9" stroke="#4C7EA8" stroke-width="2"/>
+      <text x="265" y="42" text-anchor="middle" font-size="13" fill="#3A2E24">熟练度 M</text>
+      <text x="265" y="60" text-anchor="middle" font-size="11" fill="#6B5947">0–100，每道独立</text>
+      <rect x="364" y="20" width="160" height="52" rx="10" fill="#FBEAF0" stroke="#C55F82" stroke-width="2"/>
+      <text x="444" y="42" text-anchor="middle" font-size="13" fill="#3A2E24">完美率 p</text>
+      <text x="444" y="60" text-anchor="middle" font-size="11" fill="#6B5947">5% → 60% 封顶</text>
+      <rect x="548" y="20" width="150" height="52" rx="10" fill="#FAEBD3" stroke="#B4702E" stroke-width="2"/>
+      <text x="623" y="42" text-anchor="middle" font-size="13" fill="#3A2E24">品质系数 Q</text>
+      <text x="623" y="60" text-anchor="middle" font-size="11" fill="#6B5947">完美 ×1.5 [PH]</text>
+      <rect x="190" y="104" width="150" height="52" rx="10" fill="#E9F4EC" stroke="#5E9B77" stroke-width="2"/>
+      <text x="265" y="126" text-anchor="middle" font-size="13" fill="#3A2E24">顾客耐心 p</text>
+      <text x="265" y="144" text-anchor="middle" font-size="11" fill="#6B5947">提交瞬间锁存</text>
+      <rect x="364" y="104" width="160" height="52" rx="10" fill="#E9F4EC" stroke="#5E9B77" stroke-width="2"/>
+      <text x="444" y="126" text-anchor="middle" font-size="13" fill="#3A2E24">耐心系数 T(p)</text>
+      <text x="444" y="144" text-anchor="middle" font-size="11" fill="#6B5947">0.5 + 0.5p [PH]</text>
+      <rect x="548" y="104" width="150" height="52" rx="10" fill="#FAEBD3" stroke="#B4702E" stroke-width="2"/>
+      <text x="623" y="126" text-anchor="middle" font-size="13" fill="#3A2E24">评价档</text>
+      <text x="623" y="144" text-anchor="middle" font-size="11" fill="#6B5947">阶梯 0.6 / 0.3 [PH]</text>
+      <path d="M167 46 L188 46 M341 46 L362 46 M525 46 L546 46" stroke="#4C7EA8" stroke-width="2" fill="none"/>
+      <path d="M341 130 L362 130 M525 130 L546 130" stroke="#5E9B77" stroke-width="2" fill="none"/>
+      <path d="M699 46 L740 46 L740 88 M699 130 L740 130 L740 88" stroke="#B4702E" stroke-width="2" fill="none"/>
+      <rect x="712" y="70" width="82" height="36" rx="8" fill="#B4702E"/>
+      <text x="753" y="93" text-anchor="middle" font-size="12" fill="#FFFFFF">单笔收益</text>
+      <text x="400" y="172" text-anchor="middle" font-size="11.5" fill="#6B5947">收益 = 基础价 B × 品质系数 Q × 耐心系数 T(p)</text>
     </svg>
-    <div class="cap">图 3　场景开放节奏：S4 在第三章置灰是叙事本身；S6 撤摊与 S2 柜台重启是同一事件的两面</div>
+    <div class="cap">图 3 · 两条链只在结算式里汇合；员工与设备不进入这张图（减负不增伤）</div>
   </div>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
-</section>
 
-<!-- 6 玩法类型 -->
-<section class="sheet" id="s4">
-  <p class="eyebrow">04 / Mechanics</p>
-  <h2>玩法类型：8 种常规 + 4 种规则态</h2>
-  <p class="sub">3 核心关卡 + 3 经营 + 2 长线；每种都写清 purpose / inputs / outputs / failure state</p>
-
-  <h3>核心关卡（对应三重磨炼，每道招牌菜必走）</h3>
+  <h3>3.1 模型 A：熟练度 → 完美率 → 收益</h3>
   <table class="sm">
-    <thead><tr><th style="width:5%">ID</th><th style="width:16%">玩法</th><th style="width:25%">Purpose / 玩家决策</th><th style="width:20%">Inputs → Outputs</th><th>Failure state</th></tr></thead>
+    <thead><tr><th style="width:14%">品质</th><th style="width:34%">概率函数 <span class="ph">[PLACEHOLDER]</span></th><th style="width:14%">收益 Q</th><th style="width:14%">评价</th><th>视觉反馈</th></tr></thead>
     <tbody>
-      <tr><td><b>P1</b></td><td>制作 · <b>练习关（练）</b></td><td>把手感练成肌肉记忆；决策＝何时停火、擀几层、温控到几度</td><td>触屏操作 + 音频提示（糖的「噗」声）→ 手感值、失败品、焦痕</td><td>无限重试、不计分、不扣资源；<b>连焦三炉是教学不是惩罚</b></td></tr>
-      <tr><td><b>P2</b></td><td><b>剧情关（悟）</b></td><td>回答「做给谁吃」；决策＝一次二选一</td><td>短对话 + 客人档案 → 糖霜插图解锁、关系 +1</td><td>无失败；选错只换台词，不阻断（P2）</td></tr>
-      <tr><td><b>P3</b></td><td><b>挑战关（战）</b></td><td>真实压力下完整复现；决策＝并发排序、干扰应对</td><td>限时订单 + V1 干扰 → 页「学成」、金币、排名积分</td><td>退回练习关，不丢已学页；干扰必带喜剧落点</td></tr>
-    </tbody>
-  </table>
-
-  <h3>经营玩法（Session loop 主体）</h3>
-  <table class="sm">
-    <thead><tr><th style="width:5%">ID</th><th style="width:16%">玩法</th><th style="width:25%">Purpose / 玩家决策</th><th style="width:20%">Inputs → Outputs</th><th>Failure state</th></tr></thead>
-    <tbody>
-      <tr><td><b>P4</b></td><td><b>接单经营</b></td><td>多桌并行排序；决策＝先做哪单、先补哪种料</td><td>订单波次 + 耐心值 → 金币、客流、回头客</td><td>客人等走只丢本单收入，不掉段位、不扣页数（P4）</td></tr>
-      <tr><td><b>P5</b></td><td><b>装扮与器具升级</b></td><td>花钱买「看得见的变强」；决策＝先扩产能还是先换牌子</td><td>金币 + 装扮件 → 客流加成、并行桌数、步数缩短</td><td>纯正向；<b>漏雨屋顶不可修</b>（设定红线）</td></tr>
-      <tr><td><b>P6</b></td><td><b>经营结算</b></td><td>读账本做次日备料；决策＝备料量、定价</td><td>收支 + 原料单 → 次日库存、账本剧情文本</td><td>备料失衡 → 次日缺料，可在 S3 临时补货（花时间不花钱）</td></tr>
-    </tbody>
-  </table>
-
-  <h3>长线养成</h3>
-  <table class="sm">
-    <thead><tr><th style="width:5%">ID</th><th style="width:16%">玩法</th><th style="width:25%">Purpose / 玩家决策</th><th style="width:20%">Inputs → Outputs</th><th>Failure state</th></tr></thead>
-    <tbody>
-      <tr><td><b>P7</b></td><td><b>糖勺榜段位评定</b></td><td>把「升段＝看下一页」变成期待；决策＝带哪几道招牌菜去评</td><td>已学页 + 五阶评定口味 → 段位、新页显形、新场景</td><td>不达标下个 session 再评，<b>不惩罚、不刷日常</b>（P4）</td></tr>
-      <tr><td><b>P8</b></td><td><b>队伍岗位派遣</b></td><td>感受「队伍变大了」；决策＝谁去哪个岗位</td><td>已入队角色 + 岗位槽 → 技法 / 外送 / 结算加成与关系事件</td><td>岗位空闲只损失加成；<b>加成在挑战关需封顶</b></td></tr>
-    </tbody>
-  </table>
-
-  <h3>4 种章节规则态（不新增玩法，临时改规则）</h3>
-  <table class="sm">
-    <thead><tr><th style="width:5%">ID</th><th style="width:17%">规则态</th><th style="width:16%">生效窗口</th><th style="width:33%">改了什么</th><th>剧情对应</th></tr></thead>
-    <tbody>
-      <tr><td><b>V1</b></td><td>干扰事件池</td><td>一章起，按段位升级</td><td>顾苦六种手法：糖罐换盐 / 温度计调乱 / 胡椒烟雾弹 / 鸽子占座 / 伪装评论家打一星 / 改门牌。<b>真造成麻烦</b>，但必带自食其果的落点</td><td>1-4 换盐反做出海盐焦糖、2-4 烟雾弹催出「等出来的层次」、5-1 全场换苦精</td></tr>
-      <tr><td><b>V2</b></td><td><b>无配方模式</b></td><td>4-1 ~ 4-8</td><td>S4 置灰、配方提示隐藏，只能凭手感选料；已学菜逐道「重铸」</td><td>三十天不许用菜谱；爽点来自失去后逐道返还</td></tr>
-      <tr><td><b>V3</b></td><td><b>回想关卡</b></td><td>5-5 ~ 5-6</td><td>把玩家<b>失败过的</b>菜列成重做清单，三位新队友各守一炉（数层 / 试味 / 记账）</td><td>第 100 页「把摔过的，再做一遍」→ 百页齐鸣</td></tr>
-      <tr><td><b>V4</b></td><td><b>自由炉</b></td><td>终章 6-3 ~ 6-8</td><td>关闭排名、金币、计时、评分；只保留制作操作与全员在场</td><td>故意焦一角的布丁、第 101 页显字。<b>全作唯一不产出数值的一炉</b></td></tr>
-    </tbody>
-  </table>
-  <div class="callout green"><b>零成本复用</b>　V1 的六种「捣乱」在 5-3 后被顾苦编成「防捣乱演练」教材，从敌对机制原地转成教学机制——同一个事件池，两遍用法，不新增资源。</div>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
-</section>
-
-<!-- 7 剧情穿插 -->
-<section class="sheet" id="s5">
-  <p class="eyebrow">05 / Narrative Integration</p>
-  <h2>主线剧情穿插机制</h2>
-  <p class="sub">剧情不另开时间线，全部挂在 session 的三个插入口上——玩家永远在「玩」</p>
-
-  <div class="grid3">
-    <div class="card"><span class="name">G1 · 开门钩子</span><p><b>位置</b>：session 开始、接单前<br><b>形态</b>：2–4 句对话 + 一个明确目标<br><b>时长</b>：≤ 20 秒 <span class="ph">[PLACEHOLDER]</span>，可跳过<br><b>例</b>：0-2「先说好，我不教笨蛋」、2-1 下战帖</p></div>
-    <div class="card"><span class="name">G2 · 关中气泡</span><p><b>位置</b>：制作 / 挑战关进行中<br><b>形态</b>：单句短气泡，<b>不暂停操作</b><br><b>时长</b>：单句 ≤ 2 秒，自动滚<br><b>例</b>：1-4 顾苦宣言、2-3「第 87 次，还是个饼」</p></div>
-    <div class="card"><span class="name">G3 · 关门落点</span><p><b>位置</b>：结算后、退出 session 前<br><b>形态</b>：显形仪式 / 章末钩子 / 入场动画<br><b>时长</b>：≤ 40 秒 <span class="ph">[PLACEHOLDER]</span><br><b>例</b>：0-5 糖霜插图、1-7「……再来一块」、5-2 多摆一副碗筷</p></div>
-  </div>
-  <div class="callout"><b>铁律</b>　G2 绝不弹全屏对话框。玩家手上正端着一炉，读字就会糊锅——这是反馈通道问题，不是叙事问题。</div>
-
-  <h3>四条咬合规则（用来审每一个剧情节点）</h3>
-  <table class="sm">
-    <thead><tr><th style="width:6%">#</th><th style="width:26%">规则</th><th>说明</th></tr></thead>
-    <tbody>
-      <tr><td><b>R1</b></td><td>每个剧情节点必须有玩法落点</td><td>节点要能写出「触发条件 + 场景 + 玩法 + 产出」四件套；写不出来的删掉或并入 G3 台词</td></tr>
-      <tr><td><b>R2</b></td><td>冲突角色只在自己负责的磨炼里出现</td><td>雷千层→P1 / P3（练）；顾苦→V1（战）；沈如意→P2 / P6（悟）。入队后统一转 P8 岗位加成</td></tr>
-      <tr><td><b>R3</b></td><td>入队即解锁，且当场可操作</td><td>5-2 / 5-3 / 5-4 分别开放 S8、S9、S2 结算强化；玩家在同一次 session 内就能点开新按钮</td></tr>
-      <tr><td><b>R4</b></td><td>章末钩子＝下一次开门提示</td><td>1-7 显出三页 → 二章 G1；2-7 叠纸 → 三章 G1；4-8 最后 13 页 → 五章 G1</td></tr>
-    </tbody>
-  </table>
-
-  <h3>关键节拍 → 玩法落点（16 个高价值节点）</h3>
-  <table class="sm">
-    <thead><tr><th style="width:8%">节点</th><th style="width:21%">剧情事件</th><th style="width:7%">插入口</th><th style="width:10%">场景</th><th style="width:28%">玩法 / 规则态</th><th>玩法产出</th></tr></thead>
-    <tbody>
-      <tr><td>0-3 / 0-4</td><td>连焦三炉 → 听声顿悟</td><td>G2</td><td>S1</td><td>P1 教学（关计时器，只留声音提示）</td><td>第 1 页显形</td></tr>
-      <tr><td>0-5</td><td>糖霜插图</td><td>G3</td><td>S4</td><td>显形仪式</td><td>正反馈仪式建立</td></tr>
-      <tr><td>1-2</td><td>豆豆偷吃被抓</td><td>G1</td><td>S2</td><td>解锁「试吃」反馈</td><td>喜剧反馈通道</td></tr>
-      <tr><td>1-3</td><td>沈如意应聘</td><td>G1</td><td>S2</td><td>开放 P6 结算（账本从乱到平）</td><td>结算误差减免</td></tr>
-      <tr><td>1-4</td><td>顾苦换盐 → 反爆单</td><td>G2+P3</td><td>S1/S2</td><td>V1 首次投放 → 将错就错</td><td>招牌菜「海盐焦糖」</td></tr>
-      <tr><td>1-7</td><td>铜勺评定 / 周伯开口</td><td>G3</td><td>S5→S2</td><td>P7 首次评定</td><td>铜勺、第 2–8 页</td></tr>
-      <tr><td>2-2</td><td>初战惨败 1024 层</td><td>G3</td><td>S5</td><td>P3 挑战关（<b>必须真的输</b>）</td><td>失败品入收藏册</td></tr>
-      <tr><td>2-4 / 2-5</td><td>烟雾弹 →「等出来的层次」</td><td>G2</td><td>S1</td><td>V1 干扰 + P1 擀制练习</td><td>擀制手感值</td></tr>
-      <tr><td>2-6</td><td>平局（周伯一票）</td><td>G3</td><td>S5</td><td>P7 评定（「好吃」票独立于技法分）</td><td>银勺、第 9–20 页</td></tr>
-      <tr><td>3-2 / 3-3</td><td>拓印事发、摘星封炉扣书</td><td>G1</td><td>S2/S4</td><td><b>剥离全部加成</b>：S4 置灰、岗位清空、装扮加成停用</td><td>玩家与主角同步「失去」</td></tr>
-      <tr><td>3-5 / 3-6</td><td>摔模具 → 顾苦那袋糖</td><td>G3</td><td>S1</td><td>本 session 不接单，只做一炉不卖的布丁</td><td>无数值产出，情绪回暖</td></tr>
-      <tr><td>4-1</td><td>三十天不许用菜谱</td><td>G1</td><td>S1</td><td>V2 无配方模式开启</td><td>已学 40 页进入重铸队列</td></tr>
-      <tr><td>4-7</td><td>周伯亮明身份</td><td>G3</td><td>S5</td><td>P7 评定口味改变（条例加「谁在吃」）</td><td>琉璃勺、菜谱归还、41–87 页批量显形</td></tr>
-      <tr><td>5-2</td><td>雷千层认输入队</td><td>G3</td><td>S7→S8</td><td>R3：当场开放 S8 技法台 + 派遣岗位</td><td>技法研发</td></tr>
-      <tr><td>5-3</td><td>苦甜交织、顾苦入队</td><td>G2+G3</td><td>S7→S9</td><td>R3：当场开放 S9 + V1 转演练教材</td><td>咕咕外送队</td></tr>
-      <tr><td>5-4</td><td>豆豆留人、沈如意归队</td><td>G3</td><td>S7→S2</td><td>R3：S6 关闭、S2 账本重新摊开</td><td>经营结算强化</td></tr>
-      <tr><td>5-5 / 5-6</td><td>回想 · 百页齐鸣</td><td>整局</td><td>S7+S4</td><td>V3 回想关（三人各守一炉）</td><td>100/101、云顶勺</td></tr>
-      <tr><td>6-3 / 6-5</td><td>故意焦一角 · 第 101 页</td><td>整局</td><td>S1→S2→S4</td><td>V4 自由炉（关闭全部数值）</td><td>101/101、全员同框</td></tr>
-    </tbody>
-  </table>
-  <div class="callout blue"><b>防穿帮说明</b>　第四章末「已显形 87 页」与「书被扣」不矛盾：扣书期间<b>只显形题目、不学会</b>。批量显形给的是待办清单，三重磨炼仍在归还后逐页进行。这正是「显形 ≠ 学会」铁律撑住剧情的地方，不要改成「第四章直接学会 47 页」。</div>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
-</section>
-
-<!-- 8 章节流程表 -->
-<section class="sheet" id="s6">
-  <p class="eyebrow">06 / Chapter Flow</p>
-  <h2>章节 × 玩法 × 场景 流程表</h2>
-  <p class="sub">七幕主表：每一幕都写清出口条件，剧情与玩法在同一行对齐</p>
-
-  <table class="sm">
-    <thead><tr><th style="width:7%">幕</th><th style="width:11%">剧情节拍</th><th style="width:12%">主场景</th><th style="width:19%">主玩法</th><th style="width:12%">规则态</th><th style="width:18%">新解锁</th><th style="width:14%">队伍变化</th><th style="width:7%">session</th></tr></thead>
-    <tbody>
-      <tr><td><b>序章</b></td><td>0-1 ~ 0-6</td><td>S3→S1→S4</td><td>P1 教学</td><td>—</td><td>火候判定（听声）、S4、第 1 页</td><td>糖老书</td><td>1</td></tr>
-      <tr><td><b>第一章</b></td><td>1-1 ~ 1-7</td><td>S2 / S1 / S3 / S5</td><td>P4 / P5 / P6 / P7</td><td>V1 首次</td><td>铜勺、2–8 页、试吃反馈</td><td>豆豆、沈如意加入；顾苦、雷千层露面；周伯</td><td>4</td></tr>
-      <tr><td><b>第二章</b></td><td>2-1 ~ 2-7</td><td>S5 / S1</td><td>P1 擀制 / P3 / P7</td><td>V1 升级</td><td>银勺、9–20 页、限时订单</td><td>不变（雷千层仍是对手）</td><td>5</td></tr>
-      <tr><td><b>第三章</b></td><td>3-1 ~ 3-9</td><td>S2 / S1 / S6</td><td>P4 多桌并行 / P6</td><td>剥离（V2 前置）</td><td>21–40 页 → 被扣；S6 开放</td><td><b>沈如意离队</b>（唯一一次队伍变短）</td><td>3</td></tr>
-      <tr><td><b>第四章</b></td><td>4-1 ~ 4-8</td><td>S1 / S5 / S6</td><td>P1 重铸 / P3 复原 / P7</td><td><b>V2 无配方</b></td><td>琉璃勺、菜谱归还、41–87 页显形、S8 前置</td><td>雷千层作证（不入队）、沈如意暗中补单</td><td>6</td></tr>
-      <tr><td><b>第五章</b></td><td>5-1 ~ 5-7</td><td>S7 / S8 / S9 / S4</td><td>P3 极高压 / P8 / P7 终评</td><td>V1 终局 / <b>V3 回想</b></td><td>88–100 页、云顶勺、神位</td><td><b>5-2 雷千层 / 5-3 顾苦 / 5-4 沈如意 全部入队</b></td><td>5</td></tr>
-      <tr><td><b>终章</b></td><td>6-1 ~ 6-8</td><td>S2 全员同框 / S1 / S4</td><td>自由炉</td><td><b>V4 关闭数值</b></td><td>第 101 页</td><td>七人同框，无一人离场</td><td>1</td></tr>
+      <tr><td><b>完美</b></td><td><code>clamp(0.05 + 0.0055×M, 0.05, 0.60)</code></td><td>×1.5</td><td>好评（覆盖）</td><td>糖霜爆闪 + 糖老书「勉强能算个东西」</td></tr>
+      <tr><td>普通</td><td><code>1 − p_perfect − p_fail</code></td><td>×1.0</td><td>按耐心档</td><td>常规出餐</td></tr>
+      <tr><td>失手</td><td><code>clamp(0.20 − 0.0018×M, 0.02, 0.20)</code></td><td>×0.5</td><td>差评（覆盖）</td><td>面团糊脸 + 材料成本价返还</td></tr>
     </tbody>
   </table>
   <div class="grid">
-    <div class="footbox"><b>序章出口</b>第 1 页长出糖霜插图</div>
-    <div class="footbox"><b>一章出口</b>铜勺通过，一次显出三页（→ 二章 G1）</div>
-    <div class="footbox"><b>三章出口</b>围裙口袋里那张空白纸角（→ 四章 G1）</div>
-    <div class="footbox"><b>五章出口</b>第 101 页仍是空白（→ 终章 G1）</div>
+    <div class="card"><span class="name">低端留 5% 完美</span><p>新手第一局就能撞见高光长什么样，是留存钩子，不是随机放水。</p></div>
+    <div class="card"><span class="name">高端封顶 60%</span><p>若允许 100% 完美，后期经营会退化成无判定的点击流水线。</p></div>
+    <div class="card"><span class="name">失手不归零</span><p>下限 2%，喜剧落点始终存在，符合调性红线。</p></div>
+    <div class="card hero"><span class="name">保底机制</span><p>连续 N 单未出完美后第 N+1 单强制完美；N <span class="ph">[PLACEHOLDER]</span>，防「练了白练」。</p></div>
   </div>
 
-  <h3>队伍长度曲线（P3 支柱的可视化）</h3>
-  <div class="fig">
-    <svg viewBox="0 0 800 218" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
-      <rect x="0" y="0" width="800" height="218" fill="#FFFDF7"/>
-      <g font-size="11.5" fill="#3A2E24">
-        <text x="10" y="28">序章</text><text x="10" y="58">第一章</text><text x="10" y="88">第二章</text><text x="10" y="118">第三章</text><text x="10" y="148">第四章</text><text x="10" y="178">第五章</text><text x="10" y="208">终章</text>
-      </g>
-      <g>
-        <rect x="90" y="14" width="22" height="18" rx="3" fill="#B4702E"/>
-        <rect x="90" y="44" width="22" height="18" rx="3" fill="#B4702E"/><rect x="116" y="44" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="142" y="44" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="168" y="44" width="22" height="18" rx="3" fill="#5E9B77"/>
-        <rect x="90" y="74" width="22" height="18" rx="3" fill="#B4702E"/><rect x="116" y="74" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="142" y="74" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="168" y="74" width="22" height="18" rx="3" fill="#5E9B77"/>
-        <rect x="90" y="104" width="22" height="18" rx="3" fill="#B4702E"/><rect x="116" y="104" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="142" y="104" width="22" height="18" rx="3" fill="#5E9B77"/>
-        <rect x="90" y="134" width="22" height="18" rx="3" fill="#B4702E"/><rect x="116" y="134" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="142" y="134" width="22" height="18" rx="3" fill="#5E9B77"/>
-        <rect x="90" y="164" width="22" height="18" rx="3" fill="#B4702E"/><rect x="116" y="164" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="142" y="164" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="168" y="164" width="22" height="18" rx="3" fill="#C55F82"/><rect x="194" y="164" width="22" height="18" rx="3" fill="#C55F82"/><rect x="220" y="164" width="22" height="18" rx="3" fill="#C55F82"/>
-        <rect x="90" y="194" width="22" height="18" rx="3" fill="#B4702E"/><rect x="116" y="194" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="142" y="194" width="22" height="18" rx="3" fill="#5E9B77"/><rect x="168" y="194" width="22" height="18" rx="3" fill="#C55F82"/><rect x="194" y="194" width="22" height="18" rx="3" fill="#C55F82"/><rect x="220" y="194" width="22" height="18" rx="3" fill="#C55F82"/>
-      </g>
-      <text x="256" y="118" font-size="11.5" fill="#B75B52">← 全作唯一一次缩短：结算按钮真的少了一个</text>
-      <text x="256" y="178" font-size="11.5" fill="#C55F82">← 同章三次入队，每次都当场开一个新按钮</text>
-      <g font-size="10.5" fill="#6B5947">
-        <rect x="520" y="16" width="12" height="12" rx="2" fill="#B4702E"/><text x="538" y="26">糖老书</text>
-        <rect x="600" y="16" width="12" height="12" rx="2" fill="#5E9B77"/><text x="618" y="26">豆豆 / 周伯 / 沈如意</text>
-        <rect x="520" y="36" width="12" height="12" rx="2" fill="#C55F82"/><text x="538" y="46">雷千层 / 顾苦 / 沈如意（归队）</text>
-      </g>
-    </svg>
-    <div class="cap">图 4　队伍长度曲线：第三章「少一个岗位」比任何台词都更能让玩家理解背叛</div>
-  </div>
-  <div class="callout"><b>用操作系统讲剧情</b>　沈如意走后，结算按钮真的少了一个；三人归队后，同一次 session 内三个新按钮亮起来。这不是叙事技巧，是 P3 支柱的执行结果。</div>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
+  <h3>3.2 模型 B：耐心 → 收益 / 评价 / 离场</h3>
+  <table class="sm">
+    <thead><tr><th style="width:22%">项</th><th>定义</th></tr></thead>
+    <tbody>
+      <tr><td>初始耐心 P0</td><td><span class="ph">[PLACEHOLDER]</span> 秒，随段位、顾客类型、点击步数变化；进门起线性下降</td></tr>
+      <tr><td>收益系数</td><td><code>T(p) = 0.5 + 0.5p</code>（满耐心 ×1.0，半耐心 ×0.75）<span class="ph">[PLACEHOLDER]</span></td></tr>
+      <tr><td>评价（普通品质）</td><td><code>p ≥ 0.6</code> 好评 / <code>0.3 ≤ p &lt; 0.6</code> 中评 / <code>p &lt; 0.3</code> 差评 <span class="ph">[PLACEHOLDER]</span></td></tr>
+      <tr><td><b>耐心归零</b></td><td>顾客离场，本单收益 0，记「流失客数」；不额外差评、不扣金币、不掉 M（P4）</td></tr>
+    </tbody>
+  </table>
+  <p class="chg">Rationale：评价用阶梯（明确可读）、收益用线性（平滑，不制造「差一秒亏一半」的挫败）。</p>
+
+  <h3>3.3 完美 × 耐心的结算优先级（默认方案 A，待商讨 Q1）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:12%">方案</th><th style="width:34%">完美时评价</th><th style="width:34%">完美时收益</th><th>采用</th></tr></thead>
+    <tbody>
+      <tr><td><b>A 默认</b></td><td>强制好评（覆盖耐心档）</td><td><code>B × 1.5 × T(p)</code>，耐心系数照常</td><td class="ok">✔</td></tr>
+      <tr><td>B</td><td>强制好评</td><td><code>B × 1.5</code>，完全免疫耐心扣减</td><td>待商讨</td></tr>
+      <tr><td>C</td><td>只给好评</td><td><code>B × T(p)</code>，完美纯属评价事件</td><td>待商讨</td></tr>
+    </tbody>
+  </table>
+  <div class="callout blue"><b>为什么默认选 A</b>　它同时保住「熟练度影响收益」与「耐心影响收益」；选 B 会让练满之后的耐心系统对高熟练度玩家整体失效。<b>结算顺序唯一</b>：判品质 → 锁存 p → 算 Q×T(p) → 判评价档（完美/失手覆盖）→ 发金币与好评率。</div>
+
+  <h3>3.4 评价的回收口</h3>
+  <table class="sm">
+    <thead><tr><th style="width:26%">汇总</th><th style="width:40%">影响</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>当日好评率</td><td>次日进店顾客基数 <span class="ph">[PLACEHOLDER]</span></td><td>「服务快」和「做得好」指向同一目标</td></tr>
+      <tr><td>流失客数</td><td>当日评价上限封顶 <span class="ph">[PLACEHOLDER]</span></td><td>防拖时间刷好评</td></tr>
+      <tr><td><b>累计好评率</b></td><td><b>糖勺榜评定「谁在吃」项</b></td><td>4-7 周伯亮身份、条例松口，在系统里就是好评率第一次进入评定公式</td></tr>
+      <tr><td>差评</td><td>只压好评率，不扣金币</td><td>P4：失败不惩罚</td></tr>
+    </tbody>
+  </table>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
 </section>
 
-<!-- 9 经济与数值 -->
+<!-- 6 自动化 -->
+<section class="sheet" id="s4">
+  <p class="eyebrow">04 / Automation Curve</p>
+  <h2>减负与自动化曲线</h2>
+  <p class="sub">员工与设备只减少手动点击，不碰品质；自动化率取代队伍长度，成为新的进度条</p>
+
+  <h3>4.1 定位：减负 ≠ 增伤（P3）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:50%">会影响</th><th>不会影响</th></tr></thead>
+    <tbody>
+      <tr><td>需要玩家手动点击的步数 / 单位时间可服务顾客数 / 并行顾客上限 / 出餐等待 / 结算与备料的接管</td><td><b>熟练度 M、完美率、品质判定、单笔基础价 B、耐心初值 P0、段位评定结果</b></td></tr>
+    </tbody>
+  </table>
+  <div class="callout red"><b>最容易写歪的一条</b>　吞吐提高 → 单位时间金币提高，这是玩家能理解的间接因果；不是给每单偷偷加 10%。把完美率挂到设备上，玩家会算出「买设备＝买收益」，练习系统当场作废，Fun Hypothesis 的「练回去」消失。</div>
+
+  <h3>4.2 员工与设备</h3>
+  <div class="grid">
+    <div class="card"><span class="name">员工 P4</span><p>岗位：备料 / 烤制 / 上菜 / 收银，各自动接管一段固定步骤。只接管已学会菜品；新菜首做、异常订单、干扰事件强制手动。</p><p>成本：一次性雇佣 + <b>每 session 工资（持续 sink）</b>。余额不足 → 该岗位「今天请假」，不裁员、不扣进度。</p></div>
+    <div class="card"><span class="name">设备 P5</span><p>升级 1–5 级 <span class="ph">[PLACEHOLDER]</span>，每级减少 1 个手动步骤或缩短出餐等待；不改食材种类、不改配方。</p><p>成本：一次性升级 + <b>每 session 维护费（持续 sink）</b>。维护不足 → 本局降级运行，不掉等级。<b>漏雨屋顶仍不可修。</b></p></div>
+  </div>
+
+  <h3>4.3 自动化率曲线（A ≤ 70% <span class="ph">[PLACEHOLDER]</span>）</h3>
+  <div class="fig">
+    <svg viewBox="0 0 800 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="七幕自动化率曲线">
+      <rect x="0" y="0" width="800" height="210" fill="#FFFDF7"/>
+      <path d="M60 170 L790 170 M60 130 L790 130 M60 90 L790 90 M60 50 L790 50" stroke="#E8DDC9" stroke-width="1" fill="none"/>
+      <text x="46" y="174" text-anchor="end" font-size="10" fill="#9A876F">0%</text>
+      <text x="46" y="134" text-anchor="end" font-size="10" fill="#9A876F">23%</text>
+      <text x="46" y="94" text-anchor="end" font-size="10" fill="#9A876F">47%</text>
+      <text x="46" y="54" text-anchor="end" font-size="10" fill="#9A876F">70%</text>
+      <rect x="78" y="166" width="72" height="4" rx="2" fill="#B4702E"/>
+      <rect x="180" y="135" width="72" height="35" rx="4" fill="#FAEBD3" stroke="#B4702E" stroke-width="1.5"/>
+      <rect x="282" y="101" width="72" height="69" rx="4" fill="#FAEBD3" stroke="#B4702E" stroke-width="1.5"/>
+      <rect x="384" y="166" width="72" height="4" rx="2" fill="#B75B52"/>
+      <rect x="486" y="119" width="72" height="51" rx="4" fill="#E9F4EC" stroke="#5E9B77" stroke-width="1.5"/>
+      <rect x="588" y="50" width="72" height="120" rx="4" fill="#E9F4EC" stroke="#5E9B77" stroke-width="1.5"/>
+      <rect x="690" y="166" width="72" height="4" rx="2" fill="#7A6BB0"/>
+      <text x="114" y="188" text-anchor="middle" font-size="11" fill="#3A2E24">序章 0%</text>
+      <text x="216" y="188" text-anchor="middle" font-size="11" fill="#3A2E24">一章 20%</text>
+      <text x="318" y="188" text-anchor="middle" font-size="11" fill="#3A2E24">二章 40%</text>
+      <text x="420" y="188" text-anchor="middle" font-size="11" fill="#B75B52">三章 0%</text>
+      <text x="522" y="188" text-anchor="middle" font-size="11" fill="#3A2E24">四章 30%</text>
+      <text x="624" y="188" text-anchor="middle" font-size="11" fill="#3A2E24">五章 70%</text>
+      <text x="726" y="188" text-anchor="middle" font-size="11" fill="#7A6BB0">终章 0%</text>
+      <text x="420" y="24" text-anchor="middle" font-size="12.5" font-weight="600" fill="#B75B52">3-3 剥离：全作唯一一次倒退</text>
+      <text x="726" y="24" text-anchor="middle" font-size="11" fill="#7A6BB0">自愿关掉</text>
+    </svg>
+    <div class="cap">图 4 · 自动化率每章都变，玩家每局都能感到手变轻或变重</div>
+  </div>
+  <div class="callout"><b>P5 红线</b>　即使 A = 70%，玩家仍必须做三类决策：先服务谁、打烊后投自动化还是投熟练度、新菜首做与干扰应对。playtest 出现「挂着不动也能过关」，先砍自动接管范围，别加新玩法。</div>
+
+  <h3>4.4 三次入队 = 三条自动化线（R3 重定义）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:10%">节点</th><th style="width:12%">角色</th><th style="width:18%">入队即解锁</th><th style="width:26%">自动化线</th><th>旧身份的新用法</th></tr></thead>
+    <tbody>
+      <tr><td>5-2</td><td>雷千层</td><td>S8 技法台</td><td><b>练习自动化</b>：委托练习累计 M</td><td>继续挑刺，改成替全店校准火候</td></tr>
+      <tr><td>5-3</td><td>顾苦</td><td>S9 咕咕外送站</td><td><b>提交 / 外送自动化</b>：鸽子接管上菜与外送单</td><td>继续捣乱，改成防捣乱演练教材</td></tr>
+      <tr><td>5-4</td><td>沈如意</td><td>S2 柜台</td><td><b>结算自动化</b>：自动平账、列支工资维护</td><td>继续算账，改成替全店算</td></tr>
+    </tbody>
+  </table>
+  <p class="chg">v1.0 的「入队即解锁」偏加成，v2.0 改成「入队即减负」——每个人来，都是来帮主角少点几下的。</p>
+
+  <h3>4.5 第三章：用操作系统讲背叛</h3>
+  <table class="sm">
+    <thead><tr><th style="width:38%">被剥离项</th><th>玩家立刻感受到</th></tr></thead>
+    <tbody>
+      <tr><td>员工离岗（沈如意出走 + 岗位清空）</td><td>食材按钮重新全部要手点</td></tr>
+      <tr><td>设备停机</td><td>出餐等待恢复初始值</td></tr>
+      <tr><td>S4 菜谱界面置灰</td><td>熟练度条不可见、显形题目也不给</td></tr>
+      <tr><td>工资与维护费停收</td><td>账本少两行支出，反而更像「人真的走了」</td></tr>
+    </tbody>
+  </table>
+  <div class="callout green"><b>不需要一句解释台词</b>　玩家在 3-1 已习惯 40% 自动化，3-3 一局内被打回 0%，手上点击量直接翻倍。3-6 顾苦那袋糖对应「一位临时帮工回来」，自动化率首次回升，情绪回暖也落在手指上。</div>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
+</section>
+
+<!-- 7 玩法类型 -->
+<section class="sheet" id="s5">
+  <p class="eyebrow">05 / System Spec</p>
+  <h2>玩法类型：8 种常规 + 4 种规则态</h2>
+  <p class="sub">数量沿用 v1.0，内容全部重定义；每种都写得出 purpose / inputs / outputs / failure state</p>
+
+  <h3>5.1 主体与养成</h3>
+  <table class="sm">
+    <thead><tr><th style="width:7%">ID</th><th style="width:17%">玩法</th><th style="width:26%">Purpose / 决策</th><th style="width:24%">Outputs</th><th>Failure state</th></tr></thead>
+    <tbody>
+      <tr><td><b>P1</b></td><td><b>接单经营（主体）</b></td><td>有限耐心下按序点食材、决定先服务谁</td><td>金币、评价、完美次数、M 微量增长</td><td>耐心归零 → 收益 0、记流失；点错可撤销</td></tr>
+      <tr><td><b>P2</b></td><td>练习关（熟练度）</td><td>把有限余额投到哪一道去练</td><td>M ↑；首次做出 → 页学成 + 插图</td><td>无失败；焦了照常给 M，材料成本价返还</td></tr>
+      <tr><td><b>P3</b></td><td>高压经营时段（战）</td><td>并发排序、干扰应对、极限出餐</td><td>评定结果、剧情产出、额外客流</td><td>未达标 → 下 session 再评，不扣进度</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 减负与经营支撑</h3>
+  <table class="sm">
+    <thead><tr><th style="width:7%">ID</th><th style="width:17%">玩法</th><th style="width:26%">Purpose / 决策</th><th style="width:24%">Outputs</th><th>Failure state</th></tr></thead>
+    <tbody>
+      <tr><td><b>P4</b></td><td>员工雇佣与排班</td><td>先雇哪个岗位；工资占收入比是否可承受</td><td>A ↑、并行顾客上限 ↑</td><td>发薪不足 → 「今天请假」，本局无接管</td></tr>
+      <tr><td><b>P5</b></td><td>设备升级</td><td>先减哪一步点击；维护费是否可承受</td><td>手动步数 ↓、出餐等待 ↓</td><td>维护不足 → 本局降级，不掉等级</td></tr>
+      <tr><td><b>P6</b></td><td>经营结算（打烊账本）</td><td>备料量、定价、投资分配</td><td>次日库存、可支配余额、次日客流基数</td><td>备料失衡 → 次日缺料，S3 临时补货</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 长线与叙事</h3>
+  <table class="sm">
+    <thead><tr><th style="width:7%">ID</th><th style="width:17%">玩法</th><th style="width:26%">Purpose / 决策</th><th style="width:24%">Outputs</th><th>Failure state</th></tr></thead>
+    <tbody>
+      <tr><td><b>P7</b></td><td>糖勺榜段位评定</td><td>带哪几道高熟练度菜去评</td><td>段位、新页显形、新岗位槽</td><td>不达标 → 再评，不设分数墙、不刷日常</td></tr>
+      <tr><td><b>P8</b></td><td>剧情关（悟）</td><td>由 T1–T5 经营触发器解锁后播放；一次双项抉择「这道做给谁吃」</td><td>新订单类型、新岗位槽、关系事件、台词差异</td><td>无失败；选错只换台词，不阻断经营</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.4 四种规则态（临时改经营规则，不是新玩法）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:7%">ID</th><th style="width:16%">规则态</th><th style="width:15%">窗口</th><th style="width:38%">改了什么</th><th>剧情对应</th></tr></thead>
+    <tbody>
+      <tr><td><b>V1</b></td><td>干扰事件池</td><td>一章起按段位投放</td><td>六种手法每次都<b>真实增加点击步数或压缩耐心</b>，必带自食其果落点</td><td>1-4 换盐、2-4 烟雾弹、5-1 换苦精；5-3 后转教材</td></tr>
+      <tr><td><b>V2</b></td><td>无配方模式</td><td>4-1 ~ 4-8</td><td>食材名称隐藏，凭记忆点选；设备不显示名称提示；S4 置灰</td><td>三十天不许用菜谱；4-6 桂花糕</td></tr>
+      <tr><td><b>V3</b></td><td>回想关卡</td><td>5-5 ~ 5-6</td><td>重做失败过 / 熟练度最低的菜，三人各守一炉，补足 M</td><td>第 100 页「把摔过的再做一遍」</td></tr>
+      <tr><td><b>V4</b></td><td>自由炉</td><td>6-3 ~ 6-8</td><td>关闭排名、金币、耐心、评分，<b>关闭全部自动化</b></td><td>故意焦一角、第 101 页；唯一不产出数值的一炉</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><b>零新增资源的一处复用</b>　V1 的六种捣乱在 5-3 后从敌对机制原地转成教学机制；V4 新加的「关掉自动化」一句，让终章主题在操作系统上可操作。</div>
+
+  <h3>5.5 单局产出与七幕 session（沿用 v1.0 切分，仍待验证）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:12%">幕</th><th style="width:10%">session</th><th style="width:36%">经营侧重</th><th style="width:16%">自动化率</th><th>出口</th></tr></thead>
+    <tbody>
+      <tr><td>序章</td><td>1</td><td>教学局：只卖焦糖布丁，全手动</td><td>0%</td><td>第 1 页学成</td></tr>
+      <tr><td>第一章</td><td>4</td><td>铜勺，2 位并行；首次雇员工</td><td>0 → 20%</td><td>第 2–8 页</td></tr>
+      <tr><td>第二章</td><td>5</td><td>银勺，3 位并行；设备首升</td><td>20 → 40%</td><td>平局事件 2-6</td></tr>
+      <tr><td>第三章</td><td>3</td><td><b>剥离：员工离岗、设备停机</b></td><td><b>40 → 0%</b></td><td>围裙里的纸角</td></tr>
+      <tr><td>第四章</td><td>6</td><td>无配方，手动强度全作最高</td><td>0 → 30%</td><td>最后 13 页提示</td></tr>
+      <tr><td>第五章</td><td>5</td><td>云顶大会；三次入队</td><td>30 → 70%</td><td>100 页齐鸣</td></tr>
+      <tr><td>终章</td><td>1</td><td>自由炉：主动关掉全部自动化</td><td>70 → 0%（自愿）</td><td>第 101 页显字</td></tr>
+    </tbody>
+  </table>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
+</section>
+
+<!-- 8 场景与剧情 -->
+<section class="sheet" id="s6">
+  <p class="eyebrow">06 / Scenes &amp; Story Beats</p>
+  <h2>场景清单与主线剧情穿插</h2>
+  <p class="sub">9 个场景数量不变、功能全部重定义；剧情仍不另开时间线，挂在 G1 / G2 / G3 三个插入口</p>
+
+  <h3>6.1 场景功能重定义</h3>
+  <table class="sm">
+    <thead><tr><th style="width:7%">ID</th><th style="width:22%">场景</th><th style="width:42%">v2.0 承载玩法</th><th>关键细节</th></tr></thead>
+    <tbody>
+      <tr><td><b>S1</b></td><td>一勺糖 · 后厨</td><td><b>P1 食材点击台</b> / P2 练习台 / P5 设备摆放 / V2</td><td>食材按钮常驻；设备升级画面可见；屋顶一直漏</td></tr>
+      <tr><td><b>S2</b></td><td>大堂与柜台</td><td><b>P1 顾客与耐心条</b> / P4 派遣 / P6 账本 / 5-4 结算自动化</td><td>耐心条常显在顾客卡上；账本摊在柜台</td></tr>
+      <tr><td><b>S3</b></td><td>巷口街面</td><td>排队客流 / P6 临时补货 / S9 外送</td><td>好评率高时排队变长</td></tr>
+      <tr><td><b>S4</b></td><td>《一百零一页》界面</td><td><b>熟练度总览</b> / 显形 / 学成 / V3 回想 / 段位</td><td>每页显示 M 与近 20 单完美次数；扣书期置灰</td></tr>
+      <tr><td><b>S5</b></td><td>糖勺榜评定场</td><td>P3 高压时段 / P7 评定</td><td>4-7 起评定公式加入累计好评率</td></tr>
+      <tr><td><b>S6</b></td><td>街对面代记账小摊</td><td>支线观察 / 喜剧事件</td><td>第三章「岗位清空」的对照画面；5-4 撤摊</td></tr>
+      <tr><td><b>S7</b></td><td>云端食榜大会场</td><td>极限并行顾客 / 三线同场 / 三次入队</td><td>全场耐心衰减加快 <span class="ph">[PLACEHOLDER]</span></td></tr>
+      <tr><td><b>S8</b></td><td>雷记分店技法台</td><td><b>练习自动化</b>（5-2）/ 技法研发</td><td>委托只累计 M，不代替首次学成</td></tr>
+      <tr><td><b>S9</b></td><td>咕咕外送站</td><td><b>提交 / 外送自动化</b>（5-3）/ 防捣乱演练</td><td>外送单用独立计时，不占店内耐心条</td></tr>
+    </tbody>
+  </table>
+  <p class="chg">刻意不建场景：顾苦童年甜品店门口（仅回忆）、雷记老店（仅讲述），依 LOCATIONS.md 红线。</p>
+
+  <h3>6.2 三插入口与六条咬合规则</h3>
+  <div class="grid">
+    <div class="card"><span class="name">G1 开门钩子</span><p>备料前，2–4 句对话 + 本局目标，≤20s，可跳过。</p></div>
+    <div class="card"><span class="name">G2 关中气泡</span><p>营业进行中，单句 ≤2s 且不暂停操作。<b>绝不弹全屏对话框</b>——读字就会让顾客等走，这是反馈通道问题。</p></div>
+    <div class="card"><span class="name">G3 关门落点</span><p>练习后，显形仪式 / 章末钩子 / 入队动画，≤40s，可跳过。</p></div>
+    <div class="card hero"><span class="name">R3 入队即解锁</span><p>5-2 / 5-3 / 5-4 分别开放练习自动化 / 提交自动化 / 结算自动化，同一次 session 内点开新按钮即生效。</p></div>
+  </div>
+  <table class="sm">
+    <thead><tr><th style="width:8%">#</th><th style="width:30%">规则</th><th>v2.0 更新</th></tr></thead>
+    <tbody>
+      <tr><td>R1</td><td>每个剧情节点必须有玩法落点</td><td>四件套改为「触发条件 + 场景 + 经营环节 + 产出」；写不出来的并入 G3 台词</td></tr>
+      <tr><td>R2</td><td>冲突角色只在自己负责的磨炼里出现</td><td>雷千层→练习 / 评定；顾苦→V1（增加点击步数或压缩耐心）；沈如意→结算；入队后统一转自动化岗位</td></tr>
+      <tr><td>R4</td><td>章末钩子＝下一次开门提示</td><td>1-7 显三页、2-7 叠纸、4-8 最后 13 页、5-7 第 101 页空白，不变</td></tr>
+      <tr><td><b>R5</b></td><td>主线节点必须绑定经营触发器</td><td>只用可观测经营量，不用隐藏计数器；详见 6.4</td></tr>
+      <tr><td><b>R6</b></td><td>触发器只解锁剧情，不阻挡经营</td><td>主线节点在下一个 G1 / G3 播放，必触发且不可跳过；详见 6.4</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.3 高价值节拍 → 经营落点（节选 8 条，完整 16 条见 Markdown）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:13%">节点</th><th style="width:25%">剧情事件</th><th style="width:12%">插入口</th><th style="width:26%">经营 / 玩法落点</th><th>产出</th></tr></thead>
+    <tbody>
+      <tr><td>0-3 / 0-4</td><td>连焦三炉 → 听声顿悟</td><td>G2</td><td>P1 教学：只卖布丁，全手动点 3 个食材</td><td>第 1 页学成</td></tr>
+      <tr><td>1-3</td><td>沈如意应聘</td><td>G1</td><td>开放 P6 账本</td><td>结算自动化前置</td></tr>
+      <tr><td>1-4</td><td>顾苦换盐 → 反爆单</td><td>G2</td><td>V1 首次投放：点击步数 +1，将错就错</td><td>招牌菜「海盐焦糖」</td></tr>
+      <tr><td>2-2</td><td>初战惨败 1024 层</td><td>G3</td><td>P3 高压时段（必须真的输）</td><td>练的动机</td></tr>
+      <tr><td><b>3-2 / 3-3</b></td><td>拓印事发、摘星封炉扣书</td><td>G1</td><td><b>员工离岗 + 设备停机 + S4 置灰，A 归零</b></td><td>玩家与主角同步失去</td></tr>
+      <tr><td><b>4-7</b></td><td>周伯亮明身份</td><td>G3</td><td><b>评定公式加入累计好评率</b>（条例加「谁在吃」）</td><td>琉璃勺、菜谱归还</td></tr>
+      <tr><td>5-2 / 3 / 4</td><td>三人入队</td><td>G3</td><td>R3：三条自动化线当场接通</td><td>A 30% → 70%</td></tr>
+      <tr><td>6-3 / 6-5</td><td>故意焦一角 · 第 101 页</td><td>整个 session</td><td>V4 自由炉：关闭全部自动化与数值</td><td>101/101、全员同框</td></tr>
+    </tbody>
+  </table>
+  <h3>6.4 剧情触发条件：全部由经营进度派生（本版新增）</h3>
+  <div class="callout green"><b>剧情没有被削弱</b>　三插入口、16 个高价值节拍、七幕主线、三次入队、大团圆全部保留；改的只是触发方式：v1.0 由「进入某个关卡」触发，v2.0 由「经营到达某个可观测的量」触发。经营永远是主体时段，剧情是经营长出来的结果。</div>
+  <table class="sm">
+    <thead><tr><th style="width:18%">触发器</th><th style="width:38%">条件（除设定锚定项外均 <span class="ph">[PLACEHOLDER]</span>）</th><th style="width:34%">触发的剧情节点</th><th>插入口</th></tr></thead>
+    <tbody>
+      <tr><td><b>T1 经营里程碑</b></td><td>首次完成一局营业 / 累计出餐 N 单 / 当日好评率 ≥ X / 连续营业 D 天</td><td>0-5 糖霜插图、1-7 周伯「再来一块」、4-7 条例松口、6-7「今天不累。」</td><td>G3</td></tr>
+      <tr><td><b>T2 菜谱解锁特定点心</b></td><td>显形第 N 页（段位解锁）/ 首次学成某道 / 该道 M ≥ 阈值</td><td>0-3 焦糖布丁、1-4 海盐焦糖、2-4 千层酥、4-6 桂花糕、5-3 苦甜交织</td><td>G1 / G3</td></tr>
+      <tr><td><b>T3 段位与评定</b></td><td>铜 / 银 / 琉璃 / 云顶 评定通过（五阶，设定锚定）</td><td>1-7 铜勺、2-6 平局、4-8 菜谱归还、5-7 封神</td><td>G3</td></tr>
+      <tr><td><b>T4 自动化与队伍</b></td><td>首位员工上岗 / 设备升到 L2 / A 达 40% / 三次入队（设定锚定）</td><td>1-3 沈如意应聘、3-3 剥离、三次入队仪式</td><td>G1 / G3</td></tr>
+      <tr><td><b>T5 异常经营事件</b></td><td>顾苦干扰首次命中 / 连续 N 单失手 / 单局流失达阈值</td><td>1-4 换盐反爆单、3-5 摔模具、3-6 顾苦那袋糖</td><td>G2</td></tr>
+    </tbody>
+  </table>
+  <div class="grid">
+    <div class="card"><span class="name">R5 主线节点绑定触发器</span><p>触发器只用玩家看得见的量：金币、页数、熟练度、段位、好评率、自动化率、在岗人数；不用隐藏计数器。</p></div>
+    <div class="card hero"><span class="name">R6 触发器不阻挡经营</span><p>经营永远能继续开下一局；主线剧情在下一个 G1 / G3 播放，必触发且不可跳过，支线可跳过。</p></div>
+  </div>
+  <h4>剧情回喂经营（剧情不是纯观赏）</h4>
+  <table class="sm">
+    <thead><tr><th style="width:44%">剧情事件</th><th>回喂给经营的东西</th></tr></thead>
+    <tbody>
+      <tr><td>升段 / 新页显形</td><td>菜单宽度 ↑ → 新订单类型、新顾客、基础价 B 上限 ↑</td></tr>
+      <tr><td>首次学成某道点心</td><td>该道进入可制作列表，开始累计熟练度 M</td></tr>
+      <tr><td>沈如意应聘 / 三次入队</td><td>岗位槽 +1、三条自动化线、账本结算减免</td></tr>
+      <tr><td>4-7 条例加「谁在吃」</td><td>累计好评率正式进入评定公式</td></tr>
+      <tr><td>顾苦 5-3 收编鸽子</td><td>S9 外送单解锁、V1 干扰转演练教材</td></tr>
+      <tr><td>终章第 101 页</td><td>自由炉规则态（关闭数值，无经营产出，主题闭环）</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><b>为什么这样安排</b>　玩家为了「看到下一段剧情」去把店经营得更好，剧情又给回新的菜、新的人、新的岗位——经营与叙事共用一个进度条，不会出现「玩了半天经营、剧情还在原地」或「看完过场回去接着点食材」的割裂。</div>
+  <div class="callout blue"><b>防穿帮</b>　第四章末「已显形 87 页」与「书被扣」不矛盾：扣书期只显形题目、不学会；批量显形给的是待办清单，学成仍在归还后逐页首次做出，熟练度不会自动补满。</div>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
+</section>
+
+<!-- 9 经济与矩阵 -->
 <section class="sheet" id="s7">
   <p class="eyebrow">07 / Economy &amp; Tuning</p>
-  <h2>经济系统、数值与调优表</h2>
-  <p class="sub">钱从哪来、到哪去；任何 source 找不到 sink，通胀只是时间问题</p>
+  <h2>经济系统：持续 sink 与数值调优</h2>
+  <p class="sub">v1.0 最大的通胀风险被结构性解决：员工工资与设备维护费随主体玩法一起增长</p>
 
-  <div class="fig">
-    <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
-      <rect x="0" y="0" width="800" height="200" fill="#FFFDF7"/>
-      <text x="14" y="22" font-size="12.5" font-weight="600" fill="#5E9B77">SOURCES · 进</text>
-      <text x="430" y="22" font-size="12.5" font-weight="600" fill="#B75B52">SINKS · 出</text>
-      <g font-size="11.5" fill="#3A2E24">
-        <rect x="14" y="32" width="300" height="26" rx="4" fill="#E9F4EC" stroke="#5E9B77"/><text x="24" y="49">出餐收入（P4 每单）</text>
-        <rect x="14" y="64" width="300" height="26" rx="4" fill="#E9F4EC" stroke="#5E9B77"/><text x="24" y="81">评定奖励（P7 五阶各一次）</text>
-        <rect x="14" y="96" width="300" height="26" rx="4" fill="#E9F4EC" stroke="#5E9B77"/><text x="24" y="113">外送订单（S9，5-3 后）</text>
-        <rect x="14" y="128" width="300" height="26" rx="4" fill="#E9F4EC" stroke="#5E9B77"/><text x="24" y="145">回头客小费 / 剧情奖励（秘传、原料单）</text>
-        <rect x="430" y="32" width="356" height="26" rx="4" fill="#FBECE9" stroke="#B75B52"/><text x="440" y="49">原料采购（每 session，随菜单宽度增长）</text>
-        <rect x="430" y="64" width="356" height="26" rx="4" fill="#FBECE9" stroke="#B75B52"/><text x="440" y="81">器具升级 / 店铺装扮（一次性，件数有限）</text>
-        <rect x="430" y="96" width="356" height="26" rx="4" fill="#FBECE9" stroke="#B75B52"/><text x="440" y="113">岗位派遣开销 / 干扰事件重做成本</text>
-        <rect x="430" y="128" width="356" height="26" rx="4" fill="#FBEAF0" stroke="#C55F82"/><text x="440" y="145">鸽子饲料与外送队维护（5-3 后持续 sink）</text>
-        <rect x="430" y="160" width="356" height="26" rx="4" fill="#F0EDFA" stroke="#7A6BB0"/><text x="440" y="177">手感值溢出 → 失败品收藏册（软通货 sink）</text>
-      </g>
-      <path d="M314 100 L420 100" stroke="#9A876F" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
-      <text x="330" y="94" font-size="10.5" fill="#9A876F">金币池</text>
-    </svg>
-    <div class="cap">图 5　Sources &amp; Sinks：紫色与粉色两行专治「装扮买完后金币变废数字」</div>
-  </div>
-
-  <div class="callout"><b>最大风险</b>　装扮与器具是一次性 sink，买完即失效。S9 的持续维护费必须在 5-3 后立刻接入。判定依据：装扮购买次数有限，金币按 session 持续产出，收支缺口在装扮售罄后持续扩大；触发条件为装扮售罄，影响组件为金币池与第五章消费动机，根因是缺少持续性 sink。</div>
-  <div class="callout green"><b>商业化红线</b>　不卖配方、不卖页数、不卖「跳过三重磨炼」的道具。「不可作弊」是剧情铁律，商业化若与之冲突，改商业化，不改铁律。</div>
-
-  <h3>数值调优表（同步建表，不事后补）</h3>
+  <h3>7.1 Sources &amp; Sinks</h3>
   <table class="sm">
-    <thead><tr><th style="width:20%">变量</th><th style="width:19%">取值</th><th style="width:15%">类别</th><th style="width:24%">Rationale / 假设</th><th>验证路径</th></tr></thead>
+    <thead><tr><th style="width:26%">Sources（进）</th><th style="width:24%">说明</th><th style="width:26%">Sinks（出）</th><th>性质</th></tr></thead>
     <tbody>
-      <tr><td>菜谱总页数 / 五阶段位</td><td>101 / 铜银金琉璃云顶</td><td>设定锚定</td><td>大纲 v1.1 第七节</td><td>—</td></tr>
-      <tr><td>各章显形页区间</td><td>1 / 2–8 / 9–20 / 21–40 / 41–87 / 88–100</td><td>设定锚定</td><td>节奏已配平，不重调</td><td>—</td></tr>
-      <tr><td>入队节点</td><td>5-2 / 5-3 / 5-4</td><td>设定锚定</td><td>大纲 3.7 硬节点</td><td>—</td></tr>
-      <tr><td>场景数 / 常规玩法数</td><td>9 / 8</td><td>有 rationale</td><td>4+3+2 场景；3+3+2 玩法</td><td>美术排期复核</td></tr>
-      <tr><td>单局时长</td><td>8 min</td><td><span class="ph">[PLACEHOLDER]</span></td><td>A3 假设，休闲经营常见 5–10 min</td><td>首次 playtest 记 20 局中位数</td></tr>
-      <tr><td>一周目 session 数</td><td>25</td><td><span class="ph">[PLACEHOLDER]</span></td><td>16 道招牌菜 × 1.5 session 反推</td><td>paper prototype 后重算</td></tr>
-      <tr><td>招牌菜 / 常驻菜</td><td>24 / 76</td><td><span class="ph">[PLACEHOLDER]</span></td><td>按剧情权重分层，避免 300 关卡</td><td>内容量评审 + 重复感问卷</td></tr>
-      <tr><td>每 session 订单波次</td><td>2–3 波</td><td><span class="ph">[PLACEHOLDER]</span></td><td>8 分钟 × 单波约 2.5 分钟</td><td>A3 一变即作废</td></tr>
-      <tr><td>客人耐心值</td><td>未定</td><td><span class="ph">[PLACEHOLDER]</span></td><td>需与操作步数联调，不单独拍数</td><td>Moment-to-moment playtest</td></tr>
-      <tr><td>手感值上限</td><td>每道菜独立封顶</td><td><span class="ph">[PLACEHOLDER]</span></td><td>防软通货溢出，溢出转收藏册</td><td>观察是否出现「刷低级菜刷满」</td></tr>
-      <tr><td>失败返还比例</td><td>材料成本价返还</td><td><span class="ph">[PLACEHOLDER]</span></td><td>P2 支柱：失败不惩罚</td><td>观察失败后是否继续下一炉</td></tr>
-      <tr><td>干扰事件密度</td><td>每 session ≤ 1 次，按段位升级</td><td><span class="ph">[PLACEHOLDER]</span></td><td>「战」要真实压力但不变成噪音</td><td>挑战关通关率与退出率</td></tr>
-      <tr><td>岗位加成在挑战关</td><td>封顶</td><td><span class="ph">[PLACEHOLDER]</span></td><td>防 P8 把「战」关难度抹平</td><td>第五章难度测试</td></tr>
-      <tr><td>段位评定门槛</td><td>不设分数墙</td><td>有 rationale</td><td>P4 支柱：排名是解锁器</td><td>观察是否出现「卡段位」流失</td></tr>
+      <tr><td><b>出餐收入</b></td><td><code>B × Q × T(p)</code>，主来源</td><td><b>原料采购</b></td><td>持续</td></tr>
+      <tr><td>评定奖励</td><td>五阶各一次</td><td><b>员工工资</b></td><td><b>持续</b></td></tr>
+      <tr><td>外送订单</td><td>S9，5-3 后</td><td><b>设备维护费</b></td><td><b>持续</b></td></tr>
+      <tr><td>回头客小费</td><td>与好评率挂钩</td><td>员工雇佣</td><td>一次性</td></tr>
+      <tr><td>剧情奖励</td><td>秘传 / 原料单（物料）</td><td>设备升级</td><td>一次性</td></tr>
+      <tr><td>练习产物售卖</td><td><span class="ph">[PLACEHOLDER]</span> 豆豆试吃低价卖出</td><td>店铺装扮</td><td>一次性</td></tr>
+      <tr><td>—</td><td>—</td><td>干扰重做成本 / 外送队维护</td><td>偶发 / 并入工资口径</td></tr>
     </tbody>
   </table>
-  <p>所有 <span class="ph">[PLACEHOLDER]</span> 都附了验证路径。<b>没有验证路径的数值我没写</b>——包括看起来人畜无害的「初始金币 100」。</p>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
+  <div class="callout green"><b>结构性解决</b>　v1.0 的一次性 sink 购买次数有限，金币按 session 持续产出，缺口在买完后单调扩大，只能外挂「鸽子饲料」堵。v2.0 把 sink 挂在「在岗人数 × 设备等级」——这两个量随进度单调增长，与收入同向，不再靠外挂。<b>验证路径</b>：25 session 收支 Monte Carlo，观察第五章金币余额斜率是否趋平 <span class="ph">[PLACEHOLDER]</span>。</div>
+
+  <h3>7.2 禁售清单（不可作弊 + P3）</h3>
+  <p><span class="pill">不卖配方</span><span class="pill">不卖页数</span><span class="pill">不卖熟练度</span><span class="pill">不卖完美率 / 必出完美</span><span class="pill">不卖跳过练习</span><span class="pill">不卖自动化跳过</span></p>
+  <p class="chg">商业化若与铁律冲突，改商业化，不改铁律。</p>
+
+  <h3>7.3 数值调优表节选（完整版见 CSV）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:26%">变量</th><th style="width:22%">取值</th><th style="width:15%">类别</th><th>验证路径</th></tr></thead>
+    <tbody>
+      <tr><td>菜谱总页数 / 五阶 / 页区间 / 入队节点</td><td>101 / 5 / 区间 / 5-2·3·4</td><td>设定锚定</td><td>无需验证</td></tr>
+      <tr><td>单局时长</td><td>8 min</td><td><span class="ph">[PLACEHOLDER]</span></td><td>20 局中位数</td></tr>
+      <tr><td>每道菜点击步数</td><td>3–6 次</td><td><span class="ph">[PLACEHOLDER]</span></td><td>单均点击数与误点率</td></tr>
+      <tr><td>熟练度 M 范围</td><td>0–100，每道独立</td><td><span class="ph">[PLACEHOLDER]</span></td><td>观察「只练一道通关」</td></tr>
+      <tr><td>完美率 / 失手率函数</td><td>5%→60% / 20%→2%</td><td><span class="ph">[PLACEHOLDER]</span></td><td>1000 次 Monte Carlo + 主观量表</td></tr>
+      <tr><td>完美 / 失手收益系数</td><td>×1.5 / ×0.5</td><td><span class="ph">[PLACEHOLDER]</span></td><td>收支模拟</td></tr>
+      <tr><td>保底计数 N</td><td>未定</td><td><span class="ph">[PLACEHOLDER]</span></td><td>连续非完美长度分布</td></tr>
+      <tr><td>顾客耐心初值 P0</td><td>未定</td><td><span class="ph">[PLACEHOLDER]</span></td><td>Moment-to-moment playtest</td></tr>
+      <tr><td>耐心收益系数 T(p)</td><td><code>0.5+0.5p</code></td><td><span class="ph">[PLACEHOLDER]</span></td><td>收益分布与挫败问卷</td></tr>
+      <tr><td>评价阶梯阈值</td><td>0.6 / 0.3</td><td><span class="ph">[PLACEHOLDER]</span></td><td>好评率分布</td></tr>
+      <tr><td>自动化率上限</td><td>70%</td><td><span class="ph">[PLACEHOLDER]</span></td><td>观察挂机通关</td></tr>
+      <tr><td>员工工资 / 设备维护</td><td>未定</td><td><span class="ph">[PLACEHOLDER]</span></td><td>25 session 收支 Monte Carlo</td></tr>
+    </tbody>
+  </table>
+  <p class="chg">每个 <span class="ph">[PLACEHOLDER]</span> 都附验证路径；没有验证路径的数值不写，包括看起来无害的「初始金币 100」。</p>
+
+  <h3>7.4 系统交互矩阵（新增风险项）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:38%">系统对</th><th style="width:20%">判定</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>熟练度 M × 员工 / 设备</td><td class="ok">intended（隔离）</td><td>减负不改完美率，否则练习作废</td></tr>
+      <tr><td>练习 P2 × 经营 P1</td><td class="ok">intended（张力）</td><td>金币与时间争夺同一笔余额，不假装可调和</td></tr>
+      <tr><td>自动化 A × 玩家决策</td><td><span class="tag t-red">bug 风险</span></td><td>超上限后玩家零输入；按 A6 封顶并强制三类决策</td></tr>
+      <tr><td>V2 无配方 × 设备自动选料</td><td><span class="tag t-red">bug 风险</span></td><td>V2 期间隐藏名称提示，避免绕过「凭手感」</td></tr>
+      <tr><td>员工工资 × 金币池</td><td class="ok">intended</td><td>持续 sink 与收入同向增长</td></tr>
+      <tr><td>第三章剥离 × 自动化 A</td><td class="ok">intended</td><td>A 归零即用操作系统讲背叛</td></tr>
+      <tr><td>累计好评率 × P7 评定</td><td class="ok">intended</td><td>4-7 条例松口在公式上落地</td></tr>
+      <tr><td>V4 自由炉 × 数值与自动化</td><td class="ok">intended（互斥）</td><td>终章真正关掉金币 / 耐心 / 评分 / 自动接管</td></tr>
+    </tbody>
+  </table>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
 </section>
 
-<!-- 10 验证与自检 -->
+<!-- 10 验收与收尾 -->
 <section class="sheet" id="s8">
-  <p class="eyebrow">08 / Validation</p>
-  <h2>交互矩阵、失败信号与自检</h2>
-  <p class="sub">先定义「坏掉长什么样」，再开 playtest；没有失败定义的 playtest 等于没做</p>
+  <p class="eyebrow">08 / Validation &amp; Open Questions</p>
+  <h2>交互矩阵、失败信号、自检与待商讨</h2>
+  <p class="sub">先定义坏掉长什么样，再开 playtest；没有失败定义的 playtest 等于没做</p>
 
-  <h3>系统交互矩阵（intended / acceptable / bug）</h3>
-  <table class="sm">
-    <thead><tr><th style="width:34%">系统对</th><th style="width:16%">判定</th><th>说明</th></tr></thead>
-    <tbody>
-      <tr><td>V1 干扰事件 × P3 挑战关</td><td><span class="tag t-green">intended</span></td><td>「战」的核心，麻烦必须真实</td></tr>
-      <tr><td>V1 干扰事件 × P2 剧情关</td><td><span class="tag t-red">bug 风险</span></td><td>干扰会打断「悟」的抉择；P2 期间须锁定干扰投放</td></tr>
-      <tr><td>V2 无配方 × S4 菜谱界面</td><td><span class="tag t-green">intended</span></td><td>界面置灰是叙事本身</td></tr>
-      <tr><td>P5 装扮加成 × P7 段位评定</td><td><span class="tag t-blue">acceptable</span></td><td>需封顶，否则买装扮＝买段位，违反 P4</td></tr>
-      <tr><td>P8 岗位派遣 × P3 挑战关</td><td><span class="tag t-blue">acceptable</span></td><td>需封顶，队伍养成不能抹平终局压力</td></tr>
-      <tr><td>V3 回想关 × P1 练习关</td><td><span class="tag t-red">bug 风险</span></td><td>重做已练过的菜易变重复劳动；须换目标（只求「做完」）并让三位队友各守一炉提供新反馈</td></tr>
-      <tr><td>V4 自由炉 × 全部数值系统</td><td><span class="tag t-green">intended 互斥</span></td><td>终章必须真关掉金币 / 计时 / 评分，否则第 101 页的主题垮掉</td></tr>
-      <tr><td>P6 结算 × 沈如意离队</td><td><span class="tag t-green">intended</span></td><td>3-3 后结算按钮少一个，用操作系统讲背叛</td></tr>
-      <tr><td>S6 小摊 × 5-4 归队</td><td><span class="tag t-green">intended 互斥</span></td><td>撤摊与账本摊回柜台是同一事件的两面</td></tr>
-    </tbody>
-  </table>
-
-  <h3>Paper Prototype（先纸面，再代码）</h3>
-  <div class="callout blue">三张纸卡跑 10 分钟：① 一页空白菜谱（只有菜名 + 一句提示）② 一张订单 ③ 一张干扰事件（糖罐换盐）。<br><b>只验证一件事</b>：玩家在没有任何数值、美术、音效的情况下，会不会因为「把换错的盐做成招牌」而笑出来、并主动要求再来一炉。<br>不会 → Fun Hypothesis 不成立，先改核心循环，别写制作关代码。</div>
-
-  <h3>Playtest 失败信号（验收单）</h3>
-  <table class="sm">
-    <thead><tr><th style="width:6%">级别</th><th style="width:28%">信号</th><th style="width:33%">优先排查</th><th>不能先做的事</th></tr></thead>
-    <tbody>
-      <tr><td><b>A</b></td><td>序章重试 5 次以上仍不懂「听声」</td><td>反馈通道：音频音量 / 糖色渐变 / 时机高亮</td><td>别改机制、别加教程文字</td></tr>
-      <tr><td><b>B</b></td><td>第三章退出率明显上升，或说「不想玩了」</td><td>低谷长度：3-5 到 3-6 间隔、失去期是否超 1 个 session</td><td>别把背叛写轻、别删低谷</td></tr>
-      <tr><td><b>C</b></td><td>第五章金币溢出、装扮全买完仍累积</td><td>sink：S9 维护费是否按时接入</td><td>别加新装扮硬凑消费</td></tr>
-      <tr><td><b>D</b></td><td>入队后没点新按钮、说「就多了段对话」</td><td>R3 是否当场可操作、新按钮是否有即时收益</td><td>别加更长过场</td></tr>
-      <tr><td><b>E</b></td><td>玩家讨厌某个反派，或觉得反派「太蠢」</td><td>谐星化是否靠削弱实力取笑、捣乱是否真造成麻烦</td><td>别删麻烦、别加苦情</td></tr>
-      <tr><td><b>F</b></td><td>终章有人没出现在 S2、出现「会不会回来」类台词</td><td>6-2 七人同框、S6 是否撤摊、账本是否在柜台</td><td>别留白</td></tr>
-    </tbody>
-  </table>
-
-  <h3>与既有设定的一致性自检</h3>
-  <table class="sm">
-    <thead><tr><th style="width:46%">检查项</th><th>结果</th></tr></thead>
-    <tbody>
-      <tr><td>四条铁律是否全部落到玩法</td><td class="ok">✔ 显形→P7/S4；三重磨炼→P1/P2/P3；不可作弊→商业化红线；越后越挑人→V3</td></tr>
-      <tr><td>五阶排名对应五章</td><td class="ok">✔ 第六节逐幕对齐（金勺评定作废）</td></tr>
-      <tr><td>三类冲突 × 三重磨炼</td><td class="ok">✔ R2：雷千层→练、顾苦→战、沈如意→悟</td></tr>
-      <tr><td>三个入队节点与入队即解锁</td><td class="ok">✔ 5-2→S8、5-3→S9、5-4→S2；R3 当场可操作</td></tr>
-      <tr><td>大团圆铁律 / 反派谐星化</td><td class="ok">✔ 终章七人同框、S6 撤摊、书灵留在 S2；V1 必带自食其果落点，未削弱实力</td></tr>
-      <tr><td>漏雨屋顶不修 / 周伯身份不提前</td><td class="ok">✔ P5 列为不可修；4-7 才改评定口味</td></tr>
-      <tr><td>第 101 页不产出数值</td><td class="ok">✔ V4 关闭全部数值系统</td></tr>
-      <tr><td>未经 playtest 的数值是否标注</td><td class="ok">✔ 第七节全部 [PLACEHOLDER] 且附验证路径</td></tr>
-    </tbody>
-  </table>
-
-  <h3>下一步（按成本从低到高）</h3>
-  <div class="footgrid">
-    <div class="footbox"><b>1 · 纸面原型</b>3 张卡 + 10 分钟试跑记录，无前置</div>
-    <div class="footbox"><b>2 · 数值落表</b>调优表转为可计算表格，填 A3 后的真实单局时长</div>
-    <div class="footbox"><b>3 · 关卡脚本</b>序章 + 第一章，含 G1 / G2 / G3 台词插入点</div>
-    <div class="footbox"><b>4 · 可玩原型</b>S1 后厨，只做焦糖布丁一道</div>
+  <h3>8.1 Paper Prototype（5 张卡 / 10 分钟）</h3>
+  <p>① 空白菜谱（菜名 + 熟练度格）② 顾客订单卡（可擦写耐心条）③ 食材卡（3–6 格，按顺序点）④ 干扰事件（换盐 → 多点一格）⑤ 打烊账本（收入 / 工资 / 维护 / 投资双项抉择）。</p>
+  <div class="grid">
+    <div class="card"><span class="name">验证 1 · 核心爽点</span><p>没有美术与音效时，玩家会不会因为「快等走的客人面前端出一份完美」而笑出来、主动再来一局。</p></div>
+    <div class="card hero"><span class="name">验证 2 · 投资张力</span><p>打烊后会不会在「雇人」和「练一道」之间真的犹豫。不犹豫 → 2.4 的张力没成立，先调回报斜率，别写经营代码。</p></div>
   </div>
-  <div class="callout green"><b>一句话收尾</b>　这套流程没有发明任何新系统——三条剧情铁律、九个地点、三个入队节点，原样翻译成了玩法。真正需要验证的只有「把搞砸的一炉变成招牌，好不好笑、想不想再来」，其余都是排期问题。</div>
-  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计</span></div>
+
+  <h3>8.2 Playtest 失败信号（验收单）</h3>
+  <table class="sm">
+    <thead><tr><th style="width:6%">级别</th><th style="width:34%">信号</th><th style="width:34%">优先排查</th><th>不能先做的事</th></tr></thead>
+    <tbody>
+      <tr><td><b>A</b></td><td>序章重试 5 次仍不懂「点食材 → 提交」</td><td>反馈通道：食材高亮、订单对应、耐心条可见性</td><td>别改概率模型、别加教程文字</td></tr>
+      <tr><td><b>B</b></td><td>「练了没用 / 全看脸」</td><td>熟练度条与近 20 单完美次数是否常显</td><td>别直接调高完美率上限</td></tr>
+      <tr><td><b>C</b></td><td>后期挂机也能过关</td><td>A6 上限、新菜首做与异常是否强制手动</td><td>别加新玩法硬凑操作量</td></tr>
+      <tr><td><b>D</b></td><td>第五章金币溢出，或工资维护压到雇不起</td><td>持续 sink 是否随收入同向增长</td><td>别加装扮硬凑消费</td></tr>
+      <tr><td><b>E</b></td><td>离场率过高、频繁重开</td><td>P0 与点击步数联调、并行顾客数是否超 A1</td><td>别把差评改成扣金币</td></tr>
+      <tr><td><b>F</b></td><td>玩家几乎不进 P2，钱全投自动化</td><td>练习产物售价、M 增量、完美收益系数</td><td>别把练习设成开店前置</td></tr>
+      <tr><td><b>G</b></td><td>入队后没点新按钮；终章有人缺席</td><td>R3 当场可操作、6-2 七人同框、S6 已撤摊</td><td>别加更长过场、别留白</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.3 设定一致性自检</h3>
+  <table class="sm">
+    <thead><tr><th style="width:50%">检查项</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td>经营是主体 / 练习只提升熟练度 / 点食材→提交</td><td class="ok">✔ 第 2 节、5.1、6.5 主表</td></tr>
+      <tr><td><b>剧情仍为主线且由经营派生</b></td><td class="ok">✔ 6.4 五类触发器 T1–T5、R5 / R6、剧情回喂经营表</td></tr>
+      <tr><td>熟练度 → 完美率 → 收益；耐心 → 收益与评价、归零离场</td><td class="ok">✔ 模型 A / B + 唯一结算顺序</td></tr>
+      <tr><td>员工设备属减负、自动化越后越高</td><td class="ok">✔ 4.1 隔离表 + 4.4 曲线</td></tr>
+      <tr><td>四条剧情铁律 / 大团圆 / 全员入队 / 谐星反派</td><td class="ok">✔ 1.2 重解释，STORY_BIBLE 原文未改</td></tr>
+      <tr><td>周伯身份不提前 / 漏雨屋顶不修 / 第 101 页无数值</td><td class="ok">✔ 4-7 才接好评率；4.3 与 V4 明确</td></tr>
+      <tr><td>数值全部附验证路径</td><td class="ok">✔ 见 CSV 34 项</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.4 v1.0 → v2.0 连锁影响</h3>
+  <table class="sm">
+    <thead><tr><th style="width:44%">对象</th><th style="width:14%">状态</th><th>处理</th></tr></thead>
+    <tbody>
+      <tr><td>玩法流程设计 .md / .html / 数值调优表 .csv</td><td>同步</td><td>全文重建</td></tr>
+      <tr><td><code>.learnings/GAMEPLAY.md</code></td><td>同步</td><td>玩法圣经重写；旧版骨架与软通货只保留在作废声明中</td></tr>
+      <tr><td>美术资产清单</td><td>同步</td><td>追加 UI 缺口：耐心条 / 食材按钮 / 熟练度条 / 员工设备图标</td></tr>
+      <tr><td>故事大纲 / 企划书 / 五份剧情设定记忆</td><td class="ok">不改</td><td>剧情锚定未变</td></tr>
+      <tr><td>已生成 4 张常驻场景图</td><td class="ok">不改</td><td>耐心条与食材按钮属 UI 叠加层</td></tr>
+      <tr><td>Git 仓库</td><td>同步</td><td>本轮修改提交并推送</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.5 待商讨问题索引（Q1–Q14）</h3>
+  <div class="footgrid">
+    <div class="footbox"><b>Q1–Q4 · 结算与判定</b>完美与耐心优先级、品质档位、完美率上限与保底、耐心归零记账</div>
+    <div class="footbox"><b>Q5–Q8 · 自动化</b>自动化上限、员工离线、设备是否碰品质、三次入队是否等于三个自动岗位</div>
+    <div class="footbox"><b>Q9–Q11 · 养成与经济</b>练习产物能否卖、熟练度是否衰减、工资维护 vs 一次性买断</div>
+    <div class="footbox"><b>Q12 · 品类四要素</b>平台 / 单局时长 / 目标用户 / 一周目体量</div>
+    <div class="footbox"><b>Q13–Q14 · 剧情触发</b>触发颗粒度（每局 / 里程碑）、主线剧情可跳过与回放</div>
+    <div class="footbox"><b>共同前提</b>14 条均已给出默认假设并写进本稿，商讨只改对应数值或那条规则</div>
+  </div>
+  <p class="chg">14 条都已在文档里给出默认假设并写进本稿，商讨结果只改变对应数值或那条规则，不影响本版结构成立。</p>
+
+  <div class="hypo">
+    <span class="k">收尾</span>
+    <div class="txt">这版没有发明新系统——把「练」拆成熟练度、把「战」放回经营现场、把「三个人入队」翻译成三条自动化线。<br>第三章的背叛成了「手忽然变忙」，终章的自由炉成了「自己再动手一次」。</div>
+  </div>
+  <p>真正要验证的只有两件事：快等走的客人面前端出完美，好不好笑；打烊后雇人还是练一道，会不会真的犹豫。</p>
+  <div class="pagefoot"><span>《欢闹厨房》玩法流程设计 v2.0 · 经营主体版</span></div>
 </section>
 
 </body>
