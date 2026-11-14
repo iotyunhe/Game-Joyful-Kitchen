@@ -261,6 +261,28 @@ svg{display:block}
 .logitem{font-size:11px;line-height:1.5;padding:5px 0;border-bottom:2px dotted rgba(90,59,46,.2)}
 .logitem b{color:var(--berry)}
 
+/* ============ 开场序章 ============ */
+.prologue{animation:fadein .26s ease;display:flex;flex-direction:column;gap:9px}
+.pro-narr{font-size:13px;line-height:1.8;background:rgba(255,251,242,.94);border:var(--line) solid var(--cocoa);
+  border-radius:14px;padding:9px 12px;margin:0}
+.pro-narr b{color:var(--berry)}
+.pro-art{display:flex;justify-content:center;padding:2px 0}
+.pro-book{font-size:21px;font-weight:900;letter-spacing:2px;background:var(--paper);border:3px solid var(--cocoa);
+  border-radius:18px;padding:12px 20px;text-align:center;line-height:1.7}
+.pro-book span{display:block;font-size:13px;font-weight:700;color:var(--caramel);letter-spacing:1px}
+.pro-pagebox .page{width:112px;margin:0 auto}
+.pro-laws{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pro-law{background:var(--paper);border:2px solid var(--cocoa);border-radius:12px;padding:7px 9px;font-size:10.5px;line-height:1.6}
+.pro-law b{display:block;font-size:12px;color:var(--caramel);margin-bottom:2px}
+.pro-law i{font-style:normal;background:var(--frost);border:1.5px solid var(--cocoa);border-radius:6px;padding:0 4px}
+.pro-sign{font-size:28px;font-weight:900;letter-spacing:4px;background:var(--paper);border:3px solid var(--cocoa);
+  border-radius:18px;padding:9px 24px}
+.pro-sign span{color:var(--berry)}
+.pro-foot{display:flex;gap:8px;align-items:center;margin-top:auto;padding-top:6px}
+.pro-foot .btn{white-space:nowrap}
+.pro-kick{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pro-count{font-size:11px;opacity:.6;flex:none}
+
 /* 顶部单句气泡 G2（绝不弹全屏） */
 .bubble{position:absolute;z-index:15;left:14px;right:14px;top:62px;display:none;
   background:var(--frost);border:var(--line) solid var(--cocoa);border-radius:16px;
@@ -354,6 +376,8 @@ svg{display:block}
       <main class="stage" id="stage">
         <!-- 标题 -->
         <section class="view on" id="v-title"></section>
+        <!-- 开场序章 -->
+        <section class="view" id="v-prologue"></section>
         <!-- 营业 -->
         <section class="view" id="v-open">
           <div class="shopbar">
@@ -507,10 +531,10 @@ const CREW = [
 
 /* ---------- 剧情节点：每个都绑定可观测经营量（R5 / R6） ---------- */
 const STORY = {
-  'intro':{slot:'G1',tag:'G1 开门钩子',title:'0-1 · 捡到一本书，先开个店',trigger:'开局 · 首次开门',
-    lines:[['糖老书','「捡到我的时候，你连焦糖和酱油都分不清。」'],
-           ['麦小满','「今天不一样！我买了鸡蛋、牛奶，还有……」'],
-           ['糖老书','「……那我们先从别把蛋壳放进去开始。」']],
+  'intro':{slot:'G1',tag:'G1 开门钩子',title:'第 1 天 · 「要有人吃」',trigger:'序章结束 · 首次开门',
+    lines:[['糖老书','「书只是书。想长糖霜，得有人愿意吃你的布丁。」'],
+           ['麦小满','「门口那位就是『有人吃』？我这就去！」'],
+           ['糖老书','「按第一页的顺序备料。快——客人的耐心，比我的瞌睡短得多。」']],
     effect:'今天只卖焦糖布丁：3 个食材、1 位客人、全手动（A = 0%）。点顾客 → 按序点食材 → 提交。',apply(){}},
   '0-5':{slot:'G3',tag:'T1 经营里程碑',title:'0-5 · 第 1 页长出糖霜',trigger:'首次完成一局营业',
     lines:[['糖老书','「……这一炉，勉强能算个东西。」'],['麦小满','「才一页！还有一百页呢！」']],
@@ -550,6 +574,50 @@ const STORY = {
     effect:'第 101 页显字 · 全员同框 · 主线闭环',apply(){S.ending=true}}
 };
 
+/* ---------- 开场序章：世界观 + 序章 0-1 ~ 0-6（故事企划书 v1.1 序章逐拍落地） ---------- */
+const PROLOGUE = [
+  {k:'序幕 · 这座城把甜点当正经事',bg:ASSET.s3,
+   narr:['在这座城里，谁家点心好不好，<b>糖勺榜</b>说了算。',
+     '铜勺、银勺、金勺、琉璃勺、云顶勺——五级段位像梯子一样，从街角一直搭到云端食榜。',
+     '麦小满，18 岁，面包房送货工。手笨、心软、乐天，对「好吃」有野兽般的直觉——可他只会送点心，不会做点心。'],
+   say:[['麦小满','「今天的货，一分钟都不差！」']]},
+  {k:'序章 0-1 · 天降旧书',bg:ASSET.s3,
+   narr:['送货路上，一本封皮掉渣的旧书从天而降——啪叽，正中脑门。',
+     '书页泛黄，会自己翻页。扉页烫着一行小字：'],
+   art:'<div class="pro-book">《一百零一页》<span>「吃完这一本，你就是神。」</span></div>',
+   say:[['麦小满','「……神也会被书砸到吗？」']]},
+  {k:'序章 0-2 · 书里住着个老头',bg:ASSET.s4,
+   narr:['书页里慢吞吞浮出一张皱脸，戴一副糖丝眼镜，说两句就打瞌睡。他叫<b>糖老书</b>。'],
+   art:`<div class="pro-pagebox"><div class="page"><span class="pn">P.1</span>${dishIcon('pudding',44)}<div class="nm">焦糖布丁</div><div class="mm">提示：别看钟。</div></div></div>`,
+   say:[['糖老书','「我不教笨蛋。」'],
+        ['糖老书','「第一页自己看：菜名我给，配方不给——配方得你自己的炉子写出来。」']]},
+  {k:'世界观 · 这本书的四条铁律',bg:ASSET.s4,
+   art:`<div class="pro-laws">
+      <div class="pro-law"><b>① 显形</b>页面原本空白。店铺在糖勺榜升段，下一页才显出题目——只给菜名和一句提示，<i>不给配方</i>。</div>
+      <div class="pro-law"><b>② 三重磨炼</b><i>显形 ≠ 学会</i>。每道菜要过三关：练（反复实操）、悟（做给谁吃）、战（限时与捣乱里做出来）。</div>
+      <div class="pro-law"><b>③ 不可作弊</b>照抄配方、请人代做，页面会褪回空白、长出霉斑——喜剧惩罚，从头再练。</div>
+      <div class="pro-law"><b>④ 越往后越挑人</b>第 100 页要把所有失败过的菜重做一遍；第 101 页，永不因排名显形。</div>
+    </div>`,
+   say:[['糖老书','「记不住没关系。反正你摔一跤，就记住了。」']]},
+  {k:'序章 0-3 · 连焦三炉',bg:ASSET.s1,
+   narr:['借了面包房打烊后的烤炉，照着菜名硬试。','第一炉，糊了。第二炉，还是糊了。第三炉——厨房飘出黑烟。'],
+   say:[['糖老书','「（打瞌睡）……习惯就好。」'],
+        ['麦小满','「再来一炉就好！」']]},
+  {k:'序章 0-4 · 听糖',bg:ASSET.s1,
+   narr:['蹲在炉子边上，眼睛死死盯着锅。忽然——糖在锅里「噗」地轻轻一响。',
+     '火候，原来要用耳朵听，不是用眼睛看钟。'],
+   say:[['麦小满','「……原来你在跟我说话。」']]},
+  {k:'序章 0-5 · 糖霜插图',bg:ASSET.s4,
+   narr:['第四炉，焦糖布丁，成了。','纸页上悄悄长出一幅糖霜插图，还带着刚出炉的香味。'],
+   art:`<div class="pro-pagebox"><div class="page learned"><span class="pn">P.1</span><img src="${ASSET.pudding}" alt="焦糖布丁" style="width:64px;height:64px;object-fit:contain;margin-top:6px"><div class="nm">糖霜插图 · 长出来了</div></div></div>`,
+   say:[['糖老书','「这炉……勉强能算个东西。」']]},
+  {k:'序章 0-6 · 要有人吃',bg:ASSET.s2,
+   narr:['书末写着一行小字：「要有人吃。」','于是——租下街角漏雨的旧仓库，挂上一块新招牌。'],
+   art:'<div class="pro-sign">一勺<span>糖</span></div>',
+   say:[['麦小满','「今天开业！第一位客人——来块布丁吗？」'],
+        ['糖老书','「记住：别看钟，听糖。」']]}
+];
+
 /* ---------- 状态 ---------- */
 const SAVE_KEY='joyful_kitchen_demo_v1';
 let S=null, tickTimer=null, audioCtx=null, uid=0, bubbleTimer=null, toastTimer=null, overlayMode='';
@@ -565,7 +633,7 @@ function newState(){
     noRecipe:false,noRecipeNextDay:false,noRecipeHinted:false,
     interferenceDone:false,pendingInterference:false,joined:false,freeStove:false,
     ratingIncludesGood:false,ending:false,strikeActive:false,
-    triggered:{},queueG1:[],queueG3:[],storyLog:[],
+    triggered:{},queueG1:[],queueG3:[],storyLog:[],prologueDone:false,
     customers:[],activeId:null,progress:[],autoFilled:0,benchKeys:[],
     lastLedger:null,log:[],sound:true,practiceDone:false,investDone:false
   };
@@ -707,6 +775,7 @@ function renderTitle(){
         <em>点食材</em> → <em>递给客人</em> → <em>赚金币</em> → <em>雇人升设备</em> → <em>练一道</em></p>
       <button class="btn wide" data-act="start">开门营业</button>
       ${hasSave()?'<button class="btn wide sec" style="margin-top:8px" data-act="continue">继续上次（第 '+((JSON.parse(localStorage.getItem(SAVE_KEY)||'{}').day)||1)+' 天）</button>':''}
+      ${S.prologueDone?'<button class="btn wide sec" style="margin-top:8px" data-act="replay-prologue">重看开场</button>':''}
       <div class="mini-legend">
         <span>完美率 = 0.05 + 0.0055M</span><span>收益 = B × Q × (0.5+0.5p)</span>
         <span>自动化 ≤ 70%</span><span>失败不扣金币</span>
@@ -714,6 +783,43 @@ function renderTitle(){
       <p class="muted" style="margin-top:12px">点顶栏 ☰ 查看「设计对照」：每条机制、每处 demo 调档值都列得出来。</p>
     </div>`;
   renderDock();
+}
+
+/* ---------- 开场序章播放器 ---------- */
+let PRO_I=0, PRO_DONE_CB=null;
+function playPrologue(done){
+  PRO_I=0;PRO_DONE_CB=done;
+  renderPrologue();
+}
+function renderPrologue(){
+  const sl=PROLOGUE[PRO_I],total=PROLOGUE.length;
+  setBG(sl.bg,false);
+  showView('v-prologue');
+  const narr=(sl.narr||[]).map(t=>`<p class="pro-narr">${t}</p>`).join('');
+  const say=(sl.say||[]).map(([w,t])=>`<div class="speaker">${avatar(w,42)}<div class="say"><b>${w}</b>${t}</div></div>`).join('');
+  $('#v-prologue').innerHTML=`
+    <div class="prologue">
+      <div class="kicker pro-kick"><span>${sl.k}</span><span class="pro-count">${PRO_I+1} / ${total}</span></div>
+      ${sl.art?`<div class="pro-art">${sl.art}</div>`:''}
+      ${narr}${say}
+      <div class="pro-foot">
+        <button class="btn sm sec" data-act="pro-skip">跳过开场</button>
+        <button class="btn sm grow" data-act="pro-next">${PRO_I===total-1?'挂牌开店 →':'继续 →'}</button>
+      </div>
+    </div>`;
+  $('#dock').innerHTML='<span class="hintline">序章 · 从天而降的一百零一页</span>';
+  sfx.story();
+}
+function prologueNext(){
+  if(PRO_I<PROLOGUE.length-1){PRO_I++;renderPrologue()}
+  else prologueEnd();
+}
+function prologueSkip(){prologueEnd()}
+function prologueEnd(){
+  const f=PRO_DONE_CB;PRO_DONE_CB=null;
+  S.prologueDone=true;save();
+  sfx.ok();
+  if(f)f();
 }
 
 /* ---------- 营业：顾客 ---------- */
@@ -1038,6 +1144,7 @@ function openGuide(){
     ['V1 干扰','糖罐换盐 → 真实 +1 点击步，必带喜剧落点','5.4','第一局中段'],
     ['V2 无配方','隐藏名称与配方提示，设备不提示','5.4','剥离回暖后一局'],
     ['V4 自由炉','关闭金币 / 耐心 / 评分 / 全部自动化','5.4','入队后可主动开启'],
+    ['开场序章','世界观四铁律 + 序章 0-1~0-6 逐拍，首开必播、可跳过','故事企划书 v1.1 · 序章','已实现（标题页可重看）'],
     ['3-3 剥离','员工离岗、设备停机、S4 置灰、A 归零','4.6','全作唯一一次倒退'],
     ['三次入队','练习 / 提交 / 结算三条自动化线，A 跃升 70%','4.5 / R3','当场可操作'],
     ['大团圆','第 101 页显字、七人同框','STORY_BIBLE','结局页']
@@ -1300,9 +1407,16 @@ document.addEventListener('click',e=>{
   if(a==='reset'){if(confirm('重新开始一局？当前进度会被清空。')){localStorage.removeItem(SAVE_KEY);resetAll()}return}
   if(a==='start'){resetAll();return}
   if(a==='continue'){
-    if(load()){S.phase='title';renderHUD();beginService();}else{toast('没有可继续的进度')}
+    if(load()){S.phase='title';renderHUD();
+      if(!S.prologueDone){
+        playPrologue(()=>{S.queueG1.push('intro');playStories('G1',()=>beginService())});
+      }else beginService();
+    }else{toast('没有可继续的进度')}
     return;
   }
+  if(a==='pro-next'){prologueNext();return}
+  if(a==='pro-skip'){prologueSkip();return}
+  if(a==='replay-prologue'){playPrologue(()=>{renderTitle()});return}
   if(a==='story-next'){closeOverlay();const f=window.__storyNext;window.__storyNext=null;if(f)f();return}
   if(a==='story-skip'){
     closeOverlay();
@@ -1348,9 +1462,9 @@ function resetAll(){
   startDayFlow();
 }
 function startDayFlow(){
-  // 首次开局：先播 G1 开门钩子，再进入营业
-  S.queueG1.push('intro');
-  playStories('G1',()=>beginService());
+  // 首次开局：先播开场序章（世界观 + 0-1~0-6），再播 G1 开门钩子，再进入营业
+  const go=()=>{S.queueG1.push('intro');playStories('G1',()=>beginService())};
+  if(!S.prologueDone)playPrologue(go);else go();
 }
 
 /* ---------- 原型自检 / 截图入口（仅 ?selftest=1 / ?shot=1 时执行） ---------- */
@@ -1364,7 +1478,18 @@ function runSelfTest(){
     ok('失手率 M=100 → 0.02',Math.abs(pFail(100)-0.02)<1e-9,String(pFail(100)));
     ok('收益 B12 Q1.5 p1 → 18',Math.round(12*1.5*(0.5+0.5*1))===18);
     ok('收益 B12 Q0.5 p0 → 3',Math.round(12*0.5*(0.5+0))===3);
-    resetAll();S.queueG1.length=0;closeOverlay();beginService();
+    // 开场序章：编排完整、首开必播、可跳过
+    ok('开场序章已编排（≥8 幕）',Array.isArray(PROLOGUE)&&PROLOGUE.length>=8,'共 '+PROLOGUE.length+' 幕');
+    ok('开场每幕均有背景与文本',PROLOGUE.every(s=>s.bg&&(s.narr||s.say)));
+    resetAll();
+    ok('新开局先播开场序章',S.prologueDone===false&&document.querySelector('#v-prologue.on')!==null);
+    prologueSkip();
+    ok('跳过开场后标记完成并弹出引导',S.prologueDone===true&&document.querySelector('#overlay.on')!==null);
+    // 逐幕点击链：连点「继续」到第 8 幕「挂牌开店」同样进入引导
+    playPrologue(()=>{S.queueG1.push('intro');playStories('G1',()=>beginService())});
+    for(let i=0;i<PROLOGUE.length;i++)prologueNext();
+    ok('逐幕点到挂牌开店后弹出引导',S.prologueDone===true&&document.querySelector('#overlay.on')!==null);
+    PRO_DONE_CB=null;S.queueG1.length=0;closeOverlay();beginService();
     ok('开局生成顾客',S.customers.length>0,'共 '+S.customers.length+' 位');
     const c=S.customers[0];pickCustomer(c.id);
     ok('可选中顾客',S.activeId===c.id);
@@ -1442,6 +1567,7 @@ else if(QS.get('shot')){setTimeout(()=>{
   const mode=QS.get('shot');
   if(mode==='guide'){openGuide()}
   else if(mode==='book'){openBook()}
+  else if(mode==='prologue'){const n=parseInt(QS.get('slide')||'1',10);PRO_I=clamp(n-1,0,PROLOGUE.length-1);renderPrologue()}
   else {beginService();if(S.customers.length)pickCustomer(S.customers[0].id)}
 },60)}
 </script>
