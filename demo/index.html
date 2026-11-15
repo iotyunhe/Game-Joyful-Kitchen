@@ -453,7 +453,6 @@ const ASSET = {
 const $ = s => document.querySelector(s);
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
 const rnd = a => a[Math.floor(Math.random()*a.length)];
-const shuffle = a => {const r=a.slice();for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r};
 
 /* ---------- 食材与点心：全部内联 SVG，图片里不放文字 ---------- */
 const ING = {
@@ -470,6 +469,13 @@ const ING = {
   osmanthus:{n:'桂花', c:'#F2C86B', s:'flower'},
   honey:    {n:'蜂蜜', c:'#E8B45C', s:'drop'}
 };
+/* 全局投料工序：所有菜谱、被干扰后的配方、食材台共用同一条顺序。
+   玩家记住一次工序就能迁移到所有点心，后期自动化才有意义。
+   阶段：乳脂与液体基底 → 蛋与油脂 → 粉类成型 → 熬糖调味 → 点缀装饰 */
+const CRAFT_ORDER = ['milk','cream','egg','butter','dough','rice','caramel','honey','salt','osmanthus','berry','frost'];
+const CRAFT_RANK = Object.fromEntries(CRAFT_ORDER.map((k,i)=>[k,i]));
+const craftCmp = (a,b)=>(CRAFT_RANK[a]??99)-(CRAFT_RANK[b]??99);
+const craftSort = keys => [...new Set(keys)].sort(craftCmp);
 function ingIcon(key,size){
   const it=ING[key], z=size||38, h=z/2, k=z/40;
   const ST=`stroke="${C.cocoa}" stroke-width="${2.1*k}" stroke-linecap="round" stroke-linejoin="round"`;
@@ -505,10 +511,10 @@ function dishIcon(rid,size){
 
 /* ---------- 菜谱：页号沿用设定锚定的显形区间 ---------- */
 const RECIPES = [
-  {id:'pudding',name:'焦糖布丁',page:1, B:12,ing:['egg','milk','caramel'],col:'#E8A05C'},
-  {id:'salt',   name:'海盐焦糖',page:4, B:17,ing:['caramel','salt','cream','egg'],col:'#D89A4E'},
-  {id:'mille',  name:'千层酥',  page:12,B:23,ing:['dough','butter','frost','berry'],col:'#EFCB9A'},
-  {id:'osman',  name:'桂花糕',  page:53,B:29,ing:['rice','osmanthus','honey','frost'],col:'#F2C86B'}
+  {id:'pudding',name:'焦糖布丁',page:1, B:12,ing:craftSort(['egg','milk','caramel']),col:'#E8A05C'},
+  {id:'salt',   name:'海盐焦糖',page:4, B:17,ing:craftSort(['caramel','salt','cream','egg']),col:'#D89A4E'},
+  {id:'mille',  name:'千层酥',  page:12,B:23,ing:craftSort(['dough','butter','frost','berry']),col:'#EFCB9A'},
+  {id:'osman',  name:'桂花糕',  page:53,B:29,ing:craftSort(['rice','osmanthus','honey','frost']),col:'#F2C86B'}
 ];
 const RANKS = ['无勺','铜勺','银勺','琉璃勺','云顶勺'];
 const GUESTS = [
@@ -596,7 +602,7 @@ const PROLOGUE = [
         ['糖老书','「第四条。往后的页子，一页比一页难伺候。翻到哪一页算哪一页，我不提前告诉你。」'],
         ['糖老书','「行了。炉子还热着——去吧。」']]},
   {k:'序章 0-3 · 连焦三炉',bg:ASSET.s1,
-   narr:['借了面包房打烊后的烤炉，照着菜名硬试。','第一炉，糊了。第二炉，还是糊了。第三炉——厨房飘出黑烟。'],
+   narr:['借了面包房打烊后的烤炉，照着菜名硬试。','第一炉没成。第二炉也没成。第三炉——厨房飘出黑烟。'],
    say:[['糖老书','「（打瞌睡）……习惯就好。」'],
         ['麦小满','「再来一炉就好！」']]},
   {k:'序章 0-4 · 听糖',bg:ASSET.s1,
@@ -622,7 +628,7 @@ function newState(){
   return {
     day:1,phase:'title',coins:0,gross:0,dayGross:0,rankIdx:0,
     served:0,dayServed:0,dayLost:0,perfect:0,good:0,mid:0,bad:0,lost:0,
-    recent:[],noPerfectStreak:0,failStreak:0,
+    recent:[],noPerfectStreak:0,
     recipes:RECIPES.map(r=>({...r,M:0,revealed:r.id==='pudding',learned:false,perfect20:0,recent:[]})),
     staff:{prep:false,serve:false,cashier:false},staffSlot:0,device:1,
     concurrency:1,dayOrders:6,onLeave:false,leaveNextDay:false,confiscated:false,
@@ -647,13 +653,14 @@ function load(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(!d||!d
 
 /* ---------- 数值模型（与玩法文档 3.1 / 3.2 / 3.3 一致） ---------- */
 function pPerfect(M){return clamp(0.05+0.0055*M,0.05,0.60)}
-function pFail(M){return clamp(0.20-0.0018*M,0.02,0.20)}
+/* 品质只有两档：完美 / 普通。倒计时内按顺序提交必出货，
+   熟练度只决定上行波动（有多好），不制造下行惩罚（不出现「糊了」）。
+   唯一的负反馈来源是顾客耐心归零离场。 */
 function rollQuality(M){
   if(S.noPerfectStreak>=8) return 'perfect';            // 保底 N=8（demo 调档）
-  const p=pPerfect(M),f=pFail(M),r=Math.random();
-  if(r<p)return 'perfect';if(r<p+f)return 'fail';return 'normal';
+  return Math.random()<pPerfect(M)?'perfect':'normal';
 }
-const QOF={perfect:1.5,normal:1.0,fail:0.5};
+const QOF={perfect:1.5,normal:1.0};
 function autoRate(){
   if(S.freeStove||S.onLeave||S.confiscated)return 0;
   let r=0;
@@ -828,9 +835,10 @@ function spawnCustomer(){
   const pool=revealed().filter(r=>!S.freeStove?true:r.id==='pudding');
   const r=rnd(pool.length?pool:revealed());
   let ing=r.ing.slice(),firstTry=!r.learned;
-  // V1 干扰：第一局第 3 位顾客，糖罐换盐 → 真实增加一次点击
+  // V1 干扰：第一局第 3 位顾客，糖罐换盐 → 真实增加一次点击。
+  // 插入后仍按全局工序排列，不让这一单破坏玩家已经记住的顺序
   if(!S.interferenceDone&&S.served+S.dayServed>=2&&!S.freeStove){
-    ing.splice(Math.min(2,ing.length),0,'salt');
+    ing.push('salt');ing.sort(craftCmp);
     S.interferenceDone=true;
     firstTry=false;
     queueStory('1-4');
@@ -890,10 +898,10 @@ function pickCustomer(id){
 function buildBenchKeys(c){
   let keys=[...new Set(c.ing)];
   if(S.rankIdx>=2&&!S.freeStove){
-    const extra=Object.keys(ING).filter(k=>!keys.includes(k));
+    const extra=CRAFT_ORDER.filter(k=>!keys.includes(k));
     if(extra.length)keys.push(rnd(extra));   // 一枚「隔壁桌的」干扰食材
   }
-  return shuffle(keys);
+  return craftSort(keys);   // 台面与配方共用工序，不再随机打乱
 }
 function renderBench(){
   const box=$('#bench'),c=S.customers.find(x=>x.id===S.activeId);
@@ -934,7 +942,7 @@ function renderBench(){
       <button class="btn sm grow" data-act="submit" ${done===need?'':'disabled'}>提交给 ${c.guest.n} →</button>
     </div>
     <div class="mastery">
-      <div class="line"><span><b>${r.name}</b> 熟练度 M</span><span>完美率 ${(pp*100).toFixed(1)}% ｜ 失手率 ${(pFail(M)*100).toFixed(1)}%</span></div>
+      <div class="line"><span><b>${r.name}</b> 熟练度 M</span><span>完美率 ${(pp*100).toFixed(1)}% ｜ 不会失手</span></div>
       <div class="mbar"><i style="width:${M}%"></i></div>
       <div class="foot"><span>M = ${M.toFixed(1)} / 100（金币买不到）</span><span>近 20 单完美 ${r.perfect20} 次 ｜ 保底 ${Math.max(0,8-S.noPerfectStreak)} 单</span></div>
     </div>`;
@@ -977,26 +985,23 @@ function submitDish(){
     finishFreeStove();return;
   }
   const r=rec(c.rid);
-  const q=rollQuality(r.M);                                  // 1 判品质
+  const q=rollQuality(r.M);                                  // 1 判品质（完美 / 普通）
   const p=clamp(c.remain/c.P0,0,1);                          // 2 锁存耐心
   const gain=Math.round(r.B*QOF[q]*(0.5+0.5*p));             // 3 Q × T(p)
-  const review=q==='perfect'?'good':q==='fail'?'bad':(p>=.6?'good':p>=.3?'mid':'bad'); // 4 评价档
+  const review=q==='perfect'?'good':(p>=.6?'good':p>=.3?'mid':'bad'); // 4 评价档（完美覆盖好评）
   // 5 发放
   S.dayGross+=gain;S.gross+=gain;S.served++;S.dayServed++;
   if(review==='good')S.good++;else if(review==='mid')S.mid++;else S.bad++;
   r.recent.push(q);if(r.recent.length>20)r.recent.shift();
   r.perfect20=r.recent.filter(y=>y==='perfect').length;
-  if(q==='perfect'){S.perfect++;S.noPerfectStreak=0;S.failStreak=0}
-  else{S.noPerfectStreak++;if(q==='fail')S.failStreak++;else S.failStreak=0}
-  if(q!=='fail'){r.M=clamp(r.M+0.5,0,100);addLog(`出餐《${r.name}》· ${q} · +${gain} 金币`)}
-  else addLog(`出餐《${r.name}》· 失手（材料按成本价返还）· +${gain} 金币`);
+  if(q==='perfect'){S.perfect++;S.noPerfectStreak=0}else S.noPerfectStreak++;
+  r.M=clamp(r.M+0.5,0,100);                                  // 每单都涨，不再有「这单白做」
+  addLog(`出餐《${r.name}》· ${q==='perfect'?'完美':'普通'} · +${gain} 金币`);
   if(!r.learned)learn(r.id);                                 // 首次成功做出＝页学成
-  if(q==='perfect'){sfx.perfect();fxWord('完 美 ！');fxSparks(18)}
-  else if(q==='fail'){sfx.fail();fxWord('糊 啦 ~');bubble('<b>面团糊脸</b>：客人笑了，材料按成本价返还，笑完接着来。',2400)}
-  else sfx.ok();
+  if(q==='perfect'){sfx.perfect();fxWord('完 美 ！');fxSparks(18)}else sfx.ok();
   sfx.coin();fxCoin('+'+gain);
-  if(q!=='fail')toast(`${q==='perfect'?'完美':'普通'} · 好评 +${gain} 金币 · 耐心 ${Math.round(p*100)}%`);
-  else toast(`失手 · 差评 +${gain} 金币（不扣钱）`);
+  const revName=review==='good'?'好评':review==='mid'?'中评':'差评';
+  toast(`${q==='perfect'?'完美':'普通'} · ${revName} +${gain} 金币 · 耐心 ${Math.round(p*100)}%`);
   removeCustomer(c.id);
   S.activeId=null;S.progress=[];S.autoFilled=0;
   checkTriggers();
@@ -1004,7 +1009,7 @@ function submitDish(){
   afterServiceStep();
 }
 function loseCustomer(c){
-  S.dayLost++;S.lost++;S.failStreak++;
+  S.dayLost++;S.lost++;
   sfx.leave();
   bubble(`<b>${c.guest.n}</b> 等走了。本单收益 0，记一次流失——不扣金币、不掉熟练度（P4）。`,2600);
   addLog(`${c.guest.n} 耐心归零离场 · 记流失`);
@@ -1049,10 +1054,6 @@ function checkTriggers(){
   if(n>=24)queueStory('4-7');
   if(n>=30)queueStory('5-234');
   if(S.staff.prep&&!S.triggered['1-3'])queueStory('1-3');
-  if(S.failStreak>=3&&!S.triggered['t5-fail']){
-    S.triggered['t5-fail']=true;
-    bubble('<b>顾苦</b>：「连糊三炉……这回真不是我干的。」',2600);
-  }
   if(S.dayLost>=2&&!S.triggered['t5-lost']){
     S.triggered['t5-lost']=true;
     bubble('<b>糖老书</b>：「走两位也没关系，明天他们还来。」',2600);
@@ -1128,7 +1129,9 @@ function openBook(){
 function openGuide(){
   const rows=[
     ['P1 接单经营','选顾客 → 按序点食材 → 提交','2.2 / 2.3','实际操作链'],
-    ['模型 A','完美率 <code>clamp(.05+.0055M,.05,.60)</code>；失手率 <code>clamp(.20−.0018M,.02,.20)</code>','3.1','逐字实现，含保底 N=8'],
+    ['模型 A','完美率 <code>clamp(.05+.0055M,.05,.60)</code>；<b>无失手档</b>，普通保底 <code>Q=1.0</code>','3.1 · 本次修订','逐字实现，含保底 N=8'],
+    ['投料工序','全局固定：乳脂基底 → 蛋与油脂 → 粉类成型 → 熬糖调味 → 点缀；配方与食材台共用同一条顺序','本次修订','不再随机排列'],
+    ['负反馈唯一来源','耐心归零离场；倒计时内按序提交必出货，随机判定不再产生失败品质','本次修订 · P4','已实现'],
     ['模型 B','<code>T(p)=.5+.5p</code>；<code>收益=B×Q×T(p)</code>；评价阶梯 .6 / .3','3.2','逐字实现'],
     ['结算优先级','完美强制好评但耐心系数照常生效（默认方案 A）','3.3','五步顺序固定'],
     ['耐心归零','离场、收益 0、记流失，不扣金币 / 不掉 M','3.2 / P4','已实现'],
@@ -1265,7 +1268,7 @@ function renderSettle(){
     <div class="panel"><h2><span class="num">统计</span> 今天手上有多忙</h2>
       <p class="tagline">服务 ${S.dayServed} 单 · 流失 ${S.dayLost} 位 · 累计完美 ${S.perfect} 次 ·
       累计出餐 ${S.served} 单 · 好评率 ${(goodRate()*100).toFixed(0)}% · 自动化率 ${Math.round(autoRate()*100)}%</p>
-      <p class="muted">失败不扣金币、不掉熟练度。糊了、走了，都还有笑声兜底（P4）。</p>
+      <p class="muted">耐心归零只记流失：不扣金币、不掉熟练度，也不判失败（P4）。</p>
     </div>`;
   S.coins+=L.net;S.coins=Math.max(0,S.coins);
   renderHUD();save();
@@ -1470,10 +1473,16 @@ function runSelfTest(){
   try{
     ok('完美率 M=0 → 0.05',Math.abs(pPerfect(0)-0.05)<1e-9,String(pPerfect(0)));
     ok('完美率 M=100 → 0.60',Math.abs(pPerfect(100)-0.60)<1e-9,String(pPerfect(100)));
-    ok('失手率 M=0 → 0.20',Math.abs(pFail(0)-0.20)<1e-9,String(pFail(0)));
-    ok('失手率 M=100 → 0.02',Math.abs(pFail(100)-0.02)<1e-9,String(pFail(100)));
+    ok('品质只有两档',Object.keys(QOF).join(',')==='perfect,normal',Object.keys(QOF).join(','));
+    ok('普通保底 Q=1.0，无 0.5 惩罚档',QOF.normal===1.0&&!('fail' in QOF));
     ok('收益 B12 Q1.5 p1 → 18',Math.round(12*1.5*(0.5+0.5*1))===18);
-    ok('收益 B12 Q0.5 p0 → 3',Math.round(12*0.5*(0.5+0))===3);
+    ok('收益 B12 Q1.0 p0 → 6',Math.round(12*1.0*(0.5+0))===6);
+    ok('全局工序覆盖全部食材',CRAFT_ORDER.length===Object.keys(ING).length&&Object.keys(ING).every(k=>CRAFT_ORDER.includes(k)));
+    ok('牛奶 < 鸡蛋 < 焦糖',CRAFT_RANK.milk<CRAFT_RANK.egg&&CRAFT_RANK.egg<CRAFT_RANK.caramel);
+    ok('四道菜配方均按工序单调',RECIPES.every(r=>r.ing.every((k,i)=>i===0||CRAFT_RANK[k]>=CRAFT_RANK[r.ing[i-1]])));
+    ok('食材台与配方共用工序',(()=>{const r=RECIPES[1],b=buildBenchKeys({ing:r.ing});return b.filter(k=>r.ing.includes(k)).join()===r.ing.join()})());
+    ok('V1 干扰插入后仍按工序',(()=>{const a=RECIPES[0].ing.concat('salt');a.sort(craftCmp);return a.join(',')==='milk,egg,caramel,salt'})());
+    ok('倒计时内 400 次提交无失手',(()=>{S=newState();const q=[];for(let i=0;i<400;i++){S.noPerfectStreak=0;q.push(rollQuality(0))}return q.every(x=>x==='perfect'||x==='normal')})());
     // 开场序章：编排完整、首开必播、可跳过
     ok('开场序章已编排（≥8 幕）',Array.isArray(PROLOGUE)&&PROLOGUE.length>=8,'共 '+PROLOGUE.length+' 幕');
     ok('开场每幕均有背景与文本',PROLOGUE.every(s=>s.bg&&(s.narr||s.say)));
@@ -1495,9 +1504,12 @@ function runSelfTest(){
     ok('提交后出餐 +1',S.served===before+1);
     ok('营业额大于 0',S.dayGross>0,'+'+S.dayGross);
     ok('首次做出即学成',rec('pudding').learned===true);
+    ok('结算日志不含失败品质',!/失手|糊/.test(S.log.join('|')));
+    ok('提交提示条不出现失败字样',!/糊|失手/.test($('#toast').textContent),$('#toast').textContent);
+    ok('普通品质也涨熟练度 M',rec('pudding').M>0,String(rec('pudding').M));
     S.phase='selftest';clearInterval(tickTimer);
     const coins0=S.coins,m0=rec('pudding').M;
-    S.customers=[{id:9999,guest:GUESTS[0],rid:'pudding',ing:['egg','milk','caramel'],P0:10,remain:0,firstTry:false,disturbed:false}];
+    S.customers=[{id:9999,guest:GUESTS[0],rid:'pudding',ing:rec('pudding').ing.slice(),P0:10,remain:0,firstTry:false,disturbed:false}];
     loseCustomer(S.customers[0]);
     ok('耐心归零记流失',S.lost===1);
     ok('流失不扣金币',S.coins===coins0);
@@ -1564,7 +1576,15 @@ else if(QS.get('shot')){setTimeout(()=>{
   if(mode==='guide'){openGuide()}
   else if(mode==='book'){openBook()}
   else if(mode==='prologue'){const n=parseInt(QS.get('slide')||'1',10);PRO_I=clamp(n-1,0,PROLOGUE.length-1);renderPrologue()}
-  else {beginService();if(S.customers.length)pickCustomer(S.customers[0].id)}
+  else {
+    beginService();
+    const want=QS.get('dish');   // 截图入口：指定这位顾客点哪道菜，便于逐菜核对工序
+    if(want&&S.customers.length){
+      const c=S.customers[0],r=rec(want);
+      if(r){r.revealed=true;c.rid=r.id;c.ing=r.ing.slice();c.P0=P0(c.ing.length);c.remain=c.P0;c.firstTry=false;renderCustomers()}
+    }
+    if(S.customers.length)pickCustomer(S.customers[0].id)
+  }
 },60)}
 </script>
 </body>
