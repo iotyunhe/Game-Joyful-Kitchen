@@ -386,6 +386,22 @@ body.dev .devonly{display:flex!important}
   text-shadow:0 1px 2px rgba(255,251,242,.9)}
 .pro-booktag span{display:block;font-size:11px;font-weight:700;color:var(--caramel);letter-spacing:.5px;margin-top:2px}
 .pro-pagebox .page{width:136px;margin:0 auto}
+/* 摊开的书页：无硬边框，纸张从画面里浮现（方案 C） */
+.pro-spread{display:flex;width:250px;max-width:66vw;filter:drop-shadow(0 8px 10px rgba(90,59,46,.16));
+  animation:spreadRise .7s cubic-bezier(.2,.8,.25,1) both;transform-origin:center bottom}
+@keyframes spreadRise{from{opacity:0;transform:translateY(16px) scale(.92)}to{opacity:1;transform:none}}
+.pro-spread .leaf{flex:1;min-width:0;padding:14px 12px 12px;position:relative;background:#FCF6E9}
+.pro-spread .leaf.l{border-radius:12px 2px 3px 13px;box-shadow:inset -8px 0 12px -8px rgba(90,59,46,.28)}
+.pro-spread .leaf.r{border-radius:2px 12px 13px 3px;box-shadow:inset 8px 0 12px -8px rgba(90,59,46,.28)}
+.pro-spread .spine{width:3px;flex:none;background:linear-gradient(90deg,rgba(90,59,46,.18),rgba(90,59,46,.05),rgba(90,59,46,.18))}
+.pro-spread .pno{position:absolute;top:6px;font-size:9px;color:var(--cocoa);opacity:.5}
+.pro-spread .leaf.l .pno{left:9px}.pro-spread .leaf.r .pno{right:9px}
+.pro-spread .dish{display:flex;justify-content:center;margin:8px 0 2px}
+.pro-spread .ttl{text-align:center;font-size:15px;font-weight:900;color:var(--cocoa);letter-spacing:1px;line-height:1.35;margin-top:4px}
+.pro-spread .ing{font-size:11px;line-height:1.95;color:var(--cocoa);margin-top:9px;padding-left:2px}
+.pro-spread .ing .k{display:inline-block;width:9px;height:9px;border:1.6px solid var(--caramel);border-radius:3px;margin-right:5px;vertical-align:-1px}
+.pro-spread .ing .step{margin-top:4px;padding-top:5px;border-top:1px dashed rgba(90,59,46,.22)}
+.pro-spread .ing .step .k{border-color:var(--berry);border-radius:50%}
 .pro-sign{font-size:32px;font-weight:900;letter-spacing:4px;background:var(--paper);border:3px solid var(--cocoa);
   border-radius:18px;padding:12px 26px;box-shadow:0 6px 0 rgba(90,59,46,.18)}
 .pro-sign span{color:var(--berry)}
@@ -729,7 +745,7 @@ const PROLOGUE = [
    say:[['麦小满','「……神也会被书砸到吗？」']]},
   {k:'序章 0-2 · 书里住着个老头',bg:ASSET.s4,
    narr:['书页里拱出一张皱巴巴的脸，架着副糖丝眼镜。老头儿自称糖老书，没说两句就打起瞌睡。'],
-   art:`<div class="pro-pagebox"><div class="page" style="width:146px"><span class="pn">P.1</span>${dishIcon('pudding',40)}<div class="nm">焦糖布丁</div><div class="mm" style="font-size:9px;line-height:1.55">鸡蛋 2 个 · 牛奶 200ml<br>糖 60g · 中火 8 分钟</div><div class="mm" style="font-size:9px;opacity:.6">提示：别看钟</div></div></div>`,
+   art:`<div class="pro-spread"><div class="leaf l"><span class="pno">P.1</span><div class="dish">${dishIcon('pudding',52)}</div><div class="ttl">焦糖<br>布丁</div></div><div class="spine"></div><div class="leaf r"><span class="pno">配方</span><div class="ing"><div><i class="k"></i>鸡蛋 2 个</div><div><i class="k"></i>牛奶 200ml</div><div><i class="k"></i>糖 60g</div><div class="step"><i class="k"></i>中火 8 分钟</div></div></div></div>`,
    say:[['糖老书','「我不教笨蛋。」'],
         ['糖老书','「自己翻。几克糖、火开多大、烤几分钟，上头都写着，一个字没藏。」'],
         ['糖老书','「字都给你了。剩下那点，我可管不着。」']]},
