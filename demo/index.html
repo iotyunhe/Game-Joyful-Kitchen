@@ -386,22 +386,23 @@ body.dev .devonly{display:flex!important}
   text-shadow:0 1px 2px rgba(255,251,242,.9)}
 .pro-booktag span{display:block;font-size:11px;font-weight:700;color:var(--caramel);letter-spacing:.5px;margin-top:2px}
 .pro-pagebox .page{width:136px;margin:0 auto}
-/* 摊开的书页：无硬边框，纸张从画面里浮现（方案 C） */
-.pro-spread{display:flex;width:250px;max-width:66vw;filter:drop-shadow(0 8px 10px rgba(90,59,46,.16));
+/* 摊开的书页：无硬边框，纸张从画面里浮现（方案 C）
+   注意：配方清单类名为 rcp，不能叫 ing —— 全局 .ing 是食材台样式（带边框） */
+.pro-spread{display:flex;width:330px;max-width:84vw;filter:drop-shadow(0 8px 10px rgba(90,59,46,.16));
   animation:spreadRise .7s cubic-bezier(.2,.8,.25,1) both;transform-origin:center bottom}
 @keyframes spreadRise{from{opacity:0;transform:translateY(16px) scale(.92)}to{opacity:1;transform:none}}
-.pro-spread .leaf{flex:1;min-width:0;padding:14px 12px 12px;position:relative;background:#FCF6E9}
+.pro-spread .leaf{flex:1;min-width:0;padding:18px 15px 16px;position:relative;background:#FCF6E9}
 .pro-spread .leaf.l{border-radius:12px 2px 3px 13px;box-shadow:inset -8px 0 12px -8px rgba(90,59,46,.28)}
 .pro-spread .leaf.r{border-radius:2px 12px 13px 3px;box-shadow:inset 8px 0 12px -8px rgba(90,59,46,.28)}
-.pro-spread .spine{width:3px;flex:none;background:linear-gradient(90deg,rgba(90,59,46,.18),rgba(90,59,46,.05),rgba(90,59,46,.18))}
-.pro-spread .pno{position:absolute;top:6px;font-size:9px;color:var(--cocoa);opacity:.5}
-.pro-spread .leaf.l .pno{left:9px}.pro-spread .leaf.r .pno{right:9px}
-.pro-spread .dish{display:flex;justify-content:center;margin:8px 0 2px}
-.pro-spread .ttl{text-align:center;font-size:15px;font-weight:900;color:var(--cocoa);letter-spacing:1px;line-height:1.35;margin-top:4px}
-.pro-spread .ing{font-size:11px;line-height:1.95;color:var(--cocoa);margin-top:9px;padding-left:2px}
-.pro-spread .ing .k{display:inline-block;width:9px;height:9px;border:1.6px solid var(--caramel);border-radius:3px;margin-right:5px;vertical-align:-1px}
-.pro-spread .ing .step{margin-top:4px;padding-top:5px;border-top:1px dashed rgba(90,59,46,.22)}
-.pro-spread .ing .step .k{border-color:var(--berry);border-radius:50%}
+.pro-spread .spine{width:4px;flex:none;background:linear-gradient(90deg,rgba(90,59,46,.18),rgba(90,59,46,.05),rgba(90,59,46,.18))}
+.pro-spread .pno{position:absolute;top:7px;font-size:11px;color:var(--cocoa);opacity:.55}
+.pro-spread .leaf.l .pno{left:10px}.pro-spread .leaf.r .pno{right:10px}
+.pro-spread .dish{display:flex;justify-content:center;margin:10px 0 2px}
+.pro-spread .ttl{text-align:center;font-size:20px;font-weight:900;color:var(--cocoa);letter-spacing:2px;line-height:1.35;margin-top:6px}
+.pro-spread .rcp{font-size:14px;line-height:2.05;color:var(--cocoa);margin-top:10px;padding-left:2px}
+.pro-spread .rcp .k{display:inline-block;width:11px;height:11px;border:2px solid var(--caramel);border-radius:3px;margin-right:7px;vertical-align:-1px}
+.pro-spread .rcp .step{margin-top:5px;padding-top:6px;border-top:1px dashed rgba(90,59,46,.22)}
+.pro-spread .rcp .step .k{border-color:var(--berry);border-radius:50%}
 .pro-sign{font-size:32px;font-weight:900;letter-spacing:4px;background:var(--paper);border:3px solid var(--cocoa);
   border-radius:18px;padding:12px 26px;box-shadow:0 6px 0 rgba(90,59,46,.18)}
 .pro-sign span{color:var(--berry)}
@@ -754,7 +755,7 @@ const PROLOGUE = [
    say:[['麦小满','「……神也会被书砸到吗？」']]},
   {k:'序章 0-2 · 书里住着个老头',bg:ASSET.s4,
    narr:['书页里拱出一张皱巴巴的脸，架着副糖丝眼镜。老头儿自称糖老书，没说两句就打起瞌睡。'],
-   art:`<div class="pro-spread"><div class="leaf l"><span class="pno">P.1</span><div class="dish">${dishIcon('pudding',52)}</div><div class="ttl">焦糖<br>布丁</div></div><div class="spine"></div><div class="leaf r"><span class="pno">配方</span><div class="ing"><div><i class="k"></i>鸡蛋 2 个</div><div><i class="k"></i>牛奶 200ml</div><div><i class="k"></i>糖 60g</div><div class="step"><i class="k"></i>中火 8 分钟</div></div></div></div>`,
+   art:`<div class="pro-spread"><div class="leaf l"><span class="pno">P.1</span><div class="dish">${dishIcon('pudding',68)}</div><div class="ttl">焦糖<br>布丁</div></div><div class="spine"></div><div class="leaf r"><span class="pno">配方</span><div class="rcp"><div><i class="k"></i>鸡蛋 2 个</div><div><i class="k"></i>牛奶 200ml</div><div><i class="k"></i>糖 60g</div><div class="step"><i class="k"></i>中火 8 分钟</div></div></div></div>`,
    say:[['糖老书','「我不教笨蛋。」'],
         ['糖老书','「自己翻。几克糖、火开多大、烤几分钟，上头都写着，一个字没藏。」'],
         ['糖老书','「字都给你了。剩下那点，我可管不着。」']]},
@@ -1177,6 +1178,7 @@ function spawnCustomer(){
   if(S.customers.length>=S.concurrency)return;
   const pool=revealed().filter(r=>!S.freeStove?true:r.id==='pudding');
   const r=rnd(pool.length?pool:revealed());
+  const guest=rnd(GUESTS);
   let ing=r.ing.slice(),firstTry=!r.learned;
   // V1 干扰：第一局第 3 位顾客，糖罐换盐 → 真实增加一次点击。
   // 插入后仍按全局工序排列，不让这一单破坏玩家已经记住的顺序
@@ -1184,10 +1186,12 @@ function spawnCustomer(){
     ing.push('salt');ing.sort(craftCmp);
     S.interferenceDone=true;
     firstTry=false;
+    // 台词指名这一单真正的客人，避免剧情说 A 单、被换的其实是 B 单
+    STORY['1-4'].lines[0][1]=`「${guest.n}那单，怎么闻着有点咸？」`;
     queueStory('1-4');
   }
   const P0v=P0(ing.length);
-  const c={id:++uid,guest:rnd(GUESTS),rid:r.id,ing,P0:P0v,remain:P0v,firstTry,disturbed:ing.length>r.ing.length,auto:0,el:null};
+  const c={id:++uid,guest,rid:r.id,ing,P0:P0v,remain:P0v,firstTry,disturbed:ing.length>r.ing.length,auto:0,el:null};
   S.customers.push(c);
   renderCustomers();
   if(c.disturbed)bubble('<b>顾苦</b>：「我就想借点糖……」　那罐糖好像不太对劲。',3000);
@@ -1910,6 +1914,12 @@ function runSelfTest(){
     ok('食材台与配方共用工序',(()=>{const r=RECIPES[1],b=buildBenchKeys({ing:r.ing});return b.filter(k=>r.ing.includes(k)).join()===r.ing.join()})());
     ok('食材台固定 5 格（含 V1 干扰）',RECIPES.every(r=>buildBenchKeys({ing:r.ing}).length===BENCH_SLOTS)&&buildBenchKeys({ing:RECIPES[0].ing.concat('salt')}).length===BENCH_SLOTS,'正常/干扰均 '+BENCH_SLOTS+' 格');
     ok('V1 干扰插入后仍按工序',(()=>{const a=RECIPES[0].ing.concat('salt');a.sort(craftCmp);return a.join(',')==='milk,egg,caramel,salt'})());
+    ok('干扰台词指名实际被换订单的客人',(()=>{
+      S=newState();S.phase='open';S.day=1;S.dayOrders=9;S.dayServed=2;S.served=2;S.concurrency=3;
+      spawnCustomer();
+      const dist=S.customers.find(x=>x.disturbed);
+      return dist?STORY['1-4'].lines[0][1].includes(dist.guest.n):!S.interferenceDone;
+    })());
     ok('倒计时内 400 次提交无失手',(()=>{S=newState();const q=[];for(let i=0;i<400;i++){S.noPerfectStreak=0;q.push(rollQuality(0))}return q.every(x=>x==='perfect'||x==='normal')})());
     // 开场序章：编排完整、首开必播、可跳过
     ok('开场序章已编排（≥8 幕）',Array.isArray(PROLOGUE)&&PROLOGUE.length>=8,'共 '+PROLOGUE.length+' 幕');
