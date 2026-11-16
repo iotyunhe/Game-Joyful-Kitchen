@@ -998,9 +998,9 @@ const PRO_PORTRAIT={'麦小满':'charMai','糖老书':'charBook'};  // 人物 �
 
 function stopProType(){if(PRO_TYPER){clearTimeout(PRO_TYPER.timer);PRO_TYPER=null}}
 function proNextLabel(){
-  // 当前句还没打完→快进；句内还有下一句→下一句；幕内结束→下一幕；最后一幕→开店
+  // 当前句还没打完→快进；句内还有→继续；幕内结束→下一幕；最后一幕→开店
   if(PRO_TYPER&&!PRO_TYPER.done)return '';
-  if(PRO_LINE_I<PRO_LINES.length-1)return '下一句 →';
+  if(PRO_LINE_I<PRO_LINES.length-1)return '继续 →';
   return PRO_I===PROLOGUE.length-1?'挂牌开店 →':'继续 →';
 }
 function updateProNextBtn(){
@@ -1096,7 +1096,7 @@ function renderPrologue(){
   sfx.story();
   renderVNLine();
 }
-// 逐句推进：打字中→补全；句内还有→下一句；句末→下一幕
+// 逐句推进：打字中→补全；句内还有→继续；句末→下一幕
 function prologueNext(){
   if(PRO_TYPER&&!PRO_TYPER.done){finishProType();return}
   stopProType();
@@ -1404,7 +1404,7 @@ function storyVNUpdateBtn(){
   if(!SV)return;
   const b=$('[data-act="story-next"]');if(!b)return;
   const typing=SV.typer&&!SV.typer.done;
-  b.textContent=typing?'快进 ›':(SV.idx<SV.lines.length-1?'下一句 →':'继续 →');
+  b.textContent=typing?'快进 ›':'继续 →';
   b.classList.toggle('typing',!!typing);
   const dots=document.querySelectorAll('#svDots i');
   dots.forEach((d,i)=>d.classList.toggle('on',i<=SV.idx));
@@ -1880,7 +1880,8 @@ function runSelfTest(){
       finishProType();
       return $('.vn-text').textContent===PRO_LINES[PRO_LINE_I].text;
     })());
-    ok('补全后按钮恢复推进',/下一句|继续|挂牌开店/.test($('[data-act="pro-next"]').textContent));
+    ok('补全后按钮恢复推进',(()=>{const t=$('[data-act="pro-next"]').textContent;
+      return /继续|挂牌开店/.test(t)&&!/下一句/.test(t)})());
     ok('人物发言带立绘、旁白不带',(()=>{
       // 找到本幕第一句人物对白，推进到它并检查立绘
       let guard=0;
@@ -2015,6 +2016,14 @@ function runSelfTest(){
     ok('插曲跳过直接收尾',(()=>{
       let d=0;openStoryVN({slot:'G1',tag:'自检',title:'跳过',trigger:'自检',lines:[['麦小满','「跳。」']],effect:'',apply(){}},'x',()=>{d++});
       storyVNSkip();return d===1&&SV===null;
+    })());
+    ok('插曲推进按钮也统一为「继续」',(()=>{
+      let d=0;openStoryVN({slot:'G3',tag:'自检',title:'按钮',trigger:'自检',
+        lines:[['麦小满','「一。」'],['麦小满','「二。」']],effect:'',apply(){}},'x',()=>{d++});
+      storyVNFinish();
+      const t=$('[data-act="story-next"]').textContent;
+      storyVNSkip();
+      return t==='继续 →'&&!/下一句/.test(t);
     })());
   }catch(e){out.push('FAIL | 运行异常 | '+e.message+' @ '+(e.stack||'').split('\n')[1])}
   const pre=document.createElement('pre');pre.id='selftest';pre.textContent=out.join('\n');
