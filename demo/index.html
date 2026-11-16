@@ -123,6 +123,50 @@ body.dev .devonly{display:flex!important}
 .mini-legend{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:14px}
 .mini-legend span{font-size:10px;border:2px solid var(--cocoa);border-radius:12px;padding:3px 8px;background:var(--frost)}
 
+/* ============ 封面三版（?cover=1/2/3，0=旧版对照） ============ */
+.cover{text-align:center;padding:12px 14px 14px}
+.cover .big-logo{font-size:36px;font-weight:900;letter-spacing:3px;color:var(--cocoa);margin:4px 0 0;
+  text-shadow:3px 3px 0 var(--peach)}
+.cover .big-logo em{font-style:normal;color:var(--berry)}
+.cover .kicker{font-size:11px;letter-spacing:2px;opacity:.72;margin:7px 0 11px}
+.cover .line{font-size:13px;line-height:1.7;margin:12px 2px 14px}
+.cover .go{font-size:17px;padding:13px 18px}
+.cover .minor{display:flex;gap:8px;justify-content:center;margin-top:11px;min-height:26px}
+.cover .minor .btn{font-size:11px;padding:5px 12px}
+
+/* V1 招牌立绘：场景虚化当底，角色放大站中间，像一张店卡 */
+.cover-a .frame{position:relative;height:222px;border:3px solid var(--cocoa);border-radius:22px;
+  overflow:hidden;background:var(--cream);box-shadow:0 6px 0 rgba(90,59,46,.16)}
+.cover-a .frame .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.48}
+.cover-a .frame .veil{position:absolute;inset:0;background:rgba(255,247,234,.32)}
+.cover-a .frame .ch{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);
+  width:188px;height:188px;object-fit:contain;filter:drop-shadow(0 5px 0 rgba(90,59,46,.15))}
+.cover-a .frame .tag{position:absolute;top:11px;left:12px;background:var(--frost);border:2px solid var(--cocoa);
+  border-radius:12px;padding:4px 10px;font-size:11px;font-weight:800}
+
+/* V2 橱窗场景：一扇店窗，角色 + 当日主打摆在里面，像游戏商店截图 */
+.cover-b .window{position:relative;height:222px;border:4px solid var(--cocoa);border-radius:20px;
+  overflow:hidden;background:var(--cream);box-shadow:0 6px 0 rgba(90,59,46,.16)}
+.cover-b .window .scene{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover-b .window .chef{position:absolute;left:14px;bottom:-8px;width:140px;height:140px;object-fit:contain}
+.cover-b .window .dish{position:absolute;right:12px;bottom:12px;background:var(--frost);border:3px solid var(--cocoa);
+  border-radius:14px;padding:6px 9px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;
+  box-shadow:0 3px 0 rgba(90,59,46,.2)}
+.cover-b .window .dish img{width:34px;height:34px;object-fit:contain}
+.cover-b .window .sign{position:absolute;top:12px;left:50%;transform:translateX(-50%);white-space:nowrap;
+  background:var(--caramel);border:3px solid var(--cocoa);border-radius:10px;padding:5px 12px;
+  font-size:12px;font-weight:900;color:var(--cocoa);box-shadow:0 3px 0 rgba(90,59,46,.22)}
+
+/* V3 极简大字：标题占绝对重心，角色只在角落点缀 */
+.cover-c{padding-top:18px}
+.cover-c .stack{position:relative;height:236px;margin:6px auto 4px}
+.cover-c .stack .huge{position:absolute;top:38px;left:0;right:0;font-size:62px;font-weight:900;line-height:.96;
+  letter-spacing:4px;color:var(--cocoa);margin:0;text-shadow:3px 3px 0 var(--peach)}
+.cover-c .stack .huge em{font-style:normal;color:var(--berry);text-shadow:3px 3px 0 var(--cream)}
+.cover-c .stack .ch{position:absolute;right:14px;bottom:0;width:132px;height:132px;object-fit:contain}
+.cover-c .stack .spoon{position:absolute;left:26px;bottom:18px;font-size:38px;transform:rotate(-18deg)}
+.cover-c .kicker{margin-top:2px}
+
 /* ============ 营业页 ============ */
 .shopbar{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .shopbar .day{font-size:13px;font-weight:800;background:var(--frost);border:2px solid var(--cocoa);
@@ -803,26 +847,85 @@ function renderDock(){
 /* ---------- 标题页 ---------- */
 function renderTitle(){
   setBG(ASSET.s3,false);
-  $('#v-title').innerHTML=`
-    <div class="hero panel">
-      <p class="logo">一勺<span>糖</span></p>
-      <p class="eng">A SPOON OF SUGAR · PLAYABLE SLICE</p>
-      <img src="${ASSET.char}" alt="麦小满">
-      <p class="book">《欢闹厨房》· 一勺糖</p>
-      <p class="desc">捡到一本<span class="tagline"><em>《一百零一页》</em></span>之后，<br>
-        麦小满决定先开一家甜品店。<br>
-        <em>点食材</em> → <em>递给客人</em> → <em>赚金币</em> → <em>雇人升设备</em> → <em>练一道</em></p>
-      <button class="btn wide" data-act="start">开门营业</button>
-      ${hasSave()?'<button class="btn wide sec" style="margin-top:8px" data-act="continue">继续上次（第 '+((JSON.parse(localStorage.getItem(SAVE_KEY)||'{}').day)||1)+' 天）</button>':''}
-      ${S.prologueDone?'<button class="btn wide sec" style="margin-top:8px" data-act="replay-prologue">重看开场</button>':''}
-      <div class="mini-legend">
-        ${DEV_UI?`<span>完美率 = 0.05 + 0.0055M</span><span>收益 = B × Q × (0.5+0.5p)</span>
-        <span>自动化 ≤ 70%</span><span>失败不扣金币</span>`
-        :`<span>照配方顺序点</span><span>客人等急了收益会低</span>
-        <span>雇人升设备少点几下</span><span>打烊后练一道</span>`}
-      </div>
-      ${DEV_UI?'<p class="muted" style="margin-top:12px">点顶栏 ☰ 查看「设计对照」：每条机制、每处 demo 调档值都列得出来。</p>':''}
-    </div>`;
+  const cover=new URLSearchParams(location.search).get('cover')||'1';
+  const minor=[
+    hasSave()?`<button class="btn sm sec" data-act="continue">继续上次（第 ${((JSON.parse(localStorage.getItem(SAVE_KEY)||'{}').day)||1)} 天）</button>`:'',
+    S.prologueDone?'<button class="btn sm sec" data-act="replay-prologue">重看开场</button>':''
+  ].filter(Boolean).join('');
+  if(cover==='0'){
+    // 旧版封面对照
+    $('#v-title').innerHTML=`
+      <div class="hero panel">
+        <p class="logo">一勺<span>糖</span></p>
+        <p class="eng">A SPOON OF SUGAR · ${DEV_UI?'PLAYABLE SLICE':'A LITTLE DESSERT SHOP'}</p>
+        <img src="${ASSET.char}" alt="麦小满">
+        <p class="book">《欢闹厨房》· 一勺糖</p>
+        <p class="desc">捡到一本<span class="tagline"><em>《一百零一页》</em></span>之后，<br>
+          麦小满决定先开一家甜品店。<br>
+          <em>点食材</em> → <em>递给客人</em> → <em>赚金币</em> → <em>雇人升设备</em> → <em>练一道</em></p>
+        <button class="btn wide" data-act="start">开门营业</button>
+        ${minor}
+        <div class="mini-legend">
+          ${DEV_UI?`<span>完美率 = 0.05 + 0.0055M</span><span>收益 = B × Q × (0.5+0.5p)</span>
+          <span>自动化 ≤ 70%</span><span>失败不扣金币</span>`
+          :`<span>照配方顺序点</span><span>客人等急了收益会低</span>
+          <span>雇人升设备少点几下</span><span>打烊后练一道</span>`}
+        </div>
+        ${DEV_UI?'<p class="muted" style="margin-top:12px">点顶栏 ☰ 查看「设计对照」。</p>':''}
+      </div>`;
+  } else {
+    const eng=DEV_UI?'A SPOON OF SUGAR · COVER '+cover:'';
+    const devNote=DEV_UI?'<p class="muted" style="margin-top:12px">封面版本 ?cover='+cover+' · 点顶栏 ☰ 查看设计对照。</p>':'';
+    let body='';
+    if(cover==='2'){
+      body=`
+        <div class="cover cover-b panel">
+          <p class="big-logo">一勺<em>糖</em></p>
+          <p class="kicker">${eng||'一间甜品店 · 开张第一天'}</p>
+          <div class="window">
+            <img class="scene" src="${ASSET.s2}" alt="甜品店">
+            <div class="sign">今日开张</div>
+            <img class="chef" src="${ASSET.char}" alt="麦小满">
+            <div class="dish"><img src="${ASSET.pudding}" alt="">焦糖布丁</div>
+          </div>
+          <p class="line">「别光自己闻。端出去，有人吃，那页才作数。」</p>
+          <button class="btn wide go" data-act="start">开门营业 →</button>
+          <div class="minor">${minor}</div>
+          ${devNote}
+        </div>`;
+    } else if(cover==='3'){
+      body=`
+        <div class="cover cover-c panel">
+          <div class="stack">
+            <p class="huge">一勺<br><em>糖</em></p>
+            <span class="spoon">🥄</span>
+            <img class="ch" src="${ASSET.char}" alt="麦小满">
+          </div>
+          <p class="kicker">${eng||'捡到一本菜谱，开间小店，把日子过甜'}</p>
+          <p class="line">麦小满的甜品店，今天开张。</p>
+          <button class="btn wide go" data-act="start">开门营业 →</button>
+          <div class="minor">${minor}</div>
+          ${devNote}
+        </div>`;
+    } else {
+      body=`
+        <div class="cover cover-a panel">
+          <p class="big-logo">一勺<em>糖</em></p>
+          <p class="kicker">${eng||'一间甜品店 · 一本菜谱 · 一屋子熟客'}</p>
+          <div class="frame">
+            <img class="bg" src="${ASSET.s3}" alt="">
+            <div class="veil"></div>
+            <span class="tag">第 1 页 · 焦糖布丁</span>
+            <img class="ch" src="${ASSET.char}" alt="麦小满">
+          </div>
+          <p class="line">捡到一本《一百零一页》，<br>麦小满决定先把店开起来。</p>
+          <button class="btn wide go" data-act="start">开门营业 →</button>
+          <div class="minor">${minor}</div>
+          ${devNote}
+        </div>`;
+    }
+    $('#v-title').innerHTML=body;
+  }
   renderDock();
 }
 
