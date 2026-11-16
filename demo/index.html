@@ -945,8 +945,11 @@ function renderBench(){
   const slots=c.ing.map((k,i)=>`<div class="slot ${i<done?(S.progress[i]&&S.progress[i].auto?'auto':'ok'):''}">${i<done?'✓':i+1}</div>`).join('<span class="arrow">·</span>');
   const autoKeys=S.progress.filter(p=>p.auto).map(p=>p.k);
   const ingBtns=S.benchKeys.map(k=>{
-    const used=S.progress.filter(p=>p.k===k).length, need=c.ing.filter(x=>x===k).length;
-    return `<button class="ing ${autoKeys.includes(k)?'auto':''} ${used>=need?'picked':''}" data-act="tap-ing" data-key="${k}">
+    const used=S.progress.filter(p=>p.k===k).length;
+    const required=c.ing.filter(x=>x===k).length;
+    // 补位食材「需要 0 次」，不能因此默认打钩；只有真点过、且点够次数才置灰打钩
+    const picked=required>0&&used>=required;
+    return `<button class="ing ${autoKeys.includes(k)?'auto':''} ${picked?'picked':''}" data-act="tap-ing" data-key="${k}">
       ${ingIcon(k,38)}<span class="nm">${S.noRecipe?'???':ING[k].n}</span></button>`;
   }).join('');
   const M=r.M,pp=pPerfect(M);
@@ -1521,8 +1524,12 @@ function runSelfTest(){
     ok('食材台不再显示冗余标题',!/后厨食材台/.test($('#bench').innerHTML));
     const c=S.customers[0];pickCustomer(c.id);
     ok('可选中顾客',S.activeId===c.id);
+    ok('未点食材不打钩',document.querySelectorAll('#bench .ing.picked').length===0,
+       document.querySelectorAll('#bench .ing.picked').length+' 个打钩 / 5 格');
     c.ing.forEach((k,i)=>{if(S.progress.length<=i)tapIng(k)});
     ok('按序点齐食材',S.progress.length===c.ing.length,S.progress.length+'/'+c.ing.length);
+    ok('补位食材不打钩',document.querySelectorAll('#bench .ing.picked').length===c.ing.length,
+       document.querySelectorAll('#bench .ing.picked').length+' 个打钩 / 配方 '+c.ing.length+' 步');
     const before=S.served;submitDish();
     ok('提交后出餐 +1',S.served===before+1);
     ok('营业额大于 0',S.dayGross>0,'+'+S.dayGross);
@@ -1609,7 +1616,10 @@ else if(QS.get('shot')){setTimeout(()=>{
     const cc=parseInt(QS.get('cust')||'0',10);   // 截图入口：验证 1–4 位顾客同屏
     if(cc>0){S.concurrency=clamp(cc,1,4);S.customers=[];
       for(let i=0;i<S.concurrency;i++)spawnCustomer()}
-    if(S.customers.length)pickCustomer(S.customers[0].id)
+    if(S.customers.length)pickCustomer(S.customers[0].id);
+    if(QS.get('tap')==='1'&&S.customers.length){   // 截图入口：核对点齐后只有配方内食材打钩
+      const c=S.customers[0];c.ing.forEach(k=>tapIng(k))
+    }
   }
 },60)}
 </script>
