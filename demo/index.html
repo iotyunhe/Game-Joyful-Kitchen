@@ -1593,6 +1593,16 @@ function startTick(){
     }
   },100);
 }
+/* 打烊复盘插曲：视觉小说式先播，播完再结算（结算页只留账本与统计） */
+function openRecapVN(next){
+  const base=STORY['1-4'];
+  sfx.story();
+  openStoryVN(Object.assign({},base,{
+    title:DEV_UI?'1-4 · 顾苦把糖罐换成了盐':'今天那罐糖的事',
+    trigger:'V1 干扰首次命中 · 打烊复盘',
+    lines:base.lines.concat([['','那单多走了一步，书翻到第四页——字有了，做不做得出来，还是另一回事。']])
+  }),'1-4',next);
+}
 function finishDay(){
   clearInterval(tickTimer);
   S.customers=[];S.activeId=null;S.progress=[];
@@ -1609,17 +1619,13 @@ function finishDay(){
     bubble('<b>沈如意</b>：「今天工资发不出，我请个假，明天还来。」（不裁员、不扣进度）',3600);
   }
   queueStory('0-5');
-  renderSettle();
+  if(S.storyLog.some(x=>x.id==='1-4'&&x.day===S.day))openRecapVN(()=>renderSettle());
+  else renderSettle();
 }
 function renderSettle(){
   setBG(ASSET.s2,true);showView('v-settle');renderHUD();renderDock();
   const L=S.lastLedger;
   $('#v-settle').innerHTML=`
-    ${S.storyLog.some(x=>x.id==='1-4'&&x.day===S.day)?`<div class="panel">
-      <h2><span class="num">插曲</span> 今天那罐糖的事</h2>
-      ${STORY['1-4'].lines.map(([who,text])=>`<div class="speaker">${avatar(who,38)}<div class="say"><b>${who}</b>${text}</div></div>`).join('')}
-      <p class="muted" style="margin:6px 0 0">${DEV_UI?'本单点击步数 +1 · 「海盐焦糖」页显形（T2）：':'那单多走了一步，'}书翻到第四页——字有了，做不做得出来，还是另一回事。</p>
-    </div>`:''}
     <div class="panel"><h2><span class="num">账本</span> 第 ${S.day} 天 · 打烊账本</h2>
       <p class="muted">营业额在营业中已逐单跳字；这里扣掉成本，净额入余额。</p>
       <div class="ledger">
@@ -1921,9 +1927,14 @@ function runSelfTest(){
     S=newState();S.phase='open';S.day=2;S.dayServed=1;
     S.storyLog=[{id:'1-4',day:2,trigger:'干扰'}];
     finishDay();
-    const settleNode=document.querySelector('#v-settle'),settleHTML=settleNode.innerHTML,settleText=settleNode.textContent;
-    ok('干扰当天账本复盘讲出剧情',settleText.includes('我就借点糖')&&settleText.includes('海盐焦糖'));
-    ok('玩家模式复盘不露开发编号',DEV_UI||!/点击步数|T2|V1|显形（/.test(settleText));
+    ok('干扰当天先播插曲 VN 而非直接结算',!!SV&&!!$('#svText')&&$('#overlay').classList.contains('story-vn'));
+    ok('打烊插曲讲出借糖剧情',!!SV&&SV.lines.some(l=>l.text.includes('借点糖')));
+    ok('打烊插曲标题玩家模式不露编号',DEV_UI||!/^\d+-\d+/.test($('.sv-title').textContent));
+    let recapGuard=0;while(SV&&recapGuard++<12){storyVNFinish();storyVNNext()}
+    const settleText=document.querySelector('#v-settle').textContent;
+    ok('插曲播完才进账本',!SV&&settleText.includes('打烊账本'));
+    ok('结算页不再堆插曲对白',!settleText.includes('我就借点糖'));
+    ok('玩家模式结算不露开发编号',DEV_UI||!/点击步数|T2|V1|显形（/.test(settleText));
     S=settleS;
     S.coins=300;renderPractice();
     const pm=rec('pudding').M;doPractice('pudding',false);
@@ -2026,10 +2037,14 @@ else if(QS.get('shot')){setTimeout(()=>{
     beginService();S.day=3;S.dayServed=9;S.dayLost=1;S.served=23;S.phase='settle';
     S.lastLedger={gross:128,material:20,wages:0,upkeep:5,net:103,onLeave:false};renderSettle()
   }
-  else if(mode==='recap'){    // 截图入口：核对顾苦借糖当天账本复盘对白
+  else if(mode==='recap'){    // 截图入口：核对打烊先播插曲 VN、播完才进账本
     beginService();S.day=2;S.dayServed=1;S.phase='settle';
     S.storyLog=[{id:'1-4',day:2,trigger:'干扰'}];
-    S.lastLedger={gross:12,material:2,wages:0,upkeep:0,net:10,onLeave:false};renderSettle()
+    S.lastLedger={gross:12,material:2,wages:0,upkeep:0,net:10,onLeave:false};
+    openRecapVN(()=>renderSettle());
+    const li=parseInt(QS.get('line')||'0',10);
+    if(li>0){let g=0;while(SV&&SV.idx<li&&g++<10){storyVNFinish();storyVNNext()}}
+    if(QS.get('typing')!=='1')storyVNFinish();
   }
   else if(mode==='prologue'){
     const n=parseInt(QS.get('slide')||'1',10);
