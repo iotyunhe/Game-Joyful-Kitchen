@@ -847,7 +847,7 @@ function renderDock(){
 /* ---------- 标题页 ---------- */
 function renderTitle(){
   setBG(ASSET.s3,false);
-  const cover=new URLSearchParams(location.search).get('cover')||'1';
+  const cover=new URLSearchParams(location.search).get('cover')||'3';
   const minor=[
     hasSave()?`<button class="btn sm sec" data-act="continue">继续上次（第 ${((JSON.parse(localStorage.getItem(SAVE_KEY)||'{}').day)||1)} 天）</button>`:'',
     S.prologueDone?'<button class="btn sm sec" data-act="replay-prologue">重看开场</button>':''
