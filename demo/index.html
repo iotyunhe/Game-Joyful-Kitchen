@@ -328,22 +328,43 @@ body.dev .devonly{display:flex!important}
 .logitem b{color:var(--berry)}
 
 /* ============ 开场序章 ============ */
-.prologue{animation:fadein .26s ease;display:flex;flex-direction:column;gap:9px}
-.pro-narr{font-size:13px;line-height:1.8;background:rgba(255,251,242,.94);border:var(--line) solid var(--cocoa);
-  border-radius:14px;padding:9px 12px;margin:0}
+#v-prologue{height:100%}   /* 明确高度，让内部 74% 上限与底部按钮固定生效 */
+.prologue{animation:fadein .26s ease;display:flex;flex-direction:column;height:100%;gap:0}
+/* 文字区占屏高约 2/3~3/4：字号放大后自然铺开，底部留白，不顶满 */
+.pro-lines{flex:1 1 auto;min-height:66%;max-height:74%;display:flex;flex-direction:column;
+  justify-content:space-evenly;gap:14px;padding:12px 2px;overflow-y:auto;scrollbar-width:none}
+.pro-lines::-webkit-scrollbar{display:none}
+.pro-narr{font-size:17px;line-height:1.85;background:rgba(255,251,242,.96);border:var(--line) solid var(--cocoa);
+  border-radius:16px;padding:13px 15px;margin:0;box-shadow:0 4px 0 rgba(90,59,46,.12)}
 .pro-narr b{color:var(--berry)}
-.pro-art{display:flex;justify-content:center;padding:2px 0}
-.pro-book{font-size:21px;font-weight:900;letter-spacing:2px;background:var(--paper);border:3px solid var(--cocoa);
-  border-radius:18px;padding:12px 20px;text-align:center;line-height:1.7}
-.pro-book span{display:block;font-size:13px;font-weight:700;color:var(--caramel);letter-spacing:1px}
-.pro-pagebox .page{width:112px;margin:0 auto}
-.pro-sign{font-size:28px;font-weight:900;letter-spacing:4px;background:var(--paper);border:3px solid var(--cocoa);
-  border-radius:18px;padding:9px 24px}
+/* 序章对白字号放大，头像同步放大 */
+.pro-lines .speaker{margin-bottom:0;gap:12px}
+.pro-lines .speaker .say{font-size:16px;line-height:1.7;padding:12px 14px;box-shadow:0 4px 0 rgba(90,59,46,.12)}
+.pro-lines .speaker .say b{font-size:13px;margin-bottom:4px}
+/* 打字光标：只在当前正在逐字吐出的那一段显示 */
+.pro-lines .caret{display:none}
+.pro-lines .typing .caret{display:inline-block;width:10px;height:1.02em;margin-left:3px;
+  vertical-align:-3px;border-radius:2px;background:var(--caramel);animation:proBlink .7s steps(1) infinite}
+@keyframes proBlink{50%{opacity:0}}
+.pro-art{display:flex;justify-content:center;padding:6px 0}
+.pro-book{font-size:26px;font-weight:900;letter-spacing:2px;background:var(--paper);border:3px solid var(--cocoa);
+  border-radius:18px;padding:16px 24px;text-align:center;line-height:1.7}
+.pro-book span{display:block;font-size:15px;font-weight:700;color:var(--caramel);letter-spacing:1px}
+.pro-pagebox .page{width:132px;margin:0 auto}
+.pro-sign{font-size:34px;font-weight:900;letter-spacing:4px;background:var(--paper);border:3px solid var(--cocoa);
+  border-radius:18px;padding:13px 28px}
 .pro-sign span{color:var(--berry)}
-.pro-foot{display:flex;gap:8px;align-items:center;margin-top:auto;padding-top:6px}
+.pro-foot{display:flex;gap:9px;align-items:center;flex:none;margin-top:auto;padding-top:10px}
 .pro-foot .btn{white-space:nowrap}
-.pro-kick{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.pro-count{font-size:11px;opacity:.6;flex:none}
+.pro-foot .btn.typing{min-width:96px}
+.pro-kick{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex:none;margin-bottom:4px}
+.pro-kick span:first-child{font-size:13px;font-weight:800}
+.pro-count{font-size:12px;opacity:.6;flex:none}
+@media(max-height:760px){
+  .pro-lines{gap:10px;padding:10px 2px}
+  .pro-narr{font-size:15px;padding:10px 12px}
+  .pro-lines .speaker .say{font-size:14px;padding:9px 12px}
+}
 
 /* 顶部单句气泡 G2（绝不弹全屏） */
 .bubble{position:absolute;z-index:15;left:14px;right:14px;top:62px;display:none;
@@ -781,7 +802,7 @@ function setBG(url,soft){
 }
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===id));
-  $('.stage').classList.toggle('fit',id==='v-open');   // 营业页锁一屏，不出现拉条
+  $('.stage').classList.toggle('fit',id==='v-open'||id==='v-prologue');   // 营业页/序章锁一屏，不出现拉条
 }
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>e.classList.remove('on'),1500)}
@@ -929,36 +950,104 @@ function renderTitle(){
   renderDock();
 }
 
-/* ---------- 开场序章播放器 ---------- */
-let PRO_I=0, PRO_DONE_CB=null;
+/* ---------- 开场序章播放器（逐字打字机） ---------- */
+let PRO_I=0, PRO_DONE_CB=null, PRO_TYPER=null;
+const PRO_SPEED=34;        // 每字毫秒
+const PRO_PAUSE_PUNC=150;  // 标点后停顿
+const PRO_PAUSE_SEG=260;   // 段与段之间停顿
+
+function stopProType(){if(PRO_TYPER){clearTimeout(PRO_TYPER.timer);PRO_TYPER=null}}
+function proNextLabel(){
+  return PRO_I===PROLOGUE.length-1?'挂牌开店 →':'继续 →';
+}
+function updateProNextBtn(){
+  const b=$('[data-act="pro-next"]');
+  if(!b)return;
+  const typing=PRO_TYPER&&!PRO_TYPER.done;
+  b.textContent=typing?'快进 ›':proNextLabel();
+  b.classList.toggle('typing',!!typing);
+}
+function startProType(){
+  stopProType();
+  const sl=PROLOGUE[PRO_I];
+  const seq=[];
+  (sl.narr||[]).forEach((t,i)=>{
+    const el=document.querySelectorAll('.pro-lines .pro-narr .tw')[i];
+    if(el)seq.push({el,text:t});
+  });
+  (sl.say||[]).forEach((x,i)=>{
+    const el=document.querySelectorAll('.pro-lines .speaker .say .tw')[i];
+    if(el)seq.push({el,text:x[1]});
+  });
+  if(!seq.length){updateProNextBtn();return}
+  PRO_TYPER={seq,si:0,ci:0,done:false,timer:null,
+    box:$('.pro-lines'),cur:null};
+  const step=()=>{
+    const t=PRO_TYPER;
+    if(!t||t.done)return;
+    const cur=t.seq[t.si];
+    if(!cur){t.done=true;if(t.cur)t.cur.el.parentElement.classList.remove('typing');t.cur=null;updateProNextBtn();return}
+    if(t.cur!==cur){
+      if(t.cur)t.cur.el.parentElement.classList.remove('typing');
+      t.cur=cur;cur.el.parentElement.classList.add('typing');
+    }
+    t.ci++;
+    cur.el.textContent=cur.text.slice(0,t.ci);
+    if(t.box)t.box.scrollTop=t.box.scrollHeight; // 长幕自动跟随，玩家不用拉条
+    let wait=PRO_SPEED;
+    if(t.ci>=cur.text.length){t.si++;t.ci=0;wait=PRO_PAUSE_SEG}
+    else if(/[，。、；：！？]/.test(cur.text[t.ci-1]))wait=PRO_PAUSE_PUNC;
+    t.timer=setTimeout(step,wait);
+    return wait;
+  };
+  PRO_TYPER.step=step;   // 暴露给自检：脱离定时器也能验证逐字推进
+  updateProNextBtn();
+  PRO_TYPER.timer=setTimeout(step,360);   // 首段留一点呼吸，避免玩家还没看清就开始
+}
+function finishProType(){
+  const t=PRO_TYPER;
+  if(!t||t.done)return;
+  clearTimeout(t.timer);
+  t.seq.forEach(x=>x.el.textContent=x.text);
+  if(t.cur)t.cur.el.parentElement.classList.remove('typing');
+  t.cur=null;t.done=true;
+  if(t.box)t.box.scrollTop=t.box.scrollHeight;
+  updateProNextBtn();
+}
 function playPrologue(done){
+  stopProType();
   PRO_I=0;PRO_DONE_CB=done;
   renderPrologue();
 }
 function renderPrologue(){
+  stopProType();
   const sl=PROLOGUE[PRO_I],total=PROLOGUE.length;
   setBG(sl.bg,false);
   showView('v-prologue');
-  const narr=(sl.narr||[]).map(t=>`<p class="pro-narr">${t}</p>`).join('');
-  const say=(sl.say||[]).map(([w,t])=>`<div class="speaker">${avatar(w,42)}<div class="say"><b>${w}</b>${t}</div></div>`).join('');
+  const narr=(sl.narr||[]).map(t=>`<p class="pro-narr"><span class="tw"></span><i class="caret"></i></p>`).join('');
+  const say=(sl.say||[]).map(([w,t])=>`<div class="speaker">${avatar(w,50)}<div class="say"><b>${w}</b><span class="tw"></span><i class="caret"></i></div></div>`).join('');
   $('#v-prologue').innerHTML=`
     <div class="prologue">
       <div class="kicker pro-kick"><span>${sl.k}</span><span class="pro-count">${PRO_I+1} / ${total}</span></div>
-      ${sl.art?`<div class="pro-art">${sl.art}</div>`:''}
-      ${narr}${say}
+      <div class="pro-lines">
+        ${sl.art?`<div class="pro-art">${sl.art}</div>`:''}
+        ${narr}${say}
+      </div>
       <div class="pro-foot">
         <button class="btn sm sec" data-act="pro-skip">跳过开场</button>
-        <button class="btn sm grow" data-act="pro-next">${PRO_I===total-1?'挂牌开店 →':'继续 →'}</button>
+        <button class="btn sm grow" data-act="pro-next">${proNextLabel()}</button>
       </div>
     </div>`;
-  $('#dock').innerHTML='<span class="hintline">序章 · 从天而降的一百零一页</span>';
+  $('#dock').innerHTML='<span class="hintline">序章 · 从天而降的一百零一页 · 点「继续」可快进文字</span>';
   sfx.story();
+  startProType();
 }
 function prologueNext(){
+  stopProType();
   if(PRO_I<PROLOGUE.length-1){PRO_I++;renderPrologue()}
   else prologueEnd();
 }
-function prologueSkip(){prologueEnd()}
+function prologueSkip(){stopProType();prologueEnd()}
 function prologueEnd(){
   const f=PRO_DONE_CB;PRO_DONE_CB=null;
   S.prologueDone=true;save();
@@ -1565,7 +1654,7 @@ document.addEventListener('click',e=>{
     }else{toast('没有可继续的进度')}
     return;
   }
-  if(a==='pro-next'){prologueNext();return}
+  if(a==='pro-next'){if(PRO_TYPER&&!PRO_TYPER.done)finishProType();else prologueNext();return}
   if(a==='pro-skip'){prologueSkip();return}
   if(a==='replay-prologue'){playPrologue(()=>{renderTitle()});return}
   if(a==='story-next'){closeOverlay();const f=window.__storyNext;window.__storyNext=null;if(f)f();return}
@@ -1645,6 +1734,23 @@ function runSelfTest(){
     ok('「听糖」在序章只由糖老书说一次',PROLOGUE.flatMap(s=>s.say||[]).filter(x=>x[1].includes('听糖')).length===1);
     resetAll();
     ok('新开局先播开场序章',S.prologueDone===false&&document.querySelector('#v-prologue.on')!==null);
+    ok('序章启动逐字打字机',!!PRO_TYPER&&!PRO_TYPER.done&&typeof PRO_TYPER.step==='function');
+    ok('打字中按钮显示快进',/快进/.test($('[data-act="pro-next"]').textContent));
+    ok('文字逐字递增（一次一字非整段）',(()=>{
+      const tw=()=>[...document.querySelectorAll('.pro-lines .tw')].reduce((s,x)=>s+x.textContent.length,0);
+      const seq=[tw()];
+      for(let i=0;i<5;i++){PRO_TYPER.step();seq.push(tw())}
+      return seq[0]===0&&seq[1]===1&&seq[5]===5&&seq.every((n,i)=>i===0||n===seq[i-1]+1);
+    })());
+    ok('打字中显示闪烁光标',document.querySelectorAll('.pro-lines .typing .caret').length===1);
+    ok('快进后文字一次性补全',(()=>{
+      finishProType();
+      const tw=[...document.querySelectorAll('.pro-lines .tw')].map(x=>x.textContent).join('');
+      const sl=PROLOGUE[PRO_I];
+      const full=[...(sl.narr||[]),...((sl.say||[]).map(x=>x[1]))].join('');
+      return tw===full;
+    })());
+    ok('补全后按钮恢复继续',/继续|挂牌开店/.test($('[data-act="pro-next"]').textContent));
     prologueSkip();
     ok('跳过开场后标记完成并弹出引导',S.prologueDone===true&&document.querySelector('#overlay.on')!==null);
     // 逐幕点击链：连点「继续」到第 8 幕「挂牌开店」同样进入引导
@@ -1760,7 +1866,12 @@ else if(QS.get('shot')){setTimeout(()=>{
     S.storyLog=[{id:'1-4',day:2,trigger:'干扰'}];
     S.lastLedger={gross:12,material:2,wages:0,upkeep:0,net:10,onLeave:false};renderSettle()
   }
-  else if(mode==='prologue'){const n=parseInt(QS.get('slide')||'1',10);PRO_I=clamp(n-1,0,PROLOGUE.length-1);renderPrologue()}
+  else if(mode==='prologue'){
+    const n=parseInt(QS.get('slide')||'1',10);
+    PRO_I=clamp(n-1,0,PROLOGUE.length-1);
+    renderPrologue();
+    if(QS.get('typing')!=='1')finishProType();   // 默认截完整文字；typing=1 看打字中
+  }
   else {
     beginService();
     const want=QS.get('dish');   // 截图入口：指定这位顾客点哪道菜，便于逐菜核对工序
