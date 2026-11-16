@@ -14,6 +14,10 @@ __pycache__/
 # WorkBuddy 工作区内部数据（不属于游戏项目产物）
 .workbuddy/
 
+# 编辑器备份副本（如 Windows 的「xxx - 副本.html」）
+* - 副本.*
+* - 副本 (2).*
+
 # 依赖与构建产物（当前项目为纯文档 / 资产仓库，预留）
 node_modules/
 dist/
