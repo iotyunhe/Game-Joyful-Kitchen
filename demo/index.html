@@ -35,7 +35,7 @@ svg{display:block}
   background-image:radial-gradient(circle at 12px 12px, rgba(90,59,46,.09) 2px, transparent 2px);
   background-size:26px 26px}
 .side{width:250px;flex:0 0 250px;position:relative;z-index:1;display:none}
-@media(min-width:1140px){.side{display:block}}
+@media(min-width:1140px){body.dev .side{display:block}}
 .side h1{font-size:22px;margin:0 0 6px;letter-spacing:.5px}
 .side .sub{font-size:13px;opacity:.72;line-height:1.7;margin:0 0 18px}
 .side .card{background:var(--paper);border:var(--line) solid var(--cocoa);border-radius:20px;
@@ -68,6 +68,9 @@ svg{display:block}
 .iconbtn{width:32px;height:32px;flex:none;border:2px solid var(--cocoa);border-radius:12px;
   background:var(--frost);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
 .iconbtn.off{opacity:.45}
+/* 设计对照入口只给开发者；玩家界面不出现公式与 P 编号 */
+.devonly{display:none!important}
+body.dev .devonly{display:flex!important}
 .autobar{position:absolute;left:10px;right:10px;bottom:-9px;height:7px;border:2px solid var(--cocoa);
   border-radius:10px;background:var(--frost);overflow:hidden;z-index:4}
 .autobar i{display:block;height:100%;background:var(--caramel);transition:width .3s}
@@ -381,7 +384,7 @@ svg{display:block}
         <span class="spacer"></span>
         <button class="iconbtn" data-act="toggle-sound" id="soundBtn" title="声音">♪</button>
         <button class="iconbtn" data-act="open-book" title="菜谱">书</button>
-        <button class="iconbtn" data-act="open-guide" title="设计对照">☰</button>
+        <button class="iconbtn devonly" data-act="open-guide" title="设计对照">☰</button>
         <div class="autobar"><i id="autoFill" style="width:0%"></i></div>
       </header>
 
@@ -455,6 +458,10 @@ svg{display:block}
    不写回设计文档；正式数值以 output/欢闹厨房_数值调优表.csv 为准。
    ================================================================ */
 const C = {caramel:'#E8A05C',peach:'#F3BFC0',frost:'#FFF7EA',berry:'#D9534F',cream:'#F5E4C9',cocoa:'#5A3B2E'};
+/* 设计公式 / P 编号 / PLACEHOLDER 只对开发者可见；玩家界面一律不说这些。
+   本地需要核对设计口径时，在地址后加 ?dev=1。 */
+const DEV_UI = new URLSearchParams(location.search).get('dev') === '1';
+if(DEV_UI)document.body.classList.add('dev');
 /* 美术资产内联副本：源图见 art/generated/，此处为等比缩小后的优化版，
    使 demo 成为真正单文件、脱离目录结构也能显示 */
 const ASSET = {
@@ -763,7 +770,7 @@ function renderHUD(){
 function renderDock(){
   const d=$('#dock'),p=S.phase;
   if(p==='title'){
-    d.innerHTML=`<span class="hintline">经营是主体，剧情由经营长出来。</span>
+    d.innerHTML=`<span class="hintline">一间小店，一本菜谱，和一屋子熟客。</span>
       ${hasSave()?'<button class="btn sm sec" data-act="continue">继续</button>':''}
       <button class="btn sm" data-act="start">开始试营业</button>`;
   }else if(p==='open'){
@@ -774,7 +781,7 @@ function renderDock(){
     d.innerHTML=`<span class="hintline">收入 − 原料 − 工资 − 维护 = 可支配余额</span>
       <button class="btn sm" data-act="settle-next">去投资 →</button>`;
   }else if(p==='invest'){
-    d.innerHTML=`<span class="hintline">雇人 / 升设备只减点击，不提高完美率（P3）</span>
+    d.innerHTML=`<span class="hintline">雇人 / 升设备只帮你少点几下，手艺还得自己练</span>
       <button class="btn sm" data-act="invest-next">去练习 →</button>`;
   }else if(p==='practice'){
     d.innerHTML=`<span class="hintline">练习只提升熟练度，金币买不到 M</span>
@@ -793,7 +800,7 @@ function renderTitle(){
       <p class="logo">一勺<span>糖</span></p>
       <p class="eng">A SPOON OF SUGAR · PLAYABLE SLICE</p>
       <img src="${ASSET.char}" alt="麦小满">
-      <p class="book">《欢闹厨房》· 玩法流程设计 v2.0 可玩垂直切片</p>
+      <p class="book">《欢闹厨房》· 一勺糖</p>
       <p class="desc">捡到一本<span class="tagline"><em>《一百零一页》</em></span>之后，<br>
         麦小满决定先开一家甜品店。<br>
         <em>点食材</em> → <em>递给客人</em> → <em>赚金币</em> → <em>雇人升设备</em> → <em>练一道</em></p>
@@ -801,10 +808,12 @@ function renderTitle(){
       ${hasSave()?'<button class="btn wide sec" style="margin-top:8px" data-act="continue">继续上次（第 '+((JSON.parse(localStorage.getItem(SAVE_KEY)||'{}').day)||1)+' 天）</button>':''}
       ${S.prologueDone?'<button class="btn wide sec" style="margin-top:8px" data-act="replay-prologue">重看开场</button>':''}
       <div class="mini-legend">
-        <span>完美率 = 0.05 + 0.0055M</span><span>收益 = B × Q × (0.5+0.5p)</span>
-        <span>自动化 ≤ 70%</span><span>失败不扣金币</span>
+        ${DEV_UI?`<span>完美率 = 0.05 + 0.0055M</span><span>收益 = B × Q × (0.5+0.5p)</span>
+        <span>自动化 ≤ 70%</span><span>失败不扣金币</span>`
+        :`<span>照配方顺序点</span><span>客人等急了收益会低</span>
+        <span>雇人升设备少点几下</span><span>打烊后练一道</span>`}
       </div>
-      <p class="muted" style="margin-top:12px">点顶栏 ☰ 查看「设计对照」：每条机制、每处 demo 调档值都列得出来。</p>
+      ${DEV_UI?'<p class="muted" style="margin-top:12px">点顶栏 ☰ 查看「设计对照」：每条机制、每处 demo 调档值都列得出来。</p>':''}
     </div>`;
   renderDock();
 }
@@ -868,7 +877,7 @@ function spawnCustomer(){
   const c={id:++uid,guest:rnd(GUESTS),rid:r.id,ing,P0:P0v,remain:P0v,firstTry,disturbed:ing.length>r.ing.length,auto:0,el:null};
   S.customers.push(c);
   renderCustomers();
-  if(c.disturbed)bubble('<b>顾苦</b>：「我就想借点糖……」　这单 +1 步；将错就错，<b>「海盐焦糖」页显形</b>（T2 剧情回喂经营）。',3400);
+  if(c.disturbed)bubble('<b>顾苦</b>：「我就想借点糖……」　这单多点一步；将错就错，<b>「海盐焦糖」那页显形了</b>。',3400);
 }
 function renderCustomers(){
   const box=$('#custList');
@@ -937,10 +946,10 @@ function renderBench(){
     ? c.ing.map((k,i)=>`<span class="q ${i<done?'done':''}">?</span>`).join('')
     : c.ing.map((k,i)=>`<span class="${i<done?'done':''}">${ING[k].n}${i<need-1?' → ':''}</span>`).join('');
   $('#shopTip').innerHTML=S.freeStove
-    ? '<b>V4 自由炉</b>：金币、耐心、评分、全部自动化都关掉了。只留手动一炉，全员在场。'
+    ? '<b>自由炉</b>：不算钱、不排名、也不催客人。全员都在，自己烤一炉。'
     : S.noRecipe
-    ? '<b>V2 无配方</b>：连菜谱上的字都藏了，凭手感点。糖老书说：「第三格，我什么都没说。」'
-    : (c.disturbed?'<b>V1 干扰</b>：糖罐被换成盐，这单要多点一步，配方临时改写。':'<b>提示</b>：按配方顺序点食材；耐心越低，收益与评价越低。完美会强制好评。');
+    ? '<b>没菜谱</b>：连菜谱上的字都藏了，凭手感点。糖老书说：「第三格，我什么都没说。」'
+    : (c.disturbed?'<b>糖罐被动过</b>：这单多点一步，配方临时改写。':'<b>提示</b>：按配方顺序点食材；客人等得越久，赚得越少。做出完美，客人一定说好。');
   $('#shopTip').className='tip-strip'+(S.noRecipe||S.freeStove?' gray':'');
   const slots=c.ing.map((k,i)=>`<div class="slot ${i<done?(S.progress[i]&&S.progress[i].auto?'auto':'ok'):''}">${i<done?'✓':i+1}</div>`).join('<span class="arrow">·</span>');
   const autoKeys=S.progress.filter(p=>p.auto).map(p=>p.k);
@@ -1031,7 +1040,7 @@ function submitDish(){
 function loseCustomer(c){
   S.dayLost++;S.lost++;
   sfx.leave();
-  bubble(`<b>${c.guest.n}</b> 等走了。本单收益 0，记一次流失——不扣金币、不掉熟练度（P4）。`,2600);
+  bubble(`<b>${c.guest.n}</b> 等走了。这单没赚着，下一位来。`,2600);
   addLog(`${c.guest.n} 耐心归零离场 · 记流失`);
   removeCustomer(c.id);
   if(S.activeId===c.id){S.activeId=null;S.progress=[]}
@@ -1097,16 +1106,23 @@ function showStoryCard(id,next){
   n.apply();
   sfx.story();
   const lines=n.lines.map(([who,text])=>`<div class="speaker">${avatar(who,42)}<div class="say"><b>${who}</b>${text}</div></div>`).join('');
+  const kicker=DEV_UI?`${n.slot} 插入口 · ${n.tag}`:'一段插曲';
+  const shownTitle=DEV_UI?n.title:n.title.replace(/^\d+-\d+(?:\s*\/\s*\d+-\d+)*\s*·\s*/,'');
+  const when=DEV_UI?`触发条件：${n.trigger}　｜　第 ${S.day} 天`:`第 ${S.day} 天`;
+  const effect=DEV_UI?`<div class="story-effect"><b>剧情回喂经营</b>${n.effect}</div>`:'';
+  const freeBtn=n.slot==='G3'&&id==='5-234'
+    ?`<button class="btn wide frost" style="margin-bottom:8px" data-act="free-stove">明天想自己再烤一炉${DEV_UI?'（V4 自由炉）':''}</button>`:'';
+  const foot=DEV_UI?'<p class="muted" style="margin:9px 0 0">主线剧情在下一个开门 / 关门时播放，永远不打断营业（R6）。</p>':'';
   openOverlay('story',`
-    <div class="kicker">${n.slot} 插入口 · ${n.tag}</div>
-    <h2>${n.title}</h2>
-    <p class="muted" style="margin:0 0 10px">触发条件：${n.trigger}　｜　第 ${S.day} 天</p>
+    <div class="kicker">${kicker}</div>
+    <h2>${shownTitle}</h2>
+    <p class="muted" style="margin:0 0 10px">${when}</p>
     ${lines||'<div class="muted">（营业中的一句短气泡，不打断操作）</div>'}
-    <div class="story-effect"><b>剧情回喂经营</b>${n.effect}</div>
-    ${n.slot==='G3'&&id==='5-234'?'<button class="btn wide frost" style="margin-bottom:8px" data-act="free-stove">明天想自己再烤一炉（V4 自由炉）</button>':''}
+    ${effect}
+    ${freeBtn}
     <div class="row"><button class="btn sec grow" data-act="story-skip">略过本段</button>
     <button class="btn grow" data-act="story-next">继续 →</button></div>
-    <p class="muted" style="margin:9px 0 0">主线剧情在下一个开门 / 关门时播放，永远不打断营业（R6）。</p>`);
+    ${foot}`);
   window.__storyNext=next;
 }
 
@@ -1126,7 +1142,7 @@ function openBook(){
       ${r.revealed?dishIcon(r.id,40):'<div style="font-size:22px;opacity:.4">· · ·</div>'}
       <div class="nm">${S.confiscated?'（扣书）':r.revealed?r.name:'尚未显形'}</div>
       ${r.revealed&&!S.confiscated?`<div class="mbar"><i style="width:${r.M}%"></i></div>
-        <div class="mm">M ${r.M.toFixed(1)} ｜ 近 20 单完美 ${r.perfect20}</div>
+        <div class="mm">熟练度 ${r.M.toFixed(1)} ｜ 近 20 单完美 ${r.perfect20}</div>
         <div class="mm" style="color:${r.learned?C.berry:C.cocoa}">${r.learned?'已学成 · 糖霜插图':'显形 ≠ 学会'}</div>`:''}
       <span class="pn2">${r.id==='pudding'?'1':'·'}</span>
     </div>`;
@@ -1135,14 +1151,14 @@ function openBook(){
     <div style="font-size:22px">🍮</div><div class="nm">${S.ending?'因为你还想再做一炉':'仍是一片空白'}</div></div>`;
   for(let i=0;i<2;i++)cells+='<div class="page blank"><div class="nm">· · ·</div></div>';
   openOverlay('book',`
-    <div class="kicker">S4 ·《一百零一页》</div>
+    <div class="kicker">《一百零一页》</div>
     <h2>菜谱与熟练度总览</h2>
-    <p class="muted">已显形 ${revealed().length} / 101 页（本原型只排入 4 道可制作点心）。
+    <p class="muted">已显形 ${revealed().length} / 101 页（眼下能做的就这四道）。
     ${S.confiscated?'<b style="color:'+C.berry+'">扣书期：整本置灰并叠封条，熟练度条不可见。</b>':'显形给的是菜谱，不是你手上的功夫：首次成功做出，才算学成。'}</p>
     <div class="bookgrid">${cells}</div>
-    <div class="story-effect" style="margin-top:12px"><b>评价回收口</b>
-      累计好评率 ${(goodRate()*100).toFixed(0)}%${S.ratingIncludesGood?' · 已进入评定公式（4-7 条例松口）':' · 尚未进入评定公式'}；
-      流失 ${S.lost} 位会压低当日评价上限。</div>
+    <div class="story-effect" style="margin-top:12px"><b>街坊怎么说</b>
+      ${DEV_UI?`累计好评率 ${(goodRate()*100).toFixed(0)}%${S.ratingIncludesGood?' · 已进入评定公式（4-7 条例松口）':' · 尚未进入评定公式'}；流失 ${S.lost} 位会压低当日评价上限。`
+      :`如今好评率 ${(goodRate()*100).toFixed(0)}%。${S.lost?`走了 ${S.lost} 位客人，今天的话就没那么好听了。`:'今天没人空手走，街坊都挺满意。'}`}</div>
     ${S.phase==='open'?'<p class="muted">营业中翻书，客人可不等你（耐心照常走）。</p>':''}
     <button class="btn wide" data-act="close-overlay">合上菜谱</button>`);
 }
@@ -1274,7 +1290,7 @@ function renderSettle(){
   setBG(ASSET.s2,true);showView('v-settle');renderHUD();renderDock();
   const L=S.lastLedger;
   $('#v-settle').innerHTML=`
-    <div class="panel"><h2><span class="num">P6</span> 第 ${S.day} 天 · 打烊账本</h2>
+    <div class="panel"><h2><span class="num">账本</span> 第 ${S.day} 天 · 打烊账本</h2>
       <p class="muted">营业额在营业中已逐单跳字；这里扣掉成本，净额入余额。</p>
       <div class="ledger">
         <div class="lr"><span>出餐营业额（${S.dayServed} 单）</span><span>+ ${L.gross} 🪙</span></div>
@@ -1283,12 +1299,13 @@ function renderSettle(){
         <div class="lr minus"><span>设备维护${L.onLeave?'（停机）':''}</span><span>− ${L.upkeep}</span></div>
         <div class="lr total"><span>今日净额</span><span style="color:${L.net>=0?C.cocoa:C.berry}">${L.net>=0?'+':''}${L.net} 🪙</span></div>
       </div>
-      <p class="note">评价回收口：累计好评率 ${(goodRate()*100).toFixed(0)}% → 次日客流基数；今日流失 ${S.dayLost} 位 → 当日评价上限封顶（系数 [PLACEHOLDER] 待 playtest）；差评只压好评率、不扣金币。</p>
+      ${DEV_UI?`<p class="note">评价回收口：累计好评率 ${(goodRate()*100).toFixed(0)}% → 次日客流基数；今日流失 ${S.dayLost} 位 → 当日评价上限封顶（系数 [PLACEHOLDER] 待 playtest）；差评只压好评率、不扣金币。</p>`
+      :'<p class="note">今天的好评会带到明天；走了的客人会让街坊挑剔一点。差评只是嘴上说说，钱袋不受影响。</p>'}
     </div>
     <div class="panel"><h2><span class="num">统计</span> 今天手上有多忙</h2>
       <p class="tagline">服务 ${S.dayServed} 单 · 流失 ${S.dayLost} 位 · 累计完美 ${S.perfect} 次 ·
       累计出餐 ${S.served} 单 · 好评率 ${(goodRate()*100).toFixed(0)}% · 自动化率 ${Math.round(autoRate()*100)}%</p>
-      <p class="muted">耐心归零只记流失：不扣金币、不掉熟练度，也不判失败（P4）。</p>
+      ${DEV_UI?'<p class="muted">耐心归零只记流失：不扣金币、不掉熟练度，也不判失败（P4）。</p>':''}
     </div>`;
   S.coins+=L.net;S.coins=Math.max(0,S.coins);
   renderHUD();save();
@@ -1299,26 +1316,26 @@ function renderInvest(){
   const staffCard=(role,name,price,desc,need)=>`
     <div class="shop-item">
       <div class="t">${name}<span class="price">${price} 🪙</span></div>
-      <div class="d">${desc}<br><span class="no">不会</span>提高完美率 / 熟练度 / 单价 / 顾客耐心（P3）。</div>
-      ${S.staff[role]?'<div class="owned">✔ 已上岗 · 每局工资 6 🪙（持续 sink）</div>'
+      <div class="d">${desc}<br><span class="no">只</span>帮你少点几下，味道还是你自己的手艺。</div>
+      ${S.staff[role]?'<div class="owned">✔ 已上岗 · 每局工资 6 🪙</div>'
         :`<button class="btn sm" data-act="hire" data-role="${role}" ${(S.coins<price||S.staffSlot<need||S.onLeave)?'disabled':''}>雇佣</button>
           ${S.staffSlot<need?`<span class="muted"> · 需先升到${need===1?'铜勺':'更高段位'}开放岗位槽</span>`:''}
           ${S.onLeave?'<span class="muted"> · 剥离期岗位清空</span>':''}`}
     </div>`;
   const devPrice=70+(S.device-1)*45;
   $('#v-invest').innerHTML=`
-    <div class="panel"><h2><span class="num">P4 / P5</span> 把钱花在「少点几下」上</h2>
-      <p class="muted">当前金币 <b>${S.coins} 🪙</b> ｜ 自动化率 <b>${Math.round(ar*100)}%</b> ｜ 上限 70%（A6：排序、投资、新菜首做仍要你决定）。</p>
-      <p class="tagline">雇人与升设备<b>只减负</b>：减少手动点击步数、提高并行顾客数。练习才提高完美率——两条投资必须交替推进。</p>
+    <div class="panel"><h2><span class="num">省事</span> 把钱花在「少点几下」上</h2>
+      <p class="muted">当前金币 <b>${S.coins} 🪙</b> ｜ 帮手接管 <b>${Math.round(ar*100)}%</b></p>
+      <p class="tagline">雇人与升设备只帮你少按几次、同时招呼更多客人。想让点心更好吃，还是得回去练手艺。</p>
     </div>
     ${staffCard('prep','🍳 备料岗（自动点前 N 个食材）',60,'自动接管已学会菜品的固定步骤；新菜首做、异常订单强制手动。',1)}
-    ${staffCard('serve','🕊 上菜岗（自动选中耐心最低的顾客）',90,'帮你排序，但「提交」永远由你点（P5 决策不消失）。',2)}
+    ${staffCard('serve','🕊 上菜岗（自动选中等急了的顾客）',90,'帮你挑人，但「提交」那一下永远由你点。',2)}
     ${staffCard('cashier','📒 收银岗（账本自动平账）',120,'工资与维护费自动列支，打烊账本不再手算。',3)}
     <div class="shop-item">
-      <div class="t">🔥 烤炉升级 → L${S.device+1}<span class="price">${devPrice} 🪙</span></div>
-      <div class="d">每级减少 1 个手动步骤 / 缩短出餐等待；<span class="no">不改</span>配方、不显示品质提示。
-        当前 L${S.device}，每局维护费 ${(S.device-1)*5} 🪙（持续 sink）。<br><span class="muted">漏雨屋顶仍然不修（设定红线）。</span></div>
-      ${S.device>=5?'<div class="owned">✔ 已升至 L5 封顶</div>':
+      <div class="t">🔥 烤炉升级 → ${S.device+1} 级<span class="price">${devPrice} 🪙</span></div>
+      <div class="d">每级少点一步、出餐更快；配方不变，也不会提前告诉你品质。
+        现在是 ${S.device} 级，每局维护费 ${(S.device-1)*5} 🪙。<br><span class="muted">漏雨的屋顶还是不修。</span></div>
+      ${S.device>=5?'<div class="owned">✔ 已升到 5 级封顶</div>':
         `<button class="btn sm" data-act="upgrade" ${(S.coins<devPrice||S.onLeave)?'disabled':''}>升级</button>
          ${S.onLeave?'<span class="muted"> · 剥离期设备停机</span>':''}`}
     </div>
@@ -1327,24 +1344,23 @@ function renderInvest(){
 function renderPractice(){
   S.phase='practice';setBG(ASSET.s4,true);showView('v-practice');renderHUD();renderDock();
   $('#v-practice').innerHTML=`
-    <div class="panel"><h2><span class="num">P2</span> 打烊后 · 练哪一道</h2>
-      <p class="muted">练习<b>唯一</b>的产出是熟练度 M。金币买原料，但买不到 M（不可作弊铁律）。
-      经营出餐每单只给 M+0.5，练习才给 +8~12。当前金币 <b>${S.coins} 🪙</b>。</p>
-      <p class="tagline">练过的那道，完美概率会明显上去——熟练度条与「近 20 单完美次数」常驻可见（P2）。</p>
+    <div class="panel"><h2><span class="num">练一道</span> 打烊后 · 练哪一道</h2>
+      <p class="muted">练一次，这道点心的手艺就长一截。金币买得到原料，买不到手艺。当前金币 <b>${S.coins} 🪙</b>。</p>
+      <p class="tagline">练过的那道更容易出「完美」；熟练度和近 20 单完美次数都写在菜谱里。</p>
     </div>
     ${revealed().map(r=>{
       const cost=8+Math.round(r.B/2);
       return `<div class="pcard">${dishIcon(r.id,40)}
         <div class="info"><div class="nm">${r.name} <span class="muted">P.${r.page}</span></div>
           <div class="pbar"><i style="width:${r.M}%"></i></div>
-          <div class="meta">M ${r.M.toFixed(1)} ｜ 完美率 ${(pPerfect(r.M)*100).toFixed(1)}% ｜ 近 20 单完美 ${r.perfect20} ｜ ${r.learned?'已学成':'显形 ≠ 学会'}</div></div>
+          <div class="meta">熟练度 ${r.M.toFixed(1)} ｜ 完美率 ${(pPerfect(r.M)*100).toFixed(1)}% ｜ 近 20 单完美 ${r.perfect20} ｜ ${r.learned?'已学成':'还没练熟'}</div></div>
         <div style="display:flex;flex-direction:column;gap:5px">
           <button class="btn sm" data-act="practice" data-id="${r.id}" ${(S.coins<cost||S.practiceDone)?'disabled':''}>练习 ${cost}🪙</button>
           ${S.joined?`<button class="btn sm sec" data-act="delegate" data-id="${r.id}" ${S.practiceDone?'disabled':''}>委托练习</button>`:''}
         </div></div>`;
     }).join('')}
-    <div class="panel"><p class="muted">${S.joined?'5-2 雷千层入队：委托练习按他的标准自动累计 M（+50%），但首次学成仍要自己做出（不代替学成）。':'三次入队后可解锁「练习自动化」，现在还没人会替你练。'}</p>
-      <p class="muted">练习产物按低价卖给街坊，返还 3 🪙；练习永远不是开店的前置条件（P1）。</p></div>`;
+    <div class="panel">      <p class="muted">${S.joined?'雷千层入队后可以委托他练；不过头一回做成，还得你自己上手。':'等三个人都入队，就能找人替你练。'}</p>
+      <p class="muted">练出来的点心低价卖给街坊，返还 3 🪙；想什么时候练都行，不用先练好才开门。</p></div>`;
 }
 function doPractice(id,delegated){
   const r=rec(id);if(!r||S.practiceDone)return;
@@ -1382,7 +1398,7 @@ function beginFreeStove(){
   setBG(ASSET.s1,false);showView('v-open');renderHUD();renderDock();
   const gc=$('#goalCard');if(gc)gc.style.display='none';
   $('#shopDay').textContent='终章 · 自由炉';
-  $('#shopTip').innerHTML='<b>V4 自由炉</b>：金币、耐心、评分、全部自动化都关掉了。只留手动一炉，全员在场。';
+  $('#shopTip').innerHTML='<b>自由炉</b>：不算钱、不排名、也不催客人。全员都在，自己烤一炉。';
   $('#shopTip').className='tip-strip gray';
   spawnCustomer();renderCustomers();renderBench();
   $('#dock').innerHTML='<span class="hintline">这一炉不产出任何数值。</span>';
@@ -1397,7 +1413,7 @@ function renderEnding(){
   setBG(ASSET.s3,false);showView('v-ending');renderHUD();renderDock();
   $('#v-ending').innerHTML=`
     <div class="ending">
-      <p class="kicker" style="font-size:10px;letter-spacing:2px;opacity:.6">V4 · 自由炉 · 主线闭环</p>
+      <p class="kicker" style="font-size:10px;letter-spacing:2px;opacity:.6">自由炉 · 因为你还想再做一炉</p>
       <h2>今天不累。</h2>
       <p class="muted">主角学会了全部菜谱，店里也全自动了，<br>却选择自己动手再烤一炉。故意焦一角的布丁。</p>
       <img src="${ASSET.pudding}" alt="焦糖布丁" style="width:120px;height:120px;object-fit:contain;margin:6px auto;display:block">
@@ -1416,7 +1432,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');if(!t)return;
   const a=t.dataset.act;
   if(a==='toggle-sound'){S.sound=!S.sound;renderHUD();save();return}
-  if(a==='open-guide'){openGuide();return}
+  if(a==='open-guide'){if(DEV_UI)openGuide();return}
   if(a==='open-book'){openBook();return}
   if(a==='close-overlay'){
     closeOverlay();
@@ -1589,6 +1605,11 @@ function runSelfTest(){
     S.freeStove=true;ok('自由炉关闭自动化',autoRate()===0);
     showStoryCard=origShow;
     clearInterval(tickTimer);S.phase='selftest';
+    if(!DEV_UI){
+      const uiText=document.body.innerText;
+      ok('玩家界面不显示设计公式',!/PLACEHOLDER|playtest|完美率 =|收益 =|评定公式|（P[0-9]）/.test(uiText),
+         uiText.match(/PLACEHOLDER|playtest|完美率 =|收益 =|评定公式|（P[0-9]）/)?.[0]||'无');
+    }
   }catch(e){out.push('FAIL | 运行异常 | '+e.message+' @ '+(e.stack||'').split('\n')[1])}
   const pre=document.createElement('pre');pre.id='selftest';pre.textContent=out.join('\n');
   document.body.appendChild(pre);
@@ -1605,6 +1626,10 @@ else if(QS.get('shot')){setTimeout(()=>{
   const mode=QS.get('shot');
   if(mode==='guide'){openGuide()}
   else if(mode==='book'){openBook()}
+  else if(mode==='settle'){   // 截图入口：核对账本页不再出现公式与设计编号
+    beginService();S.day=3;S.dayServed=9;S.dayLost=1;S.served=23;S.phase='settle';
+    S.lastLedger={gross:128,material:20,wages:0,upkeep:5,net:103,onLeave:false};renderSettle()
+  }
   else if(mode==='prologue'){const n=parseInt(QS.get('slide')||'1',10);PRO_I=clamp(n-1,0,PROLOGUE.length-1);renderPrologue()}
   else {
     beginService();
