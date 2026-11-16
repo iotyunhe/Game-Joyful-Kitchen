@@ -350,10 +350,6 @@ body.dev .devonly{display:flex!important}
   border:2px solid var(--cocoa);border-radius:10px;padding:2px 10px;margin-bottom:6px}
 .vn-name.narr{background:var(--cream);color:var(--cocoa)}
 .vn-text{font-size:17px;line-height:1.7;min-height:56px;color:var(--cocoa)}
-.vn-text::after{content:'';display:inline-block;width:10px;height:1.02em;margin-left:3px;vertical-align:-3px;
-  border-radius:2px;background:var(--caramel);animation:proBlink .7s steps(1) infinite}
-.vn-text.done::after{display:none}
-@keyframes proBlink{50%{opacity:0}}
 .vn-foot{display:flex;gap:8px;align-items:center;margin-top:8px}
 .vn-foot .btn{white-space:nowrap}
 .vn-foot .btn.typing{min-width:96px}
@@ -1783,7 +1779,7 @@ function runSelfTest(){
       for(let i=0;i<5;i++){PRO_TYPER.step();seq.push(len())}
       return seq[0]===0&&seq[1]===1&&seq[5]===5&&seq.every((n,i)=>i===0||n===seq[i-1]+1);
     })());
-    ok('打字中对话框有闪烁光标',!$('.vn-text').classList.contains('done'));
+    ok('打字中对话框保持未完成态',!$('.vn-text').classList.contains('done'));
     ok('快进后当前句一次性补全',(()=>{
       finishProType();
       return $('.vn-text').textContent===PRO_LINES[PRO_LINE_I].text;
