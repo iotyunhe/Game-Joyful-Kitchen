@@ -75,7 +75,9 @@ svg{display:block}
 /* ============ 舞台 ============ */
 .stage{position:relative;z-index:2;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
   scrollbar-width:thin;scrollbar-color:var(--caramel) transparent}
-.view{display:none;padding:12px 12px 16px;min-height:100%}
+/* 营业页一屏放得下：顾客卡 + 食材台 + 提交按钮，永不拉条 */
+.stage.fit{overflow:hidden}
+.view{display:none;padding:9px 10px 10px;min-height:100%}
 .view.on{display:block;animation:fadein .22s ease}
 @keyframes fadein{from{transform:translateY(6px)}to{transform:none}}
 
@@ -116,30 +118,30 @@ svg{display:block}
 .mini-legend span{font-size:10px;border:2px solid var(--cocoa);border-radius:12px;padding:3px 8px;background:var(--frost)}
 
 /* ============ 营业页 ============ */
-.shopbar{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.shopbar{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .shopbar .day{font-size:13px;font-weight:800;background:var(--frost);border:2px solid var(--cocoa);
   border-radius:14px;padding:5px 10px}
 .shopbar .orders{font-size:12px;flex:1;text-align:right}
 .today-gross{font-size:12px;color:var(--cocoa);font-weight:700}
 .tip-strip{font-size:11px;background:var(--peach);border:2px solid var(--cocoa);border-radius:14px;
-  padding:6px 9px;margin-bottom:9px;line-height:1.5}
+  padding:5px 8px;margin-bottom:7px;line-height:1.45}
 .tip-strip.gray{background:var(--frost)}
 
-.cust-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
-.cust{display:flex;gap:9px;align-items:center;background:var(--paper);border:var(--line) solid var(--cocoa);
-  border-radius:18px;padding:8px 9px;box-shadow:0 4px 0 rgba(90,59,46,.14);
+.cust-list{display:flex;flex-direction:column;gap:6px;margin-bottom:7px}
+.cust{display:flex;gap:8px;align-items:center;background:var(--paper);border:var(--line) solid var(--cocoa);
+  border-radius:16px;padding:5px 8px;box-shadow:0 3px 0 rgba(90,59,46,.14);
   cursor:pointer;transition:transform .12s,background .12s;position:relative;animation:slidein .25s ease}
 @keyframes slidein{from{transform:translateX(20px)}to{transform:none}}
 .cust.sel{background:var(--frost);transform:translateX(3px);box-shadow:0 4px 0 var(--caramel)}
 .cust.urgent{animation:shake .4s ease}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-.cust .face{width:44px;height:44px;flex:none;border-radius:50%;border:var(--line) solid var(--cocoa);
+.cust .face{width:38px;height:38px;flex:none;border-radius:50%;border:var(--line) solid var(--cocoa);
   display:flex;align-items:center;justify-content:center;font-size:19px;background:var(--peach);overflow:hidden}
 .cust .face img{width:100%;height:100%;object-fit:cover}
 .cust .info{flex:1;min-width:0}
-.cust .who{font-size:11px;opacity:.7;display:flex;align-items:center;gap:5px}
+.cust .who{font-size:10px;opacity:.7;display:flex;align-items:center;gap:5px;line-height:1.3}
 .cust .who .first{font-size:10px;background:var(--berry);color:var(--frost);border-radius:8px;padding:1px 5px}
-.cust .dish{font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px;margin:1px 0 4px}
+.cust .dish{font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;margin:0 0 2px;line-height:1.3}
 .cust .dish svg{flex:none}
 .pat{display:flex;align-items:center;gap:5px}
 .pat .track{flex:1;height:10px;border:2px solid var(--cocoa);border-radius:10px;background:var(--frost);overflow:hidden}
@@ -151,40 +153,54 @@ svg{display:block}
 .pat.low .clock{display:block}
 .cust .emoji{position:absolute;right:9px;top:7px;font-size:13px}
 
-.bench{background:var(--paper);border:var(--line) solid var(--cocoa);border-radius:20px;
-  padding:11px;box-shadow:0 5px 0 rgba(90,59,46,.13)}
-.bench .head{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;margin-bottom:7px}
-.bench .head .step{margin-left:auto;font-size:11px;font-weight:600;opacity:.7}
-.hint{font-size:11px;line-height:1.6;background:var(--cream);border:2px dashed var(--cocoa);
-  border-radius:12px;padding:6px 8px;margin-bottom:9px}
+.bench{background:var(--paper);border:var(--line) solid var(--cocoa);border-radius:18px;
+  padding:9px;box-shadow:0 4px 0 rgba(90,59,46,.13)}
+.hint{font-size:11px;line-height:1.5;background:var(--cream);border:2px dashed var(--cocoa);
+  border-radius:11px;padding:5px 7px;margin-bottom:6px}
 .hint b{color:var(--cocoa)}
 .hint .q{display:inline-block;width:20px;height:20px;line-height:18px;text-align:center;
   border:2px solid var(--cocoa);border-radius:8px;background:var(--frost);margin-right:3px;font-weight:800}
 .hint .done{color:var(--berry)}
-.ing-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-bottom:9px}
-.ing{width:84px;min-height:74px;border:var(--line) solid var(--cocoa);border-radius:16px;background:var(--frost);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  padding:5px 2px;box-shadow:0 3px 0 rgba(90,59,46,.2);transition:transform .09s,box-shadow .09s,background .12s;position:relative}
+/* 食材台固定 5 格：任何一天、任何菜、有无干扰都占同一排，排版不跳动 */
+.ing-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-bottom:6px}
+.ing{width:100%;min-height:64px;border:var(--line) solid var(--cocoa);border-radius:14px;background:var(--frost);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  padding:4px 1px;box-shadow:0 3px 0 rgba(90,59,46,.2);transition:transform .09s,box-shadow .09s,background .12s;position:relative}
 .ing:active{transform:translateY(3px);box-shadow:none}
-.ing .nm{font-size:10px;font-weight:700;white-space:nowrap}
+.ing .nm{font-size:9px;font-weight:700;white-space:nowrap}
 .ing.picked{background:var(--frost);border-color:var(--berry);opacity:.55}
 .ing.picked::after{content:"✓";position:absolute;top:2px;right:5px;font-size:11px;color:var(--berry);font-weight:900}
 .ing.auto{background:var(--peach)}
 .ing.auto::before{content:"自动";position:absolute;top:2px;left:4px;font-size:9px;
   background:var(--caramel);border:1.5px solid var(--cocoa);border-radius:7px;padding:0 3px}
 .ing.wrong{animation:shake .3s}
-.chosen{display:flex;gap:5px;align-items:center;min-height:26px;margin-bottom:8px;flex-wrap:wrap}
-.chosen .slot{width:24px;height:24px;border:2px solid var(--cocoa);border-radius:9px;
+.chosen{display:flex;gap:4px;align-items:center;min-height:22px;margin-bottom:6px;flex-wrap:wrap}
+.chosen .slot{width:22px;height:22px;border:2px solid var(--cocoa);border-radius:8px;
   background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:10px}
 .chosen .slot.ok{background:var(--caramel)}
 .chosen .slot.auto{background:var(--peach)}
 .chosen .arrow{font-size:11px;opacity:.5}
 .bench .acts{display:flex;gap:7px}
-.mastery{margin-top:9px;border-top:2px dashed rgba(90,59,46,.3);padding-top:8px}
+.mastery{margin-top:6px;border-top:2px dashed rgba(90,59,46,.3);padding-top:6px}
 .mastery .line{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
 .mastery .mbar{height:12px;border:2px solid var(--cocoa);border-radius:10px;background:var(--frost);overflow:hidden}
 .mastery .mbar i{display:block;height:100%;background:var(--caramel)}
-.mastery .foot{display:flex;justify-content:space-between;font-size:10px;opacity:.72;margin-top:4px}
+.mastery .foot{display:flex;justify-content:space-between;font-size:9px;opacity:.72;margin-top:3px}
+/* 矮屏再收一档：仍然一屏放得下，绝不出现拉条 */
+@media(max-height:800px){
+  .cust{padding:3px 8px}
+  .cust .face{width:34px;height:34px}
+  .cust .dish{margin-bottom:1px}
+  .ing{min-height:58px}
+  .mastery .foot{display:none}
+}
+@media(max-height:700px){
+  .cust{padding:2px 7px}
+  .cust .face{width:30px;height:30px}
+  .cust-list{gap:4px;margin-bottom:5px}
+  .ing{min-height:54px}
+  .mastery{display:none}   /* 小屏只留操作区，熟练度在账本/练习页看 */
+}
 
 /* ============ 账本 / 投资 / 练习 ============ */
 .ledger{font-size:13px}
@@ -383,7 +399,6 @@ svg{display:block}
           <div class="tip-strip" id="shopTip"></div>
           <div class="cust-list" id="custList"></div>
           <div class="bench" id="bench"></div>
-          <div class="panel" id="goalCard"></div>
         </section>
         <!-- 账本 -->
         <section class="view" id="v-settle"></section>
@@ -476,6 +491,8 @@ const CRAFT_ORDER = ['milk','cream','egg','butter','dough','rice','caramel','hon
 const CRAFT_RANK = Object.fromEntries(CRAFT_ORDER.map((k,i)=>[k,i]));
 const craftCmp = (a,b)=>(CRAFT_RANK[a]??99)-(CRAFT_RANK[b]??99);
 const craftSort = keys => [...new Set(keys)].sort(craftCmp);
+/* 食材台固定 5 格：跨天、跨菜、有无干扰都占同一排，排版不跳动 */
+const BENCH_SLOTS = 5;
 function ingIcon(key,size){
   const it=ING[key], z=size||38, h=z/2, k=z/40;
   const ST=`stroke="${C.cocoa}" stroke-width="${2.1*k}" stroke-linecap="round" stroke-linejoin="round"`;
@@ -703,7 +720,10 @@ function setBG(url,soft){
   $('#bg').style.backgroundImage=`url("${url}")`;
   $('#veil').classList.toggle('soft',!!soft);
 }
-function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===id))}
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===id));
+  $('.stage').classList.toggle('fit',id==='v-open');   // 营业页锁一屏，不出现拉条
+}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>e.classList.remove('on'),1500)}
 function bubble(html,ms){
@@ -897,20 +917,17 @@ function pickCustomer(id){
   }
 }
 function buildBenchKeys(c){
-  let keys=[...new Set(c.ing)];
-  if(S.rankIdx>=2&&!S.freeStove){
-    const extra=CRAFT_ORDER.filter(k=>!keys.includes(k));
-    if(extra.length)keys.push(rnd(extra));   // 一枚「隔壁桌的」干扰食材
+  const keys=craftSort(c.ing);   // 必需食材（含 V1 干扰）先按全局工序排好
+  for(const k of CRAFT_ORDER){
+    if(keys.length>=BENCH_SLOTS)break;
+    if(!keys.includes(k))keys.push(k);   // 空格按固定工序补，不随机、不随天数变
   }
-  return craftSort(keys);   // 台面与配方共用工序，不再随机打乱
+  return craftSort(keys);
 }
 function renderBench(){
   const box=$('#bench'),c=S.customers.find(x=>x.id===S.activeId);
   if(!c){
-    box.innerHTML=`<div class="head">🍳 后厨食材台<span class="step">S1 · P1</span></div>
-      <div class="muted" style="padding:14px 4px;text-align:center;line-height:1.8">
-        先点上面任意一张顾客卡，<br>再按配方顺序点食材，最后点「提交给顾客」。<br>
-        <span style="opacity:.7">（员工接管的步骤会标「自动」，但提交永远要你自己点）</span></div>`;
+    box.innerHTML=`<div class="hint"><b>配方：</b>先点一张顾客卡，再按序点食材 → 提交。</div>`;
     $('#shopTip').innerHTML='<b>操作链</b>：选顾客 → 按序点食材 → 提交。点错可以撤销，不扣耐心。';
     $('#shopTip').className='tip-strip';
     return;
@@ -934,8 +951,7 @@ function renderBench(){
   }).join('');
   const M=r.M,pp=pPerfect(M);
   box.innerHTML=`
-    <div class="head">🍳 后厨食材台<span class="step">${done} / ${need} 步</span></div>
-    <div class="hint">${S.noRecipe?'<b>配方：?</b>　':'<b>配方：</b>'}${hint}</div>
+    <div class="hint"><b>配方 ${done}/${need}：</b>${hint}</div>
     <div class="ing-grid">${ingBtns}</div>
     <div class="chosen">${slots}</div>
     <div class="acts">
@@ -1482,6 +1498,7 @@ function runSelfTest(){
     ok('牛奶 < 鸡蛋 < 焦糖',CRAFT_RANK.milk<CRAFT_RANK.egg&&CRAFT_RANK.egg<CRAFT_RANK.caramel);
     ok('四道菜配方均按工序单调',RECIPES.every(r=>r.ing.every((k,i)=>i===0||CRAFT_RANK[k]>=CRAFT_RANK[r.ing[i-1]])));
     ok('食材台与配方共用工序',(()=>{const r=RECIPES[1],b=buildBenchKeys({ing:r.ing});return b.filter(k=>r.ing.includes(k)).join()===r.ing.join()})());
+    ok('食材台固定 5 格（含 V1 干扰）',RECIPES.every(r=>buildBenchKeys({ing:r.ing}).length===BENCH_SLOTS)&&buildBenchKeys({ing:RECIPES[0].ing.concat('salt')}).length===BENCH_SLOTS,'正常/干扰均 '+BENCH_SLOTS+' 格');
     ok('V1 干扰插入后仍按工序',(()=>{const a=RECIPES[0].ing.concat('salt');a.sort(craftCmp);return a.join(',')==='milk,egg,caramel,salt'})());
     ok('倒计时内 400 次提交无失手',(()=>{S=newState();const q=[];for(let i=0;i<400;i++){S.noPerfectStreak=0;q.push(rollQuality(0))}return q.every(x=>x==='perfect'||x==='normal')})());
     // 开场序章：编排完整、首开必播、可跳过
@@ -1501,6 +1518,7 @@ function runSelfTest(){
     ok('逐幕点到挂牌开店后弹出引导',S.prologueDone===true&&document.querySelector('#overlay.on')!==null);
     PRO_DONE_CB=null;S.queueG1.length=0;closeOverlay();beginService();
     ok('开局生成顾客',S.customers.length>0,'共 '+S.customers.length+' 位');
+    ok('食材台不再显示冗余标题',!/后厨食材台/.test($('#bench').innerHTML));
     const c=S.customers[0];pickCustomer(c.id);
     ok('可选中顾客',S.activeId===c.id);
     c.ing.forEach((k,i)=>{if(S.progress.length<=i)tapIng(k)});
@@ -1588,6 +1606,9 @@ else if(QS.get('shot')){setTimeout(()=>{
       const c=S.customers[0],r=rec(want);
       if(r){r.revealed=true;c.rid=r.id;c.ing=r.ing.slice();c.P0=P0(c.ing.length);c.remain=c.P0;c.firstTry=false;renderCustomers()}
     }
+    const cc=parseInt(QS.get('cust')||'0',10);   // 截图入口：验证 1–4 位顾客同屏
+    if(cc>0){S.concurrency=clamp(cc,1,4);S.customers=[];
+      for(let i=0;i<S.concurrency;i++)spawnCustomer()}
     if(S.customers.length)pickCustomer(S.customers[0].id)
   }
 },60)}
