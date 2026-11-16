@@ -310,8 +310,8 @@ body.dev .devonly{display:flex!important}
 .overlay.story-vn{padding:0;background:transparent}
 .overlay.story-vn .modal{width:100%;height:100%;max-height:100%;overflow:hidden;background:transparent;
   border:none;border-radius:0;box-shadow:none;padding:0}
-/* 播放插曲时隐藏底层 view，避免旧对话框从遮罩下透出；#bg 场景图保留 */
-.stage.sv-on .view{visibility:hidden}
+/* 播放插曲时彻底移除底层 view（display:none 不会被子元素覆盖），避免序章旁白框与插曲框叠在一起 */
+.stage.sv-on .view{display:none !important}
 /* 剧情插曲 VN：章节条浮在场景顶，开发者信息收进小角标 */
 .sv-head{position:absolute;top:56px;left:12px;right:12px;z-index:4;display:flex;flex-direction:column;gap:4px}
 .sv-title{align-self:flex-start;font-size:13px;font-weight:800;background:rgba(255,251,242,.94);
@@ -1423,6 +1423,7 @@ function storyVNClose(callNext){
   if(callNext&&f)f();
 }
 function openStoryVN(n,id,next){
+  stopProType();   // 停掉序章打字机，避免底层对话框继续吐字
   SV={lines:n.lines.map(([who,text])=>({who,text})),idx:0,typer:null,next,free:id==='5-234',node:n};
   const shownTitle=DEV_UI?n.title:n.title.replace(/^\d+-\d+(?:\s*\/\s*\d+-\d+)*\s*·\s*/,'');
   const when=DEV_UI?`触发：${n.trigger}　｜　第 ${S.day} 天`:`第 ${S.day} 天`;
@@ -1988,6 +1989,11 @@ function runSelfTest(){
       lines:[['麦小满','「第一句。」'],['糖老书','「第二句。」'],['','第三句旁白。']],
       effect:'自检',apply(){}}, 'selftest', ()=>{svDone++});
     ok('插曲改为视觉小说式：上方场景+底部对话框',!!$('#svText')&&!!$('.vn-scene')&&$('#overlay').classList.contains('story-vn'));
+    ok('插曲播放时全局只有一个可见对话框（底层不叠框）',(()=>{
+      showView('v-prologue');   // 强制底层序章 view 仍 on，验证隐藏规则确实兜住
+      const vis=[...document.querySelectorAll('.vn-box')].filter(e=>e.getClientRects().length>0);
+      return vis.length===1&&!!vis[0].querySelector('#svText');
+    })());
     ok('插曲逐字打字（一次一字）',(()=>{
       const len=()=>$('#svText').textContent.length,seq=[len()];
       for(let i=0;i<3;i++){SV.typer.step();seq.push(len())}
@@ -2032,6 +2038,14 @@ else if(QS.get('shot')){setTimeout(()=>{
     const li=parseInt(QS.get('line')||'0',10);
     if(li>0){let g=0;while(SV&&SV.idx<li&&g++<10){storyVNFinish();storyVNNext()}}
     if(QS.get('typing')!=='1')storyVNFinish();
+  }
+  else if(mode==='intro-real'){ // 复现：序章画面未退场时弹 intro 插曲（回归用）
+    S.queueG1.length=0;S.queueG3.length=0;S.prologueDone=false;
+    playPrologue(()=>{S.queueG1.push('intro');playStories('G1',()=>{})});
+    stopProType();prologueEnd();
+    const li=parseInt(QS.get('line')||'0',10);
+    if(li>0){let g=0;while(SV&&SV.idx<li&&g++<10){storyVNFinish();storyVNNext()}}
+    if(QS.get('typing')!=='1'&&SV)storyVNFinish();
   }
   else if(mode==='settle'){   // 截图入口：核对账本页不再出现公式与设计编号
     beginService();S.day=3;S.dayServed=9;S.dayLost=1;S.served=23;S.phase='settle';
