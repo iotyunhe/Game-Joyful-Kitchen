@@ -328,6 +328,7 @@ body.dev .devonly{display:flex!important}
 .logitem b{color:var(--berry)}
 
 /* ============ 开场序章 ============ */
+#v-prologue{height:100%}   /* 明确高度，让内部 74% 上限与底部按钮固定生效 */
 .prologue{animation:fadein .26s ease;display:flex;flex-direction:column;height:100%;gap:0}
 /* 文字区占屏高约 2/3~3/4：字号放大后自然铺开，底部留白，不顶满 */
 .pro-lines{flex:1 1 auto;min-height:66%;max-height:74%;display:flex;flex-direction:column;
@@ -801,7 +802,7 @@ function setBG(url,soft){
 }
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===id));
-  $('.stage').classList.toggle('fit',id==='v-open');   // 营业页锁一屏，不出现拉条
+  $('.stage').classList.toggle('fit',id==='v-open'||id==='v-prologue');   // 营业页/序章锁一屏，不出现拉条
 }
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>e.classList.remove('on'),1500)}
@@ -985,10 +986,10 @@ function startProType(){
     const t=PRO_TYPER;
     if(!t||t.done)return;
     const cur=t.seq[t.si];
-    if(!cur){t.done=true;if(t.cur)t.cur.parentElement.classList.remove('typing');t.cur=null;updateProNextBtn();return}
+    if(!cur){t.done=true;if(t.cur)t.cur.el.parentElement.classList.remove('typing');t.cur=null;updateProNextBtn();return}
     if(t.cur!==cur){
-      if(t.cur)t.cur.parentElement.classList.remove('typing');
-      t.cur=cur;cur.parentElement.classList.add('typing');
+      if(t.cur)t.cur.el.parentElement.classList.remove('typing');
+      t.cur=cur;cur.el.parentElement.classList.add('typing');
     }
     t.ci++;
     cur.el.textContent=cur.text.slice(0,t.ci);
@@ -997,7 +998,9 @@ function startProType(){
     if(t.ci>=cur.text.length){t.si++;t.ci=0;wait=PRO_PAUSE_SEG}
     else if(/[，。、；：！？]/.test(cur.text[t.ci-1]))wait=PRO_PAUSE_PUNC;
     t.timer=setTimeout(step,wait);
+    return wait;
   };
+  PRO_TYPER.step=step;   // 暴露给自检：脱离定时器也能验证逐字推进
   updateProNextBtn();
   PRO_TYPER.timer=setTimeout(step,360);   // 首段留一点呼吸，避免玩家还没看清就开始
 }
@@ -1006,7 +1009,7 @@ function finishProType(){
   if(!t||t.done)return;
   clearTimeout(t.timer);
   t.seq.forEach(x=>x.el.textContent=x.text);
-  if(t.cur)t.cur.parentElement.classList.remove('typing');
+  if(t.cur)t.cur.el.parentElement.classList.remove('typing');
   t.cur=null;t.done=true;
   if(t.box)t.box.scrollTop=t.box.scrollHeight;
   updateProNextBtn();
@@ -1731,8 +1734,15 @@ function runSelfTest(){
     ok('「听糖」在序章只由糖老书说一次',PROLOGUE.flatMap(s=>s.say||[]).filter(x=>x[1].includes('听糖')).length===1);
     resetAll();
     ok('新开局先播开场序章',S.prologueDone===false&&document.querySelector('#v-prologue.on')!==null);
-    ok('序章启动逐字打字机',!!PRO_TYPER&&!PRO_TYPER.done);
+    ok('序章启动逐字打字机',!!PRO_TYPER&&!PRO_TYPER.done&&typeof PRO_TYPER.step==='function');
     ok('打字中按钮显示快进',/快进/.test($('[data-act="pro-next"]').textContent));
+    ok('文字逐字递增（一次一字非整段）',(()=>{
+      const tw=()=>[...document.querySelectorAll('.pro-lines .tw')].reduce((s,x)=>s+x.textContent.length,0);
+      const seq=[tw()];
+      for(let i=0;i<5;i++){PRO_TYPER.step();seq.push(tw())}
+      return seq[0]===0&&seq[1]===1&&seq[5]===5&&seq.every((n,i)=>i===0||n===seq[i-1]+1);
+    })());
+    ok('打字中显示闪烁光标',document.querySelectorAll('.pro-lines .typing .caret').length===1);
     ok('快进后文字一次性补全',(()=>{
       finishProType();
       const tw=[...document.querySelectorAll('.pro-lines .tw')].map(x=>x.textContent).join('');
