@@ -307,6 +307,20 @@ body.dev .devonly{display:flex!important}
   border-radius:22px;padding:15px;box-shadow:0 8px 0 rgba(90,59,46,.3)}
 .modal h2{font-size:17px;margin:0 0 4px}
 .modal .kicker{font-size:10px;letter-spacing:1px;opacity:.6;margin-bottom:10px}
+.overlay.story-vn{padding:0;background:transparent}
+.overlay.story-vn .modal{width:100%;height:100%;max-height:100%;overflow:hidden;background:transparent;
+  border:none;border-radius:0;box-shadow:none;padding:0}
+/* 播放插曲时隐藏底层 view，避免旧对话框从遮罩下透出；#bg 场景图保留 */
+.stage.sv-on .view{visibility:hidden}
+/* 剧情插曲 VN：章节条浮在场景顶，开发者信息收进小角标 */
+.sv-head{position:absolute;top:56px;left:12px;right:12px;z-index:4;display:flex;flex-direction:column;gap:4px}
+.sv-title{align-self:flex-start;font-size:13px;font-weight:800;background:rgba(255,251,242,.94);
+  border:2px solid var(--cocoa);border-radius:12px;padding:5px 12px;box-shadow:0 3px 0 rgba(90,59,46,.12)}
+.sv-when{align-self:flex-start;font-size:10px;background:rgba(255,251,242,.82);border-radius:9px;padding:2px 8px;opacity:.9}
+.sv-dev{align-self:flex-start;font-size:10px;line-height:1.5;background:rgba(255,251,242,.9);
+  border:1.5px dashed var(--cocoa);border-radius:9px;padding:4px 8px;max-width:94%}
+.sv-dev b{color:var(--berry)}
+.sv-free{margin-right:auto}
 .speaker{display:flex;gap:9px;align-items:flex-start;margin-bottom:9px}
 .speaker .av{width:42px;height:42px;flex:none;border-radius:50%;border:var(--line) solid var(--cocoa);
   display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;overflow:hidden}
@@ -1348,32 +1362,100 @@ function showStoryCard(id,next){
   if(!n){next();return}
   n.apply();
   sfx.story();
-  const lines=n.lines.map(([who,text])=>`<div class="speaker">${avatar(who,42)}<div class="say"><b>${who}</b>${text}</div></div>`).join('');
-  const kicker=DEV_UI?`${n.slot} 插入口 · ${n.tag}`:'一段插曲';
+  openStoryVN(n,id,next);
+}
+
+/* ---------- 剧情插曲播放器 · 视觉小说式（与序章同一套观感，逐字打字 + 人物立绘） ---------- */
+let SV=null;   // {lines, idx, typer, next, free, node}
+function storyVNRenderLine(){
+  if(!SV)return;
+  const ln=SV.lines[SV.idx];if(!ln)return;
+  const nameEl=$('#svName'),textEl=$('#svText'),portEl=$('#svPortrait');
+  const isNarr=!ln.who;
+  nameEl.textContent=isNarr?'旁白':ln.who;
+  nameEl.classList.toggle('narr',isNarr);
+  const key=PRO_PORTRAIT[ln.who];
+  if(key&&ASSET_PRO[key]){
+    portEl.innerHTML=`<img src="${ASSET_PRO[key]}" alt="${ln.who}">`;portEl.style.display='';
+  }else if(ln.who){
+    // 没有专属立绘的角色：用圆形头像放大兜底，保证「人物发言有形象」
+    portEl.innerHTML=`<div class="sv-av">${avatar(ln.who,120)}</div>`;portEl.style.display='';
+  }else{portEl.innerHTML='';portEl.style.display='none'}
+  textEl.textContent='';textEl.classList.remove('done');
+  stopStoryType();
+  SV.typer={text:ln.text,ci:0,done:false,timer:null};
+  const step=()=>{
+    const t=SV&&SV.typer;if(!t||t.done)return;
+    t.ci++;textEl.textContent=t.text.slice(0,t.ci);
+    let wait=PRO_SPEED;
+    if(t.ci>=t.text.length){t.done=true;textEl.classList.add('done');storyVNUpdateBtn();return}
+    if(/[，。、；：！？]/.test(t.text[t.ci-1]))wait=PRO_PAUSE_PUNC;
+    t.timer=setTimeout(step,wait);
+  };
+  SV.typer.step=step;
+  storyVNUpdateBtn();
+  SV.typer.timer=setTimeout(step,260);
+}
+function stopStoryType(){if(SV&&SV.typer){clearTimeout(SV.typer.timer);SV.typer=null}}
+function storyVNFinish(){const t=SV&&SV.typer;if(!t||t.done)return;
+  clearTimeout(t.timer);t.ci=t.text.length;
+  $('#svText').textContent=t.text;$('#svText').classList.add('done');t.done=true;storyVNUpdateBtn()}
+function storyVNUpdateBtn(){
+  if(!SV)return;
+  const b=$('[data-act="story-next"]');if(!b)return;
+  const typing=SV.typer&&!SV.typer.done;
+  b.textContent=typing?'快进 ›':(SV.idx<SV.lines.length-1?'下一句 →':'继续 →');
+  b.classList.toggle('typing',!!typing);
+  const dots=document.querySelectorAll('#svDots i');
+  dots.forEach((d,i)=>d.classList.toggle('on',i<=SV.idx));
+  const fr=$('[data-act="free-stove"]');if(fr)fr.style.display=(!typing&&SV.idx===SV.lines.length-1)?'':'none';
+}
+function storyVNNext(){
+  if(!SV)return;
+  if(SV.typer&&!SV.typer.done){storyVNFinish();return}
+  if(SV.idx<SV.lines.length-1){SV.idx++;storyVNRenderLine();return}
+  storyVNClose(true);
+}
+function storyVNSkip(){storyVNClose(true)}
+function storyVNClose(callNext){
+  stopStoryType();closeOverlay();$('.stage').classList.remove('sv-on');
+  const f=SV&&SV.next;SV=null;
+  if(callNext&&f)f();
+}
+function openStoryVN(n,id,next){
+  SV={lines:n.lines.map(([who,text])=>({who,text})),idx:0,typer:null,next,free:id==='5-234',node:n};
   const shownTitle=DEV_UI?n.title:n.title.replace(/^\d+-\d+(?:\s*\/\s*\d+-\d+)*\s*·\s*/,'');
-  const when=DEV_UI?`触发条件：${n.trigger}　｜　第 ${S.day} 天`:`第 ${S.day} 天`;
-  const effect=DEV_UI?`<div class="story-effect"><b>剧情回喂经营</b>${n.effect}</div>`:'';
-  const freeBtn=n.slot==='G3'&&id==='5-234'
-    ?`<button class="btn wide frost" style="margin-bottom:8px" data-act="free-stove">明天想自己再烤一炉${DEV_UI?'（V4 自由炉）':''}</button>`:'';
-  const foot=DEV_UI?'<p class="muted" style="margin:9px 0 0">主线剧情在下一个开门 / 关门时播放，永远不打断营业（R6）。</p>':'';
+  const when=DEV_UI?`触发：${n.trigger}　｜　第 ${S.day} 天`:`第 ${S.day} 天`;
+  const dev=DEV_UI?`<div class="sv-dev"><b>${n.slot} 插入口 · ${n.tag}</b><br>回喂经营：${n.effect}</div>`:'';
+  const dots=SV.lines.map(()=>'<i></i>').join('');
+  const free=SV.free?'<button class="btn sm frost sv-free" data-act="free-stove" style="display:none">明天想自己再烤一炉</button>':'';
   openOverlay('story',`
-    <div class="kicker">${kicker}</div>
-    <h2>${shownTitle}</h2>
-    <p class="muted" style="margin:0 0 10px">${when}</p>
-    ${lines||'<div class="muted">（营业中的一句短气泡，不打断操作）</div>'}
-    ${effect}
-    ${freeBtn}
-    <div class="row"><button class="btn sec grow" data-act="story-skip">略过本段</button>
-    <button class="btn grow" data-act="story-next">继续 →</button></div>
-    ${foot}`);
-  window.__storyNext=next;
+    <div class="vn">
+      <div class="vn-scene">
+        <div class="sv-head"><div class="sv-title">${shownTitle}</div><div class="sv-when">${when}</div>${dev}</div>
+        <div class="vn-portrait" id="svPortrait" style="display:none"></div>
+      </div>
+      <div class="vn-box">
+        <span class="vn-name" id="svName"></span>
+        <div class="vn-text" id="svText"></div>
+        <div class="vn-foot">
+          <button class="btn sm sec" data-act="story-skip">略过本段</button>
+          <button class="btn sm grow" data-act="story-next">继续 →</button>
+          ${free}
+          <span class="vn-dots" id="svDots">${dots}</span>
+        </div>
+      </div>
+    </div>`);
+  $('#overlay').classList.add('story-vn');
+  $('.stage').classList.add('sv-on');
+  storyVNRenderLine();
 }
 
 /* ---------- 浮层：菜谱 / 设计对照 / 剧情回顾 ---------- */
 function openOverlay(mode,html){
   overlayMode=mode;$('#modal').innerHTML=html;$('#overlay').classList.add('on');
 }
-function closeOverlay(){overlayMode='';$('#overlay').classList.remove('on')}
+function closeOverlay(){overlayMode='';$('#overlay').classList.remove('on','story-vn')}
 function openBook(){
   setBG(ASSET.s4,true);
   const shown=S.recipes.slice();
@@ -1700,13 +1782,11 @@ document.addEventListener('click',e=>{
   if(a==='pro-next'){if(PRO_TYPER&&!PRO_TYPER.done)finishProType();else prologueNext();return}
   if(a==='pro-skip'){prologueSkip();return}
   if(a==='replay-prologue'){playPrologue(()=>{renderTitle()});return}
-  if(a==='story-next'){closeOverlay();const f=window.__storyNext;window.__storyNext=null;if(f)f();return}
-  if(a==='story-skip'){
-    closeOverlay();
-    const f=window.__storyNext;window.__storyNext=null;if(f)f();return;
-  }
+  if(a==='story-next'){storyVNNext();return}
+  if(a==='story-skip'){storyVNSkip();return}
   if(a==='free-stove'){
-    closeOverlay();S.queueG1.length=0;S.queueG3.length=0;
+    stopStoryType();SV=null;closeOverlay();$('.stage').classList.remove('sv-on');
+    S.queueG1.length=0;S.queueG3.length=0;
     window.__storyNext=null;clearInterval(tickTimer);
     S.customers=[];S.activeId=null;S.progress=[];
     S.day++;beginFreeStove();return;
@@ -1891,6 +1971,34 @@ function runSelfTest(){
       ok('玩家界面不显示设计公式',!/PLACEHOLDER|playtest|完美率 =|收益 =|评定公式|（P[0-9]）/.test(uiText),
          uiText.match(/PLACEHOLDER|playtest|完美率 =|收益 =|评定公式|（P[0-9]）/)?.[0]||'无');
     }
+    // 剧情插曲 VN 播放器（独立于序章，逐字 + 立绘 + 链式收尾）
+    let svDone=0;
+    openStoryVN({slot:'G3',tag:'自检',title:'1-1 · 自检插曲',trigger:'自检',
+      lines:[['麦小满','「第一句。」'],['糖老书','「第二句。」'],['','第三句旁白。']],
+      effect:'自检',apply(){}}, 'selftest', ()=>{svDone++});
+    ok('插曲改为视觉小说式：上方场景+底部对话框',!!$('#svText')&&!!$('.vn-scene')&&$('#overlay').classList.contains('story-vn'));
+    ok('插曲逐字打字（一次一字）',(()=>{
+      const len=()=>$('#svText').textContent.length,seq=[len()];
+      for(let i=0;i<3;i++){SV.typer.step();seq.push(len())}
+      return seq[1]===1&&seq[3]===3&&seq.every((n,i)=>i===0||n===seq[i-1]+1);
+    })());
+    ok('插曲人物发言带立绘、旁白不带',(()=>{
+      storyVNFinish();storyVNNext();            // 到第 2 句（糖老书）
+      const has2=$('#svPortrait').style.display!=='none';
+      storyVNFinish();storyVNNext();            // 到第 3 句（旁白）
+      return has2&&$('#svPortrait').style.display==='none';
+    })());
+    storyVNFinish();storyVNNext();              // 末句 → 收尾
+    ok('插曲逐句走完触发链式回调',svDone===1&&!$('#overlay').classList.contains('story-vn'));
+    ok('插曲玩家模式标题不露设计编号',(()=>{
+      let d=0;openStoryVN({slot:'G2',tag:'自检',title:'2-6 · 平局',trigger:'自检',lines:[['麦小满','「看。」']],effect:'',apply(){}},'x',()=>{d++});
+      const t=$('.sv-title').textContent;storyVNSkip();
+      return DEV_UI?!t.includes('自检'):!/^\d+-\d+/.test(t);
+    })());
+    ok('插曲跳过直接收尾',(()=>{
+      let d=0;openStoryVN({slot:'G1',tag:'自检',title:'跳过',trigger:'自检',lines:[['麦小满','「跳。」']],effect:'',apply(){}},'x',()=>{d++});
+      storyVNSkip();return d===1&&SV===null;
+    })());
   }catch(e){out.push('FAIL | 运行异常 | '+e.message+' @ '+(e.stack||'').split('\n')[1])}
   const pre=document.createElement('pre');pre.id='selftest';pre.textContent=out.join('\n');
   document.body.appendChild(pre);
@@ -1907,6 +2015,13 @@ else if(QS.get('shot')){setTimeout(()=>{
   const mode=QS.get('shot');
   if(mode==='guide'){openGuide()}
   else if(mode==='book'){openBook()}
+  else if(mode==='story'){    // 截图入口：核对剧情插曲为视觉小说式
+    S.queueG1.length=0;S.queueG3.length=0;
+    openStoryVN(STORY['intro'],'intro',()=>{});
+    const li=parseInt(QS.get('line')||'0',10);
+    if(li>0){let g=0;while(SV&&SV.idx<li&&g++<10){storyVNFinish();storyVNNext()}}
+    if(QS.get('typing')!=='1')storyVNFinish();
+  }
   else if(mode==='settle'){   // 截图入口：核对账本页不再出现公式与设计编号
     beginService();S.day=3;S.dayServed=9;S.dayLost=1;S.served=23;S.phase='settle';
     S.lastLedger={gross:128,material:20,wages:0,upkeep:5,net:103,onLeave:false};renderSettle()
