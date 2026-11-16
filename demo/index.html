@@ -91,6 +91,9 @@ body.dev .devonly{display:flex!important}
   border-radius:12px;padding:1px 7px}
 .muted{font-size:11px;opacity:.68;line-height:1.6}
 .tagline{font-size:12px;line-height:1.7}
+#v-settle .speaker{margin-bottom:7px}
+#v-settle .speaker .av{width:38px;height:38px}
+#v-settle .speaker .say{font-size:12px;padding:7px 10px;line-height:1.45}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
   border:var(--line) solid var(--cocoa);border-radius:18px;padding:10px 16px;font-size:14px;font-weight:700;
@@ -566,7 +569,12 @@ const STORY = {
     lines:[['糖老书','「……这一炉，勉强能算个东西。」'],['麦小满','「才一页！还有一百页呢！」']],
     effect:'第 1 页学成 · 显形仪式建立',apply(){learn('pudding',true)}},
   '1-4':{slot:'G2',tag:'T2 解锁特定点心',title:'1-4 · 顾苦把糖罐换成了盐',trigger:'累计出餐 3 单（V1 干扰首次命中）',
-    lines:[],effect:'本单点击步数 +1 · 「海盐焦糖」页显形',apply(){reveal('salt')}},
+    lines:[
+      ['麦小满','「豆豆那单，怎么闻着有点咸？」'],
+      ['顾苦','「我就借点糖……谁知道罐子里装的是盐。真不是故意的。」'],
+      ['糖老书','「糖罐盐罐一个样，你倒分得清哪个是盐。」'],
+      ['糖老书','「算了，歪打正着。第四页——海盐焦糖，显形了。」']
+    ],effect:'本单点击步数 +1 · 「海盐焦糖」页显形',apply(){reveal('salt')}},
   '1-7':{slot:'G3',tag:'T3 段位评定',title:'1-7 · 铜勺',trigger:'累计出餐 8 单',
     lines:[['周伯','「……再来一块。」'],['糖老书','「我在书里待了这么些年，头回见他多要。」'],['麦小满','「那我是不是……」']],
     effect:'铜勺 · 第 2 页显形 · 开放首个员工岗位槽（P4）',apply(){S.rankIdx=1;S.staffSlot=1;reveal('salt')}},
@@ -877,7 +885,7 @@ function spawnCustomer(){
   const c={id:++uid,guest:rnd(GUESTS),rid:r.id,ing,P0:P0v,remain:P0v,firstTry,disturbed:ing.length>r.ing.length,auto:0,el:null};
   S.customers.push(c);
   renderCustomers();
-  if(c.disturbed)bubble('<b>顾苦</b>：「我就想借点糖……」　这单多点一步；将错就错，<b>「海盐焦糖」那页显形了</b>。',3400);
+  if(c.disturbed)bubble('<b>顾苦</b>：「我就想借点糖……」　那罐糖好像不太对劲。',3000);
 }
 function renderCustomers(){
   const box=$('#custList');
@@ -1066,7 +1074,7 @@ function queueStory(id){
   const n=STORY[id];if(!n)return;
   if(S.triggered[id])return;S.triggered[id]=true;
   S.storyLog.unshift({id,day:S.day,trigger:n.trigger});
-  if(n.slot==='G2'){bubble(`<b>${n.title}</b>　${n.effect}`,3200);n.apply()}
+  if(n.slot==='G2'){bubble(`<b>一点小插曲</b>　${DEV_UI?n.effect:'那罐糖好像不太对劲，先接着做，打烊再说。'}`,3200);n.apply()}
   else (n.slot==='G1'?S.queueG1:S.queueG3).push(id);
 }
 function queueLearnStory(key){
@@ -1290,6 +1298,11 @@ function renderSettle(){
   setBG(ASSET.s2,true);showView('v-settle');renderHUD();renderDock();
   const L=S.lastLedger;
   $('#v-settle').innerHTML=`
+    ${S.storyLog.some(x=>x.id==='1-4'&&x.day===S.day)?`<div class="panel">
+      <h2><span class="num">插曲</span> 今天那罐糖的事</h2>
+      ${STORY['1-4'].lines.map(([who,text])=>`<div class="speaker">${avatar(who,38)}<div class="say"><b>${who}</b>${text}</div></div>`).join('')}
+      <p class="muted" style="margin:6px 0 0">${DEV_UI?'本单点击步数 +1 · 「海盐焦糖」页显形（T2）：':'那单多走了一步，'}书翻到第四页——字有了，做不做得出来，还是另一回事。</p>
+    </div>`:''}
     <div class="panel"><h2><span class="num">账本</span> 第 ${S.day} 天 · 打烊账本</h2>
       <p class="muted">营业额在营业中已逐单跳字；这里扣掉成本，净额入余额。</p>
       <div class="ledger">
@@ -1564,6 +1577,15 @@ function runSelfTest(){
     ok('账本已生成',!!S.lastLedger,'净额 '+S.lastLedger.net);
     ok('净额 = 营业额 − 原料 − 工资 − 维护',
       S.lastLedger.net===S.lastLedger.gross-S.lastLedger.material-S.lastLedger.wages-S.lastLedger.upkeep);
+    ok('顾苦借糖剧情卡有台词',STORY['1-4'].lines.length>=3&&STORY['1-4'].lines.some(x=>x[0]==='顾苦'&&x[1].includes('借点糖')));
+    const settleS=S;
+    S=newState();S.phase='open';S.day=2;S.dayServed=1;
+    S.storyLog=[{id:'1-4',day:2,trigger:'干扰'}];
+    finishDay();
+    const settleNode=document.querySelector('#v-settle'),settleHTML=settleNode.innerHTML,settleText=settleNode.textContent;
+    ok('干扰当天账本复盘讲出剧情',settleText.includes('我就借点糖')&&settleText.includes('海盐焦糖'));
+    ok('玩家模式复盘不露开发编号',DEV_UI||!/点击步数|T2|V1|显形（/.test(settleText));
+    S=settleS;
     S.coins=300;renderPractice();
     const pm=rec('pudding').M;doPractice('pudding',false);
     ok('练习提升熟练度 M',rec('pudding').M>pm,pm.toFixed(1)+' → '+rec('pudding').M.toFixed(1));
@@ -1629,6 +1651,11 @@ else if(QS.get('shot')){setTimeout(()=>{
   else if(mode==='settle'){   // 截图入口：核对账本页不再出现公式与设计编号
     beginService();S.day=3;S.dayServed=9;S.dayLost=1;S.served=23;S.phase='settle';
     S.lastLedger={gross:128,material:20,wages:0,upkeep:5,net:103,onLeave:false};renderSettle()
+  }
+  else if(mode==='recap'){    // 截图入口：核对顾苦借糖当天账本复盘对白
+    beginService();S.day=2;S.dayServed=1;S.phase='settle';
+    S.storyLog=[{id:'1-4',day:2,trigger:'干扰'}];
+    S.lastLedger={gross:12,material:2,wages:0,upkeep:0,net:10,onLeave:false};renderSettle()
   }
   else if(mode==='prologue'){const n=parseInt(QS.get('slide')||'1',10);PRO_I=clamp(n-1,0,PROLOGUE.length-1);renderPrologue()}
   else {
