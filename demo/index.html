@@ -382,9 +382,15 @@ body.dev .devonly{display:flex!important}
   filter:drop-shadow(0 8px 0 rgba(90,59,46,.16))}
 .pro-booktag{margin:-6px auto 0;font-size:15px;font-weight:900;letter-spacing:1px;
   color:var(--cocoa);white-space:nowrap;display:inline-block;
-  background:rgba(255,251,242,.62);border-radius:10px;padding:4px 10px;
+  background:rgba(255,251,242,.62);border-radius:10px;padding:5px 12px;
   text-shadow:0 1px 2px rgba(255,251,242,.9)}
-.pro-booktag span{display:block;font-size:11px;font-weight:700;color:var(--caramel);letter-spacing:.5px;margin-top:2px}
+/* 扉页小字不和书名一起蹦出来：一开始纸片只托着书名，念到那句台词时小字才从纸边浮出 */
+.pro-booktag span{display:block;font-size:12px;line-height:1.5;font-weight:700;color:var(--caramel);letter-spacing:.5px;
+  max-height:0;margin-top:0;overflow:hidden;opacity:0;transform:translateY(5px);
+  transition:max-height .5s ease,margin-top .5s ease,opacity .4s ease,transform .5s ease}
+.vn-art.tagline .pro-booktag span{max-height:30px;margin-top:3px;opacity:1;transform:none;
+  animation:tagGlow 1.1s ease .3s 2}
+@keyframes tagGlow{0%,100%{text-shadow:none}45%{text-shadow:0 0 10px rgba(255,190,110,.95)}}
 .pro-pagebox .page{width:136px;margin:0 auto}
 /* 摊开的书页：无硬边框，纸张从画面里浮现（方案 C）
    注意：配方清单类名为 rcp，不能叫 ing —— 全局 .ing 是食材台样式（带边框） */
@@ -765,7 +771,7 @@ const PROLOGUE = [
    art:`<div class="pro-bookart"><img src="${ASSET_PRO.bookFallen}" alt="天降的旧书"><div class="pro-booktag">《一百零一页》<span>吃完这一本，你就是神。</span></div></div>`,
    lines:[[null,'半路上一本旧书从天上掉下来，啪叽，正砸脑门上。封皮都掉渣了。'],
      [null,'它还自己哗啦哗啦翻页。扉页上一行小字：'],
-     [null,'吃完这一本，你就是神。'],
+     [null,'吃完这一本，你就是神。','tagline'],
      ['麦小满','……神也会被书砸到吗？']]},
   {k:'序章 0-2 · 书里住着个老头',
    art:`<div class="pro-spread"><div class="leaf l"><span class="pno">P.1</span><div class="dish">${dishIcon('pudding',68)}</div><div class="ttl">焦糖<br>布丁</div></div><div class="spine"></div><div class="leaf r"><span class="pno">配方</span><div class="rcp"><div><i class="k"></i>鸡蛋 2 个</div><div><i class="k"></i>牛奶 200ml</div><div><i class="k"></i>糖 60g</div><div class="step"><i class="k"></i>中火 8 分钟</div></div></div></div>`,
@@ -1033,7 +1039,7 @@ function renderTitle(){
 }
 
 /* ---------- 开场序章播放器 · 视觉小说式（上方剧情大图 + 底部统一对话框 + 逐字打字机） ---------- */
-let PRO_I=0, PRO_DONE_CB=null, PRO_TYPER=null, PRO_LINE_I=0, PRO_LINES=[];
+let PRO_I=0, PRO_DONE_CB=null, PRO_TYPER=null, PRO_LINE_I=0, PRO_LINES=[], PRO_ART_STATE='';
 const PRO_SPEED=34, PRO_PAUSE_PUNC=150;
 const PRO_PORTRAIT={'麦小满':'charMai','糖老书':'charBook',
   '顾苦':'charGuku','雷千层':'charLeiqian','沈如意':'charShenruyi',
@@ -1056,8 +1062,9 @@ function updateProNextBtn(){
   dots.forEach((d,i)=>d.classList.toggle('on',i<=PRO_LINE_I));
 }
 // 把一幕的句子序列摊平：优先用有序 lines（旁白与对白可按剧本交错）
+// 每句可带第三项 artState：走到这句时给画面容器挂上的类，用来做「同一张图分拍显影」
 function buildPrologueLines(sl){
-  if(Array.isArray(sl.lines))return sl.lines.map(([who,text])=>({who:who||'',text}));
+  if(Array.isArray(sl.lines))return sl.lines.map(([who,text,artState])=>({who:who||'',text,artState:artState||''}));
   const out=[];
   (sl.narr||[]).forEach(t=>out.push({who:'',text:t}));
   (sl.say||[]).forEach(([w,t])=>out.push({who:w,text:t}));
@@ -1070,6 +1077,16 @@ function renderVNLine(){
   const isNarr=!ln.who;
   nameEl.textContent=isNarr?'旁白':ln.who;
   nameEl.classList.toggle('narr',isNarr);
+  // 画面分拍显影：取当前句之前最近一次声明的 artState，显影后不再回退
+  // （扉页小字等到念它那句才浮出，?shot= 跳句调试也能还原正确画面）
+  const artEl=$('#v-prologue .vn-art');
+  if(artEl){
+    let st='';
+    for(let i=Math.min(PRO_LINE_I,PRO_LINES.length-1);i>=0;i--){if(PRO_LINES[i].artState){st=PRO_LINES[i].artState;break}}
+    if(PRO_ART_STATE)artEl.classList.remove(PRO_ART_STATE);
+    PRO_ART_STATE=st;
+    if(PRO_ART_STATE)artEl.classList.add(PRO_ART_STATE);
+  }
   // 人物立绘：有立绘的人物才显示，旁白隐藏
   const key=PRO_PORTRAIT[ln.who];
   if(key&&ASSET_PRO[key]){
@@ -1119,6 +1136,7 @@ function renderPrologue(){
   showView('v-prologue');
   PRO_LINES=buildPrologueLines(sl);
   PRO_LINE_I=0;
+  PRO_ART_STATE='';
   const dots=PRO_LINES.map(()=>'<i></i>').join('');
   $('#v-prologue').innerHTML=`
     <div class="vn">
