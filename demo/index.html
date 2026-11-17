@@ -403,6 +403,25 @@ body.dev .devonly{display:flex!important}
 .pro-spread .rcp .k{display:inline-block;width:11px;height:11px;border:2px solid var(--caramel);border-radius:3px;margin-right:7px;vertical-align:-1px}
 .pro-spread .rcp .step{margin-top:5px;padding-top:6px;border-top:1px dashed rgba(90,59,46,.22)}
 .pro-spread .rcp .step .k{border-color:var(--berry);border-radius:50%}
+/* 糖霜插图：背景纸上已画着糖霜画的轮廓，这里只叠一层「布灵布灵」的星光，无方框、无 P.1 */
+.vn-art.frost{top:32%;left:45%}
+.pro-frost{position:relative;width:250px;height:200px;animation:frostFade .9s ease both}
+@keyframes frostFade{from{opacity:0}to{opacity:1}}
+.pro-frost .tw{position:absolute;
+  background:radial-gradient(circle at 50% 50%,#FFFFFF 0 22%,#FFD98A 32%,#F0A24E 62%,#D9822B 100%);
+  clip-path:polygon(50% 0,63% 37%,100% 50%,63% 63%,50% 100%,37% 63%,0 50%,37% 37%);
+  filter:drop-shadow(0 0 5px rgba(232,140,60,.95)) drop-shadow(0 0 12px rgba(255,255,255,.9));
+  animation:twinkle 1.9s ease-in-out infinite}
+.pro-frost .t1{top:0;left:30px;width:26px;height:26px;animation-delay:0s}
+.pro-frost .t2{top:24px;right:18px;width:20px;height:20px;animation-delay:.42s}
+.pro-frost .t3{bottom:44px;left:6px;width:18px;height:18px;animation-delay:.86s}
+.pro-frost .t4{bottom:10px;right:48px;width:28px;height:28px;animation-delay:1.24s}
+.pro-frost .t5{top:80px;left:-6px;width:16px;height:16px;animation-delay:.22s}
+.pro-frost .t6{top:-2px;right:74px;width:18px;height:18px;animation-delay:1.05s}
+.pro-frost .t7{bottom:64px;right:0;width:22px;height:22px;animation-delay:.62s}
+.pro-frost .t8{top:116px;left:60px;width:14px;height:14px;animation-delay:1.45s}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.3) rotate(0deg)}
+  50%{opacity:1;transform:scale(1) rotate(45deg)}}
 .pro-sign{font-size:32px;font-weight:900;letter-spacing:4px;background:var(--paper);border:3px solid var(--cocoa);
   border-radius:18px;padding:12px 26px;box-shadow:0 6px 0 rgba(90,59,46,.18)}
 .pro-sign span{color:var(--berry)}
@@ -693,97 +712,92 @@ const CREW = [
 
 /* ---------- 剧情节点：每个都绑定可观测经营量（R5 / R6） ---------- */
 const STORY = {
-  'intro':{slot:'G1',tag:'G1 开门钩子',title:'第 1 天 · 「要有人吃」',trigger:'序章结束 · 首次开门',
-    lines:[['糖老书','「别光自己闻。端出去，有人吃，那页才作数。」'],
-           ['麦小满','「外头那位，就是『有人吃』？」'],
-           ['糖老书','「照配方上的次序来。手快点——客人可没我这么好说话。」']],
-    effect:'今天只卖焦糖布丁：3 个食材、1 位客人、全手动（A = 0%）。点顾客 → 按序点食材 → 提交。',apply(){}},
   '0-5':{slot:'G3',tag:'T1 经营里程碑',title:'0-5 · 第 1 页长出糖霜',trigger:'首次完成一局营业',
-    lines:[['糖老书','「……这一炉，勉强能算个东西。」'],['麦小满','「才一页！还有一百页呢！」']],
+    lines:[['糖老书','……这一炉，勉强能算个东西。'],['麦小满','才一页！还有一百页呢！']],
     effect:'第 1 页学成 · 显形仪式建立',apply(){learn('pudding',true)}},
   '1-4':{slot:'G2',tag:'T2 解锁特定点心',title:'1-4 · 顾苦把糖罐换成了盐',trigger:'累计出餐 3 单（V1 干扰首次命中）',
     lines:[
-      ['麦小满','「豆豆那单，怎么闻着有点咸？」'],
-      ['顾苦','「我就借点糖……谁知道罐子里装的是盐。真不是故意的。」'],
-      ['糖老书','「糖罐盐罐一个样，你倒分得清哪个是盐。」'],
-      ['糖老书','「算了，歪打正着。第四页——海盐焦糖，显形了。」']
-    ],effect:'本单点击步数 +1 · 「海盐焦糖」页显形',apply(){reveal('salt')}},
+      ['麦小满','豆豆那单，怎么闻着有点咸？'],
+      ['顾苦','我就借点糖……谁知道罐子里装的是盐。真不是故意的。'],
+      ['糖老书','糖罐盐罐一个样，你倒分得清哪个是盐。'],
+      ['糖老书','算了，歪打正着。第四页——海盐焦糖，显形了。']
+    ],effect:'本单点击步数 +1 · 海盐焦糖页显形',apply(){reveal('salt')}},
   '1-7':{slot:'G3',tag:'T3 段位评定',title:'1-7 · 铜勺',trigger:'累计出餐 8 单',
-    lines:[['周伯','「……再来一块。」'],['糖老书','「我在书里待了这么些年，头回见他多要。」'],['麦小满','「那我是不是……」']],
+    lines:[['周伯','……再来一块。'],['糖老书','我在书里待了这么些年，头回见他多要。'],['麦小满','那我是不是……']],
     effect:'铜勺 · 第 2 页显形 · 开放首个员工岗位槽（P4）',apply(){S.rankIdx=1;S.staffSlot=1;reveal('salt')}},
   '1-3':{slot:'G1',tag:'T4 自动化与队伍',title:'1-3 · 沈如意来应聘',trigger:'首位员工上岗',
-    lines:[['沈如意','「我算账很快，真的。」'],['麦小满','「你为什么戴着墨镜？」'],['沈如意','……「防晒。」']],
+    lines:[['沈如意','我算账很快，真的。'],['麦小满','你为什么戴着墨镜？'],['沈如意','……防晒。']],
     effect:'备料岗开始自动接管已学会菜品的固定步骤（A 20%）',apply(){}},
   '2-6':{slot:'G3',tag:'T3 段位评定',title:'2-6 · 平局',trigger:'累计出餐 14 单',
-    lines:[['雷千层','「一千零二十四层，你只叠了九百。」'],['周伯','（默默把「好吃」票推过去）'],['糖老书','「……行，算平手。都别争了。」']],
+    lines:[['雷千层','一千零二十四层，你只叠了九百。'],['周伯','（默默把好吃票推过去）'],['糖老书','……行，算平手。都别争了。']],
     effect:'银勺 · 第 12 页千层酥显形 · 3 位顾客并行 · 设备可升 L2',apply(){S.rankIdx=2;reveal('mille');S.concurrency=3}},
   '3-3':{slot:'G3',tag:'T4 自动化与队伍',title:'3-3 · 摘星封炉扣书',trigger:'累计出餐 18 单',
-    lines:[['沈如意','「账本我先带走，别找我。」'],['顾苦','「……我什么都没干啊。」'],['糖老书','「书让他们拿走了。今儿起，你得自己记着了。」']],
+    lines:[['沈如意','账本我先带走，别找我。'],['顾苦','……我什么都没干啊。'],['糖老书','书让他们拿走了。今儿起，你得自己记着了。']],
     effect:'下一局：员工离岗 / 设备停机 / 菜谱置灰 / A 归零（唯一一次倒退）',
     apply(){S.leaveNextDay=true}},
   '3-6':{slot:'G3',tag:'T5 异常经营事件',title:'3-6 · 顾苦那袋糖',trigger:'剥离局结束',
-    lines:[['顾苦','「……我带了袋糖回来。别说是我拿的。」'],['麦小满','「那今天这炉，一起？」']],
+    lines:[['顾苦','……我带了袋糖回来。别说是我拿的。'],['麦小满','那今天这炉，一起？']],
     effect:'临时帮工回归 · 自动化率首次回升 · 下一局进入无配方期（V2）',
     apply(){S.staff.prep=true;S.noRecipeNextDay=true}},
   '4-1':{slot:'G1',tag:'T2 / V2',title:'4-1 · 三十天不许用菜谱',trigger:'V2 无配方规则态开启',
-    lines:[['糖老书','「字我藏起来了。」'],['麦小满','「那我怎么知道该点哪个？」'],['糖老书','「……第三格。我什么都没说。」']],
+    lines:[['糖老书','字我藏起来了。'],['麦小满','那我怎么知道该点哪个？'],['糖老书','……第三格。我什么都没说。']],
     effect:'菜谱与食材名一并隐藏，只能凭记忆点选；设备不显示名称提示',apply(){}},
-  '4-7':{slot:'G3',tag:'T3 段位评定',title:'4-7 · 条例加了一行「谁在吃」',trigger:'累计出餐 24 单',
-    lines:[['周伯','「我是糖勺榜的人。」'],['雷千层','「……条例里没有『好吃』这一项。」'],['周伯','「现在有了。」']],
+  '4-7':{slot:'G3',tag:'T3 段位评定',title:'4-7 · 条例加了一行谁在吃',trigger:'累计出餐 24 单',
+    lines:[['周伯','我是糖勺榜的人。'],['雷千层','……条例里没有『好吃』这一项。'],['周伯','现在有了。']],
     effect:'累计好评率进入评定公式 · 琉璃勺 · 第 53 页桂花糕显形 · 菜谱归还',
     apply(){S.rankIdx=3;reveal('osman');S.ratingIncludesGood=true;S.confiscated=false}},
   '5-234':{slot:'G3',tag:'T4 三次入队',title:'5-2 / 5-3 / 5-4 · 三个人来帮少点几下',trigger:'累计出餐 30 单',
-    lines:[['雷千层','「我只是来校准火候。」'],['顾苦','「鸽子比我乖，真的。」'],['沈如意','「账我重新算过了。今天不累。」']],
+    lines:[['雷千层','我只是来校准火候。'],['顾苦','鸽子比我乖，真的。'],['沈如意','账我重新算过了。今天不累。']],
     effect:'练习 / 提交 / 结算三条自动化线接通 · A 跃升至 70% · 七人同框',
     apply(){S.joined=true;S.staff.prep=true;S.staff.serve=true;S.staff.cashier=true;S.device=Math.max(S.device,3)}},
   '6-3':{slot:'G3',tag:'V4 自由炉',title:'6-3 · 因为你还想再做一炉',trigger:'玩家主动关闭全部自动化后再烤一炉',
-    lines:[['麦小满','「今天不排名、不算钱。」'],['糖老书','「那一百零一页，写什么？」'],['麦小满','「就写这个。」']],
+    lines:[['麦小满','今天不排名、不算钱。'],['糖老书','那一百零一页，写什么？'],['麦小满','就写这个。']],
     effect:'第 101 页显字 · 全员同框 · 主线闭环',apply(){S.ending=true}}
 };
 
 /* ---------- 开场序章：世界观 + 序章 0-1 ~ 0-6（故事企划书 v1.1 序章逐拍落地） ---------- */
 const PROLOGUE = [
-  {k:'序幕 · 这座城把甜点当正经事',bg:ASSET.s3,
-   narr:['在这座城里，有一座糖勺榜，它由冥冥天意所影响，能上榜的，皆为这世上点心出彩的。',
-     '榜上五阶：铜勺、银勺、金勺、琉璃勺、云顶勺，一阶高过一阶。',
-     '麦小满蹬着送货车从榜底下过，车筐里点心盒摞得老高。给面包房送了两年货，自己连个蛋都没打过。'],
-   say:[['麦小满','「到啦到啦——今儿没迟到吧？」']]},
-  {k:'序章 0-1 · 天降旧书',bg:ASSET.s3,
-   narr:['半路上一本旧书从天上掉下来，啪叽，正砸脑门上。封皮都掉渣了。',
-     '它还自己哗啦哗啦翻页。扉页上一行小字：'],
-   art:`<div class="pro-bookart"><img src="${ASSET_PRO.bookFallen}" alt="天降的旧书"><div class="pro-booktag">《一百零一页》<span>「吃完这一本，你就是神。」</span></div></div>`,
-   say:[['麦小满','「……神也会被书砸到吗？」']]},
-  {k:'序章 0-2 · 书里住着个老头',bg:ASSET.s4,
-   narr:['书页里拱出一张皱巴巴的脸，架着副糖丝眼镜。老头儿自称糖老书，没说两句就打起瞌睡。'],
+  {k:'序幕 · 这座城把甜点当正经事',
+   lines:[[null,'在这座城里，有一座糖勺榜，它由冥冥天意所影响，能上榜的，皆为这世上点心出彩的。'],
+     [null,'榜上五阶：铜勺、银勺、金勺、琉璃勺、云顶勺，一阶高过一阶。'],
+     [null,'麦小满每天都会骑车从榜底下路过，车箱里点心盒摞得整整齐齐的。他虽然也有个点心梦，但给面包房送了两年货，却连个蛋都没打过。']]},
+  {k:'序章 0-1 · 天降旧书',
+   art:`<div class="pro-bookart"><img src="${ASSET_PRO.bookFallen}" alt="天降的旧书"><div class="pro-booktag">《一百零一页》<span>吃完这一本，你就是神。</span></div></div>`,
+   lines:[[null,'半路上一本旧书从天上掉下来，啪叽，正砸脑门上。封皮都掉渣了。'],
+     [null,'它还自己哗啦哗啦翻页。扉页上一行小字：'],
+     [null,'吃完这一本，你就是神。'],
+     ['麦小满','……神也会被书砸到吗？']]},
+  {k:'序章 0-2 · 书里住着个老头',
    art:`<div class="pro-spread"><div class="leaf l"><span class="pno">P.1</span><div class="dish">${dishIcon('pudding',68)}</div><div class="ttl">焦糖<br>布丁</div></div><div class="spine"></div><div class="leaf r"><span class="pno">配方</span><div class="rcp"><div><i class="k"></i>鸡蛋 2 个</div><div><i class="k"></i>牛奶 200ml</div><div><i class="k"></i>糖 60g</div><div class="step"><i class="k"></i>中火 8 分钟</div></div></div></div>`,
-   say:[['糖老书','「我不教笨蛋。」'],
-        ['糖老书','「自己翻。几克糖、火开多大、烤几分钟，上头都写着，一个字没藏。」'],
-        ['糖老书','「字都给你了。剩下那点，我可管不着。」']]},
-  {k:'世界观 · 这本书的四条规矩',bg:ASSET.s4,
-   narr:['他从书脊里探出半张脸，伸着一根手指头，一条一条数。'],
-   say:[['糖老书','「头一条。页子本来是白的。你那勺榜往上挪一格，才翻得出下一页。」'],
-        ['糖老书','「第二条。绝知此事要躬行，书上写的你就算倒背如流，不等于你做得出来。作点心是一门手艺活，你要用心去练。」'],
-        ['糖老书','「第三条。抄别人的方子、找人代手，页子自个儿就白回去，还长毛。别问我怎么知道的。」'],
-        ['糖老书','「第四条。后头的页子，一页比一页难伺候。翻到哪页算哪页，我不说。」'],
-        ['糖老书','「行了，炉子还热着。去吧。」']]},
-  {k:'序章 0-3 · 连焦三炉',bg:ASSET.s1,
-   narr:['面包房打烊了，炉子借他用。他照着第一页，一炉一炉试。','头一炉没成。第二炉也没成。第三炉，厨房冒黑烟了。'],
-   say:[['糖老书','「（打盹）……嗯，都这样。」'],
-        ['麦小满','「再来一炉！这回我盯着。」']]},
-  {k:'序章 0-4 · 听糖',bg:ASSET.s1,
-   narr:['书上写着中火八分钟。他蹲在炉边，眼睛不敢挪。',
-     '锅里「噗」地轻轻一响。',
-     '他赶紧把火拧小，勺子还举在半空。'],
-   say:[['麦小满','「……哦。是这儿啊。」']]},
-  {k:'序章 0-5 · 糖霜插图',bg:ASSET.s4,
-   narr:['第四炉端出来，焦糖布丁，成了。','那页纸上慢慢浮出一幅糖霜画，凑近闻还有点焦糖味。'],
-   art:`<div class="pro-pagebox"><div class="page learned"><span class="pn">P.1</span><img src="${ASSET.pudding}" alt="焦糖布丁" style="width:64px;height:64px;object-fit:contain;margin-top:6px"><div class="nm">糖霜插图 · 长出来了</div></div></div>`,
-   say:[['糖老书','「这炉……勉强能算个东西。」']]},
-  {k:'序章 0-6 · 要有人吃',bg:ASSET.s2,
-   narr:['书末还有一行小字：「要有人吃。」','街角那间漏雨的旧仓库，他租下来了。门口挂了块新招牌。'],
+   lines:[[null,'书页里拱出一张皱巴巴的脸，架着副糖丝眼镜。老头儿自称糖老书。'],
+     ['糖老书','我可不教笨蛋。'],
+     ['糖老书','这是一本点心谱，详细记着配方、做法、甚至还有摆盘。']]},
+  {k:'世界观 · 这本书的四条规矩',
+   lines:[['糖老书','这里有几条规矩，第一条，这本是无字点心谱，需要你努力做好前面的点心，后面的点心菜谱自会显现。'],
+     ['糖老书','第二条，纸上得来终觉浅，绝知此事要躬行，作点心是一门手艺活，你要用心去练。'],
+     ['糖老书','第三条。如果想偷懒，找人代手，这无字点心谱的脾性，我可奉劝你别试探~'],
+     ['糖老书','第四条。这点心谱是一页比一页难伺候。你要有觉悟，另外点心谱最好不要示人，匹夫无罪怀璧其罪也。'],
+     ['糖老书','行了，回去吧，记得多练，有事没事，不要找我~']]},
+  {k:'序章 0-3 · 回过神来',bgk:0,
+   lines:[[null,'麦小满回过神来，发现街上一切如常，面前也没有什么点心谱，不过他这心头一想，点心谱就出现在了他面前，微微发光。吓得他赶紧收了起来，继续骑车送点心去了。']]},
+  {k:'序章 0-4 · 连焦两炉',bgk:4,
+   lines:[[null,'面包房打烊了，他鼓起勇气向老板借一下后厨，老板看他兢兢业业干了两年了，于是把后厨角落里的地方借给了他。他照着第一页点心谱，慢慢地尝试着。'],
+     [null,'就这样，第一次配比没把握好，第二次把锅给烧焦了~'],
+     ['糖老书','（打盹）……嗯，都这样。'],
+     ['麦小满','（麦小满涮着锅底的烧焦的地方）再来一次！我是笨了点，但勤能补拙嘛。']]},
+  {k:'序章 0-5 · 第三炉',bgk:5,
+   lines:[[null,'锅里噗地轻轻一响。'],
+     [null,'他赶紧把火拧小，勺子还举在半空。'],
+     ['麦小满','……哦哦哦！这次可以了，这次可以了！'],
+     [null,'第三次端出来，焦糖布丁，做成功了。']]},
+  {k:'序章 0-6 · 糖霜插图',bgk:6,artCls:'frost',
+   art:`<div class="pro-frost"><i class="tw t1"></i><i class="tw t2"></i><i class="tw t3"></i><i class="tw t4"></i><i class="tw t5"></i><i class="tw t6"></i><i class="tw t7"></i><i class="tw t8"></i></div>`,
+   lines:[[null,'点心谱上慢慢浮出一幅糖霜画，是麦小满做出来的焦糖布丁的样子，凑近闻还有点焦糖味。'],
+     ['糖老书','这次……勉强能算个东西。']]},
+  {k:'序章 0-7 · 一勺糖',bgk:7,
    art:'<div class="pro-sign">一勺<span>糖</span></div>',
-   say:[['麦小满','「今天开业！第一位客人——来块布丁吗？」'],
-        ['糖老书','「记着，别盯着钟，听糖。」']]}
+   lines:[[null,'麦小满回家盘算了许久，最终他决定把街角那间漏雨的旧仓库租下来。将仓库装修了一下，并门口挂了块新招牌：一勺糖。'],
+     ['麦小满','今天开业！客人，要来一块布丁吗？']]}
 ];
 
 /* ---------- 状态 ---------- */
@@ -977,7 +991,7 @@ function renderTitle(){
             <img class="chef" src="${ASSET.char}" alt="麦小满">
             <div class="dish"><img src="${ASSET.pudding}" alt="">焦糖布丁</div>
           </div>
-          <p class="line">「别光自己闻。端出去，有人吃，那页才作数。」</p>
+          <p class="line">别光自己闻。端出去，有人吃，那页才作数。</p>
           <button class="btn wide go" data-act="start">开门营业 →</button>
           <div class="minor">${minor}</div>
           ${devNote}
@@ -1041,8 +1055,9 @@ function updateProNextBtn(){
   const dots=document.querySelectorAll('.vn-dots i');
   dots.forEach((d,i)=>d.classList.toggle('on',i<=PRO_LINE_I));
 }
-// 把一幕的 narr + say 交织成句子序列（保持原文本顺序：先旁白后对白）
+// 把一幕的句子序列摊平：优先用有序 lines（旁白与对白可按剧本交错）
 function buildPrologueLines(sl){
+  if(Array.isArray(sl.lines))return sl.lines.map(([who,text])=>({who:who||'',text}));
   const out=[];
   (sl.narr||[]).forEach(t=>out.push({who:'',text:t}));
   (sl.say||[]).forEach(([w,t])=>out.push({who:w,text:t}));
@@ -1098,8 +1113,8 @@ function playPrologue(done){
 function renderPrologue(){
   stopProType();
   const sl=PROLOGUE[PRO_I],total=PROLOGUE.length;
-  // 按幕切换专属背景；没配则回退到 s4 书页
-  const bg=ASSET_PRO['proBg'+PRO_I]||ASSET.s4;
+  // 按幕切换专属背景；幕数多于背景时用 bgk 指定复用哪一张，未配则回退到 s4 书页
+  const bg=ASSET_PRO['proBg'+(sl.bgk!=null?sl.bgk:PRO_I)]||ASSET.s4;
   setBG(bg,false);
   showView('v-prologue');
   PRO_LINES=buildPrologueLines(sl);
@@ -1109,7 +1124,7 @@ function renderPrologue(){
     <div class="vn">
       <div class="vn-scene">
         <div class="vn-kick"><span class="chap">${sl.k}</span><span class="cnt">${PRO_I+1} / ${total}</span></div>
-        ${sl.art?`<div class="vn-art">${sl.art}</div>`:''}
+        ${sl.art?`<div class="vn-art ${sl.artCls||''}">${sl.art}</div>`:''}
         <div class="vn-portrait" style="display:none"></div>
       </div>
       <div class="vn-box">
@@ -1187,14 +1202,14 @@ function spawnCustomer(){
     S.interferenceDone=true;
     firstTry=false;
     // 台词指名这一单真正的客人，避免剧情说 A 单、被换的其实是 B 单
-    STORY['1-4'].lines[0][1]=`「${guest.n}那单，怎么闻着有点咸？」`;
+    STORY['1-4'].lines[0][1]=`${guest.n}那单，怎么闻着有点咸？`;
     queueStory('1-4');
   }
   const P0v=P0(ing.length);
   const c={id:++uid,guest,rid:r.id,ing,P0:P0v,remain:P0v,firstTry,disturbed:ing.length>r.ing.length,auto:0,el:null};
   S.customers.push(c);
   renderCustomers();
-  if(c.disturbed)bubble('<b>顾苦</b>：「我就想借点糖……」　那罐糖好像不太对劲。',3000);
+  if(c.disturbed)bubble('<b>顾苦</b>：我就想借点糖……　那罐糖好像不太对劲。',3000);
 }
 function renderCustomers(){
   const box=$('#custList');
@@ -1265,7 +1280,7 @@ function renderBench(){
   $('#shopTip').innerHTML=S.freeStove
     ? '<b>自由炉</b>：不算钱、不排名、也不催客人。全员都在，自己烤一炉。'
     : S.noRecipe
-    ? '<b>没菜谱</b>：连菜谱上的字都藏了，凭手感点。糖老书说：「第三格，我什么都没说。」'
+    ? '<b>没菜谱</b>：连菜谱上的字都藏了，凭手感点。糖老书说：第三格，我什么都没说。'
     : (c.disturbed?'<b>糖罐被动过</b>：这单多点一步，配方临时改写。':'<b>提示</b>：按配方顺序点食材；客人等得越久，赚得越少。做出完美，客人一定说好。');
   $('#shopTip').className='tip-strip'+(S.noRecipe||S.freeStove?' gray':'');
   const slots=c.ing.map((k,i)=>`<div class="slot ${i<done?(S.progress[i]&&S.progress[i].auto?'auto':'ok'):''}">${i<done?'✓':i+1}</div>`).join('<span class="arrow">·</span>');
@@ -1305,7 +1320,7 @@ function tapIng(key){
     if(btn){btn.classList.add('wrong');setTimeout(()=>btn.classList.remove('wrong'),320)}
     if(S.noRecipe&&!S.noRecipeHinted){
       S.noRecipeHinted=true;
-      bubble('<b>糖老书</b>：「……是那个圆的。我可什么都没说。」',2400);
+      bubble('<b>糖老书</b>：……是那个圆的。我可什么都没说。',2400);
     }else toast(`下一步该点「${ING[want].n}」`);
     return;
   }
@@ -1326,7 +1341,7 @@ function submitDish(){
   // V4 自由炉：关闭金币 / 耐心 / 评分 / 全部自动化，这一炉不产出任何数值
   if(S.freeStove){
     sfx.perfect();fxSparks(16);fxWord('自 己 烤 的');
-    bubble('<b>麦小满</b>：「故意焦一角。」　这一炉不排名、不算钱、不评分。',2800);
+    bubble('<b>麦小满</b>：故意焦一角。　这一炉不排名、不算钱、不评分。',2800);
     removeCustomer(c.id);S.activeId=null;S.progress=[];
     finishFreeStove();return;
   }
@@ -1402,7 +1417,7 @@ function checkTriggers(){
   if(S.staff.prep&&!S.triggered['1-3'])queueStory('1-3');
   if(S.dayLost>=2&&!S.triggered['t5-lost']){
     S.triggered['t5-lost']=true;
-    bubble('<b>糖老书</b>：「走俩就走俩，明儿他们还来。」',2600);
+    bubble('<b>糖老书</b>：走俩就走俩，明儿他们还来。',2600);
   }
 }
 function playStories(slot,done){
@@ -1416,7 +1431,7 @@ function showStoryCard(id,next){
   if(id.startsWith('learn:')){
     const r=rec(id.split(':')[1]);
     n={slot:'G3',tag:'T2 菜谱解锁特定点心',title:`第 ${r.page} 页 · 长糖霜了`,trigger:`首次成功做出《${r.name}》`,
-      lines:[['糖老书','「……嗯。这一页，算你的了。」'],['麦小满','「那我明天再做一炉！」']],
+      lines:[['糖老书','……嗯。这一页，算你的了。'],['麦小满','那我明天再做一炉！']],
       effect:`《${r.name}》学成：进入可制作列表，开始累计熟练度 M`,apply(){}};
   }
   if(!n){next();return}
@@ -1677,7 +1692,7 @@ function finishDay(){
   const net=S.dayGross-material-wages-upkeep;
   S.lastLedger={gross:S.dayGross,material,wages,upkeep,net,canPay,onLeave};
   if(!canPay&&labor>0&&!onLeave){
-    bubble('<b>沈如意</b>：「今天工资发不出，我请个假，明天还来。」（不裁员、不扣进度）',3600);
+    bubble('<b>沈如意</b>：今天工资发不出，我请个假，明天还来。（不裁员、不扣进度）',3600);
   }
   queueStory('0-5');
   if(S.storyLog.some(x=>x.id==='1-4'&&x.day===S.day))openRecapVN(()=>renderSettle());
@@ -1841,7 +1856,7 @@ document.addEventListener('click',e=>{
   if(a==='continue'){
     if(load()){S.phase='title';renderHUD();
       if(!S.prologueDone){
-        playPrologue(()=>{S.queueG1.push('intro');playStories('G1',()=>beginService())});
+        playPrologue(()=>beginService());
       }else beginService();
     }else{toast('没有可继续的进度')}
     return;
@@ -1893,7 +1908,7 @@ function resetAll(){
 }
 function startDayFlow(){
   // 首次开局：先播开场序章（世界观 + 0-1~0-6），再播 G1 开门钩子，再进入营业
-  const go=()=>{S.queueG1.push('intro');playStories('G1',()=>beginService())};
+  const go=()=>beginService();
   if(!S.prologueDone)playPrologue(go);else go();
 }
 
@@ -1922,16 +1937,18 @@ function runSelfTest(){
     })());
     ok('倒计时内 400 次提交无失手',(()=>{S=newState();const q=[];for(let i=0;i<400;i++){S.noPerfectStreak=0;q.push(rollQuality(0))}return q.every(x=>x==='perfect'||x==='normal')})());
     // 开场序章：编排完整、首开必播、可跳过
+    const proText=PROLOGUE.flatMap(s=>(s.lines||[]).map(x=>x[1])).join('');
     ok('开场序章已编排（≥8 幕）',Array.isArray(PROLOGUE)&&PROLOGUE.length>=8,'共 '+PROLOGUE.length+' 幕');
-    ok('开场每幕均有背景与文本',PROLOGUE.every(s=>s.bg&&(s.narr||s.say)));
-    ok('第二条规矩逐字保留用户定稿',PROLOGUE[3].say[1][1].includes('绝知此事要躬行，书上写的你就算倒背如流，不等于你做得出来。作点心是一门手艺活，你要用心去练。'));
-    ok('世界观旁白逐字保留用户定稿',PROLOGUE[0].narr[0]==='在这座城里，有一座糖勺榜，它由冥冥天意所影响，能上榜的，皆为这世上点心出彩的。');
-    ok('序章旁白无书面腔套话',!PROLOGUE.some(s=>(s.narr||[]).join('').match(/原来|于是——|像梯子一样|野兽般|不是用眼睛|悄悄长/)));
-    ok('「听糖」在序章只由糖老书说一次',PROLOGUE.flatMap(s=>s.say||[]).filter(x=>x[1].includes('听糖')).length===1);
+    ok('开场每幕均有背景与文本',PROLOGUE.every(s=>(s.lines||[]).length&&ASSET_PRO['proBg'+(s.bgk!=null?s.bgk:PROLOGUE.indexOf(s))]));
+    ok('第二条规矩逐字保留用户定稿',proText.includes('第二条，纸上得来终觉浅，绝知此事要躬行，作点心是一门手艺活，你要用心去练。'));
+    ok('世界观旁白逐字保留用户定稿',PROLOGUE[0].lines[0][1]==='在这座城里，有一座糖勺榜，它由冥冥天意所影响，能上榜的，皆为这世上点心出彩的。');
+    ok('序章旁白无书面腔套话',!proText.match(/原来|于是——|像梯子一样|野兽般|不是用眼睛|悄悄长/));
+    ok('序章台词不带「」引号',!PROLOGUE.some(s=>(s.lines||[]).some(x=>/[「」]/.test(x[1]))));
+    ok('序章已删掉被弃用的旧台词',!proText.match(/到啦到啦|打起瞌睡|要有人吃|听糖|头一条|字都给你了|第一位客人/));
     resetAll();
     ok('新开局先播开场序章',S.prologueDone===false&&document.querySelector('#v-prologue.on')!==null);
     ok('视觉小说式：上方场景+底部对话框',!!$('.vn-scene')&&!!$('.vn-box')&&!!$('.vn-portrait'));
-    ok('8幕都有专属背景图',PROLOGUE.every((_,i)=>!!ASSET_PRO['proBg'+i]));
+    ok('每幕都能解析到背景图（9 幕复用 8 张）',PROLOGUE.every((s,i)=>!!ASSET_PRO['proBg'+(s.bgk!=null?s.bgk:i)]),'共 '+PROLOGUE.length+' 幕');
     ok('两位人物形象已内联',!!ASSET_PRO.charMai&&!!ASSET_PRO.charBook);
     ok('10位角色立绘全部内联',['charMai','charBook','charGuku','charLeiqian','charShenruyi',
       'charZhoubo','charDoudou','charAjie','charYoucha','charHaizi','charZhanggui']
@@ -1960,12 +1977,13 @@ function runSelfTest(){
       return PRO_LINES[PRO_LINE_I].who?$('.vn-portrait').style.display!=='none':true;
     })());
     prologueSkip();
-    ok('跳过开场后标记完成并弹出引导',S.prologueDone===true&&document.querySelector('#overlay.on')!==null);
-    // 逐句点击链：一直点「继续」到最后一幕的「挂牌开店」进入引导
-    playPrologue(()=>{S.queueG1.push('intro');playStories('G1',()=>beginService())});
+    ok('跳过开场后直接进营业页',S.prologueDone===true&&document.querySelector('#v-open.on')!==null,'无旧开门钩子弹窗');
+    // 逐句点击链：一直点「继续」到最后一幕的「挂牌开店」直接进营业
+    S.prologueDone=false;
+    playPrologue(()=>beginService());
     let guard=0;
     while(!S.prologueDone&&guard++<200)prologueNext();
-    ok('逐句点到挂牌开店后弹出引导',S.prologueDone===true&&document.querySelector('#overlay.on')!==null,'点击 '+guard+' 次');
+    ok('逐句点到挂牌开店后直接进营业页',S.prologueDone===true&&document.querySelector('#v-open.on')!==null,'点击 '+guard+' 次');
     PRO_DONE_CB=null;S.queueG1.length=0;closeOverlay();beginService();
     ok('开局生成顾客',S.customers.length>0,'共 '+S.customers.length+' 位');
     ok('食材台不再显示冗余标题',!/后厨食材台/.test($('#bench').innerHTML));
@@ -2120,15 +2138,15 @@ else if(QS.get('shot')){setTimeout(()=>{
   else if(mode==='book'){openBook()}
   else if(mode==='story'){    // 截图入口：核对剧情插曲为视觉小说式；?id= 指定剧情节点（默认 intro）
     S.queueG1.length=0;S.queueG3.length=0;
-    const sid=QS.get('id')||'intro';
-    openStoryVN(STORY[sid]||STORY['intro'],sid,()=>{});
+    const sid=QS.get('id')||'0-5';
+    openStoryVN(STORY[sid]||STORY['0-5'],sid,()=>{});
     const li=parseInt(QS.get('line')||'0',10);
     if(li>0){let g=0;while(SV&&SV.idx<li&&g++<10){storyVNFinish();storyVNNext()}}
     if(QS.get('typing')!=='1')storyVNFinish();
   }
   else if(mode==='intro-real'){ // 复现：序章画面未退场时弹 intro 插曲（回归用）
     S.queueG1.length=0;S.queueG3.length=0;S.prologueDone=false;
-    playPrologue(()=>{S.queueG1.push('intro');playStories('G1',()=>{})});
+    playPrologue(()=>beginService());
     stopProType();prologueEnd();
     const li=parseInt(QS.get('line')||'0',10);
     if(li>0){let g=0;while(SV&&SV.idx<li&&g++<10){storyVNFinish();storyVNNext()}}
