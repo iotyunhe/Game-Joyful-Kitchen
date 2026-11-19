@@ -721,41 +721,41 @@ const CREW = [
 /* ---------- 剧情节点：每个都绑定可观测经营量（R5 / R6） ---------- */
 const STORY = {
   '0-5':{slot:'G3',tag:'T1 经营里程碑',title:'0-5 · 第 1 页长出糖霜',trigger:'首次完成一局营业',
-    lines:[['糖老书','……这一炉，勉强能算个东西。'],['麦小满','才一页！还有一百页呢！']],
+    lines:[['糖老书','……头一天，没把炉子烧了。行了。'],['麦小满','那明天再来一炉就好！后头还欠着一百页呢。']],
     effect:'第 1 页学成 · 显形仪式建立',apply(){learn('pudding',true)}},
   '1-4':{slot:'G2',tag:'T2 解锁特定点心',title:'1-4 · 顾苦把糖罐换成了盐',trigger:'累计出餐 3 单（V1 干扰首次命中）',
     lines:[
       ['麦小满','豆豆那单，怎么闻着有点咸？'],
-      ['顾苦','我就借点糖……谁知道罐子里装的是盐。真不是故意的。'],
-      ['糖老书','糖罐盐罐一个样，你倒分得清哪个是盐。'],
-      ['糖老书','算了，歪打正着。第四页——海盐焦糖，显形了。']
+      ['顾苦','我就借一勺糖……谁晓得那罐里是盐。真不是故意的！'],
+      ['糖老书','糖和盐你分得清，借没借倒说不明白。'],
+      ['糖老书','歪打正着。第四页翻开了，海盐焦糖。往后你多点一下，别嫌烦。']
     ],effect:'本单点击步数 +1 · 海盐焦糖页显形',apply(){reveal('salt')}},
   '1-7':{slot:'G3',tag:'T3 段位评定',title:'1-7 · 铜勺',trigger:'累计出餐 8 单',
-    lines:[['周伯','……再来一块。'],['糖老书','我在书里待了这么些年，头回见他多要。'],['麦小满','那我是不是……']],
+    lines:[['周伯','……再来一块。'],['糖老书','我在书里待了这么些年，没见他多要过第二块。'],['麦小满','那我这是……也算上榜了？']],
     effect:'铜勺 · 第 2 页显形 · 开放首个员工岗位槽（P4）',apply(){S.rankIdx=1;S.staffSlot=1;reveal('salt')}},
   '1-3':{slot:'G1',tag:'T4 自动化与队伍',title:'1-3 · 沈如意来应聘',trigger:'首位员工上岗',
-    lines:[['沈如意','我算账很快，真的。'],['麦小满','你为什么戴着墨镜？'],['沈如意','……防晒。']],
+    lines:[['沈如意','账我算得快，一笔不差。真的。'],['麦小满','你今天怎么戴墨镜？店里没那么晒。'],['沈如意','……防晒。']],
     effect:'备料岗开始自动接管已学会菜品的固定步骤（A 20%）',apply(){}},
   '2-6':{slot:'G3',tag:'T3 段位评定',title:'2-6 · 平局',trigger:'累计出餐 14 单',
-    lines:[['雷千层','一千零二十四层，你只叠了九百。'],['周伯','（默默把好吃票推过去）'],['糖老书','……行，算平手。都别争了。']],
+    lines:[['雷千层','一千零二十四层，你只叠了九百。差得不是一点。'],['周伯','（默默把好吃票推过去）'],['糖老书','……九百层也能吃。这回算平手。']],
     effect:'银勺 · 第 12 页千层酥显形 · 3 位顾客并行 · 设备可升 L2',apply(){S.rankIdx=2;reveal('mille');S.concurrency=3}},
   '3-3':{slot:'G3',tag:'T4 自动化与队伍',title:'3-3 · 摘星封炉扣书',trigger:'累计出餐 18 单',
-    lines:[['沈如意','账本我先带走，别找我。'],['顾苦','……我什么都没干啊。'],['糖老书','书让他们拿走了。今儿起，你得自己记着了。']],
+    lines:[['沈如意','账本我先带走。那行字……你先别翻。对不住。'],['顾苦','……我可什么都没动啊。真的。'],['糖老书','书被他们扣下了。从今天起，方子得你自个儿记。']],
     effect:'下一局：员工离岗 / 设备停机 / 菜谱置灰 / A 归零（唯一一次倒退）',
     apply(){S.leaveNextDay=true}},
   '3-6':{slot:'G3',tag:'T5 异常经营事件',title:'3-6 · 顾苦那袋糖',trigger:'剥离局结束',
-    lines:[['顾苦','……我带了袋糖回来。别说是我拿的。'],['麦小满','那今天这炉，一起？']],
+    lines:[['顾苦','……柜台上那袋糖，我可没放。里头没掺东西，真的。'],['麦小满','那正好，今天这炉，一起？']],
     effect:'临时帮工回归 · 自动化率首次回升 · 下一局进入无配方期（V2）',
     apply(){S.staff.prep=true;S.noRecipeNextDay=true}},
   '4-1':{slot:'G1',tag:'T2 / V2',title:'4-1 · 三十天不许用菜谱',trigger:'V2 无配方规则态开启',
     lines:[['糖老书','字我藏起来了。'],['麦小满','那我怎么知道该点哪个？'],['糖老书','……第三格。我什么都没说。']],
     effect:'菜谱与食材名一并隐藏，只能凭记忆点选；设备不显示名称提示',apply(){}},
   '4-7':{slot:'G3',tag:'T3 段位评定',title:'4-7 · 条例加了一行谁在吃',trigger:'累计出餐 24 单',
-    lines:[['周伯','我是糖勺榜的人。'],['雷千层','……条例里没有『好吃』这一项。'],['周伯','现在有了。']],
+    lines:[['周伯','我是糖勺榜的人。'],['雷千层','……条例里从头到尾没提过好吃。'],['周伯','现在有了。']],
     effect:'累计好评率进入评定公式 · 琉璃勺 · 第 53 页桂花糕显形 · 菜谱归还',
     apply(){S.rankIdx=3;reveal('osman');S.ratingIncludesGood=true;S.confiscated=false}},
   '5-234':{slot:'G3',tag:'T4 三次入队',title:'5-2 / 5-3 / 5-4 · 三个人来帮少点几下',trigger:'累计出餐 30 单',
-    lines:[['雷千层','我只是来校准火候。'],['顾苦','鸽子比我乖，真的。'],['沈如意','账我重新算过了。今天不累。']],
+    lines:[['雷千层','火候我替你看着。明天我来上班，别迟到。'],['顾苦','这不是投降，是深入内部观察。鸽子归我管。'],['沈如意','账本摊回来了。以后你只管烤，账我算。']],
     effect:'练习 / 提交 / 结算三条自动化线接通 · A 跃升至 70% · 七人同框',
     apply(){S.joined=true;S.staff.prep=true;S.staff.serve=true;S.staff.cashier=true;S.device=Math.max(S.device,3)}},
   '6-3':{slot:'G3',tag:'V4 自由炉',title:'6-3 · 因为你还想再做一炉',trigger:'玩家主动关闭全部自动化后再烤一炉',
@@ -1229,7 +1229,7 @@ function spawnCustomer(){
   const c={id:++uid,guest,rid:r.id,ing,P0:P0v,remain:P0v,firstTry,disturbed:ing.length>r.ing.length,auto:0,el:null};
   S.customers.push(c);
   renderCustomers();
-  if(c.disturbed)bubble('<b>顾苦</b>：我就想借点糖……　那罐糖好像不太对劲。',3000);
+  if(c.disturbed)bubble('<b>顾苦</b>：借一勺糖而已……　咦，这罐怎么有点咸？',3000);
 }
 function renderCustomers(){
   const box=$('#custList');
@@ -1301,7 +1301,7 @@ function renderBench(){
     ? '<b>自由炉</b>：不算钱、不排名、也不催客人。全员都在，自己烤一炉。'
     : S.noRecipe
     ? '<b>没菜谱</b>：连菜谱上的字都藏了，凭手感点。糖老书说：第三格，我什么都没说。'
-    : (c.disturbed?'<b>糖罐被动过</b>：这单多点一步，配方临时改写。':'<b>提示</b>：按配方顺序点食材；客人等得越久，赚得越少。做出完美，客人一定说好。');
+    : (c.disturbed?'<b>糖罐被动过</b>：这单多点一步，配方临时改写。':'<b>提示</b>：照着配方顺序点。客人等久了，钱就少了；做出完美，他一定说好。');
   $('#shopTip').className='tip-strip'+(S.noRecipe||S.freeStove?' gray':'');
   const slots=c.ing.map((k,i)=>`<div class="slot ${i<done?(S.progress[i]&&S.progress[i].auto?'auto':'ok'):''}">${i<done?'✓':i+1}</div>`).join('<span class="arrow">·</span>');
   const autoKeys=S.progress.filter(p=>p.auto).map(p=>p.k);
@@ -1392,7 +1392,7 @@ function submitDish(){
 function loseCustomer(c){
   S.dayLost++;S.lost++;
   sfx.leave();
-  bubble(`<b>${c.guest.n}</b> 等走了。这单没赚着，下一位来。`,2600);
+  bubble(`<b>${c.guest.n}</b> 等不及走了。这单没赚着，下一位。`,2600);
   addLog(`${c.guest.n} 耐心归零离场 · 记流失`);
   removeCustomer(c.id);
   if(S.activeId===c.id){S.activeId=null;S.progress=[]}
@@ -1451,7 +1451,7 @@ function showStoryCard(id,next){
   if(id.startsWith('learn:')){
     const r=rec(id.split(':')[1]);
     n={slot:'G3',tag:'T2 菜谱解锁特定点心',title:`第 ${r.page} 页 · 长糖霜了`,trigger:`首次成功做出《${r.name}》`,
-      lines:[['糖老书','……嗯。这一页，算你的了。'],['麦小满','那我明天再做一炉！']],
+      lines:[['糖老书','……嗯，这页长霜了。你那双手，总算没白烫。'],['麦小满','那我明天还来！']],
       effect:`《${r.name}》学成：进入可制作列表，开始累计熟练度 M`,apply(){}};
   }
   if(!n){next();return}
@@ -1647,7 +1647,7 @@ function beginService(){
   renderHUD();renderDock();renderCustomers();renderBench();
   updateOrdersBar();
   for(let i=0;i<S.concurrency;i++)spawnCustomer();
-  if(S.onLeave)bubble('<b>3-3 剥离</b>：人走了、炉子停了、书被扣了。今天所有步骤都要自己点。',4000);
+  if(S.onLeave)bubble('员工没来，炉子凉着，书也被扣了。今天每一步都得自己点。',4000);
   startTick();
 }
 function updateOrdersBar(){
@@ -1696,7 +1696,7 @@ function openRecapVN(next){
   openStoryVN(Object.assign({},base,{
     title:DEV_UI?'1-4 · 顾苦把糖罐换成了盐':'今天那罐糖的事',
     trigger:'V1 干扰首次命中 · 打烊复盘',
-    lines:base.lines.concat([['','那单多走了一步，书翻到第四页——字有了，做不做得出来，还是另一回事。']])
+    lines:base.lines.concat([['','那罐盐到底还是进了方子。第四页有了字；手上那点功夫，得你自己一炉一炉练。']])
   }),'1-4',next);
 }
 function finishDay(){
@@ -1847,13 +1847,13 @@ function renderEnding(){
     <div class="ending">
       <p class="kicker" style="font-size:10px;letter-spacing:2px;opacity:.6">自由炉 · 因为你还想再做一炉</p>
       <h2>今天不累。</h2>
-      <p class="muted">主角学会了全部菜谱，店里也全自动了，<br>却选择自己动手再烤一炉。故意焦一角的布丁。</p>
+      <p class="muted">菜谱学全了，店里也没他什么事了。<br>他还是自己动手烤了一炉，故意焦了一角。</p>
       <img src="${ASSET.pudding}" alt="焦糖布丁" style="width:120px;height:120px;object-fit:contain;margin:6px auto;display:block">
       <div class="p101">第 101 页显字：<br><b style="font-size:19px">「因为你还想再做一炉。」</b></div>
       <div class="group">${CREW.map(c=>`<div class="who"><div class="av" style="background:${c.c}">${c.img?`<img src="${c.img}" alt="${c.n}">`:c.n.slice(0,1)}</div>${c.n}</div>`).join('')}</div>
       <div><span class="stamp">累计出餐 ${S.served} 单</span><span class="stamp">完美 ${S.perfect} 次</span>
         <span class="stamp">好评率 ${(goodRate()*100).toFixed(0)}%</span><span class="stamp">七人同框</span></div>
-      <p class="muted" style="margin-top:14px">书灵没有散去，变成了菜单本。没有一个人离场。</p>
+      <p class="muted" style="margin-top:14px">那本旧书第二天自己翻回了柜台，继续挑刺。七个人，一个不少。</p>
       <button class="btn wide sec" style="margin-top:12px" data-act="reset">再开一局</button>
     </div>`;
   sfx.perfect();fxSparks(24);save();
@@ -2033,18 +2033,18 @@ function runSelfTest(){
     ok('账本已生成',!!S.lastLedger,'净额 '+S.lastLedger.net);
     ok('净额 = 营业额 − 原料 − 工资 − 维护',
       S.lastLedger.net===S.lastLedger.gross-S.lastLedger.material-S.lastLedger.wages-S.lastLedger.upkeep);
-    ok('顾苦借糖剧情卡有台词',STORY['1-4'].lines.length>=3&&STORY['1-4'].lines.some(x=>x[0]==='顾苦'&&x[1].includes('借点糖')));
+    ok('顾苦借糖剧情卡有台词',STORY['1-4'].lines.length>=3&&STORY['1-4'].lines.some(x=>x[0]==='顾苦'&&x[1].includes('借一勺糖')));
     const settleS=S;
     S=newState();S.phase='open';S.day=2;S.dayServed=1;
     S.storyLog=[{id:'1-4',day:2,trigger:'干扰'}];
     finishDay();
     ok('干扰当天先播插曲 VN 而非直接结算',!!SV&&!!$('#svText')&&$('#overlay').classList.contains('story-vn'));
-    ok('打烊插曲讲出借糖剧情',!!SV&&SV.lines.some(l=>l.text.includes('借点糖')));
+    ok('打烊插曲讲出借糖剧情',!!SV&&SV.lines.some(l=>l.text.includes('借一勺糖')));
     ok('打烊插曲标题玩家模式不露编号',DEV_UI||!/^\d+-\d+/.test($('.sv-title').textContent));
     let recapGuard=0;while(SV&&recapGuard++<12){storyVNFinish();storyVNNext()}
     const settleText=document.querySelector('#v-settle').textContent;
     ok('插曲播完才进账本',!SV&&settleText.includes('打烊账本'));
-    ok('结算页不再堆插曲对白',!settleText.includes('我就借点糖'));
+    ok('结算页不再堆插曲对白',!settleText.includes('我就借一勺糖'));
     ok('玩家模式结算不露开发编号',DEV_UI||!/点击步数|T2|V1|显形（/.test(settleText));
     S=settleS;
     S.coins=300;renderPractice();
